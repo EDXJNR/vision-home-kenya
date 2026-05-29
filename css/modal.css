@@ -1,0 +1,299 @@
+/* ═══════════════════════════════════════════
+   VISION HOMES KENYA — Modal Styles
+   ═══════════════════════════════════════════ */
+
+/* ── MODAL BACKDROP ── */
+.modal-bg {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-bg.open {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── MODAL PANEL ── */
+.modal {
+  background: var(--card-bg);
+  border: 0.5px solid var(--border);
+  border-radius: 4px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.25s ease;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.modal::-webkit-scrollbar { width: 4px; }
+.modal::-webkit-scrollbar-track { background: transparent; }
+.modal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── CLOSE BUTTON ── */
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  font-size: 22px;
+  color: var(--text-dim);
+  cursor: pointer;
+  background: var(--card-bg);
+  border: 0.5px solid var(--border);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: color 0.2s, border-color 0.2s;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: var(--gold);
+  border-color: rgba(201, 169, 110, 0.4);
+}
+
+/* ── PROPERTY IMAGE ── */
+.modal-img {
+  height: 300px;
+  background: var(--bg2);
+  overflow: hidden;
+  position: relative;
+}
+
+.modal-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.modal-img-badge {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 2px;
+  font-weight: 500;
+  background: var(--gold);
+  color: var(--bg);
+}
+
+/* ── BODY ── */
+.modal-body {
+  padding: 28px 32px 36px;
+}
+
+.modal-hood {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-hood::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 0.5px;
+  background: var(--gold);
+}
+
+.modal-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 6px;
+  line-height: 1.1;
+}
+
+.modal-name {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* ── STATS ROW ── */
+.modal-meta {
+  display: flex;
+  gap: 0;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 24px;
+  border: 0.5px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.modal-meta span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 20px;
+  flex: 1;
+  border-right: 0.5px solid var(--border);
+}
+
+.modal-meta span:last-child {
+  border-right: none;
+}
+
+.modal-meta i {
+  color: var(--gold);
+  font-size: 14px;
+}
+
+/* ── DESCRIPTION ── */
+.modal-desc {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.85;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 0.5px solid var(--border);
+}
+
+/* ── FEATURES GRID ── */
+.modal-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.modal-feature {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.modal-feature i {
+  color: var(--gold);
+  font-size: 13px;
+  width: 16px;
+  text-align: center;
+}
+
+/* ── ACTIONS ── */
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ── AGENT STRIP ── */
+.modal-agent {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: var(--input-bg);
+  border: 0.5px solid var(--border);
+  border-radius: 3px;
+  margin-bottom: 20px;
+}
+
+.modal-agent-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--bg);
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.modal-agent-info {
+  flex: 1;
+}
+
+.modal-agent-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.modal-agent-role {
+  font-size: 11px;
+  color: var(--text-faint);
+  letter-spacing: 0.04em;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .modal-bg {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .modal {
+    border-radius: 12px 12px 0 0;
+    max-height: 92vh;
+    animation: slideUpMobile 0.3s ease;
+  }
+
+  @keyframes slideUpMobile {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+
+  .modal-body {
+    padding: 20px 20px 32px;
+  }
+
+  .modal-img {
+    height: 220px;
+  }
+
+  .modal-meta {
+    flex-wrap: wrap;
+  }
+
+  .modal-meta span {
+    flex: 1 1 30%;
+    padding: 10px 14px;
+  }
+
+  .modal-features {
+    grid-template-columns: 1fr;
+  }
+}

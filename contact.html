@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us — Vision Homes Kenya</title>
+  <meta name="description" content="Get in touch with Vision Homes Kenya — book a viewing, request a valuation, or just say hello.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/hero.css">
+
+  <!-- Supabase + config BEFORE any other script so client is ready -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+
+  <!-- Theme: must run before first paint to kill the flash -->
+  <script>
+    (function(){
+      var root = document.documentElement;
+      root.classList.add('no-transition');
+      var t = localStorage.getItem('vhk-theme');
+      if (t === 'light') root.setAttribute('data-theme', 'light');
+      window.addEventListener('load', function () {
+        root.classList.remove('no-transition');
+      });
+    })();
+  </script>
+
+  <style>
+    /* ── Smooth theme transitions — exclude images & spinners ── */
+    *, *::before, *::after {
+      transition: background-color 0.25s ease, color 0.25s ease,
+                  border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    img, video, iframe { transition: none !important; }
+
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr 480px;
+      gap: 1px;
+      background: var(--border);
+      min-height: 60vh;
+    }
+
+    /* LEFT — info panel */
+    .contact-info {
+      background: var(--bg);
+      padding: 56px 48px;
+    }
+
+    .contact-info-label {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .contact-info-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 36px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.15;
+      margin-bottom: 32px;
+    }
+
+    .contact-details {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .contact-detail { display: flex; gap: 16px; }
+
+    .cd-icon {
+      width: 36px; height: 36px;
+      border: 0.5px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: var(--gold); flex-shrink: 0;
+    }
+
+    .cd-label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 4px; }
+    .cd-val   { font-size: 14px; color: var(--text-dim); line-height: 1.6; }
+    .cd-val a { color: var(--text-dim); text-decoration: none; }
+    .cd-val a:hover { color: var(--gold); }
+
+    .contact-hours {
+      background: var(--bg2);
+      border: 0.5px solid var(--border);
+      border-radius: 3px;
+      padding: 20px 24px;
+      margin-bottom: 32px;
+    }
+
+    .hours-title { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 14px; }
+
+    .hours-row {
+      display: flex; justify-content: space-between;
+      font-size: 13px; color: var(--text-dim);
+      padding: 6px 0; border-bottom: 0.5px solid var(--border);
+    }
+    .hours-row:last-child { border-bottom: none; }
+    .hours-row .time { color: var(--text); }
+
+    .contact-map {
+      height: 200px;
+      background: var(--bg2);
+      border: 0.5px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .contact-map iframe { width: 100%; height: 100%; border: none; }
+
+    /* RIGHT — form panel */
+    .contact-form-panel {
+      background: var(--bg2);
+      padding: 56px 48px;
+    }
+
+    .form-tabs {
+      display: flex;
+      margin-bottom: 32px;
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .form-tab {
+      padding: 10px 18px;
+      font-size: 12px; letter-spacing: 0.04em;
+      color: var(--text-faint); cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -0.5px;
+      background: none; border-top: none; border-left: none; border-right: none;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .form-tab.active { color: var(--text); border-bottom-color: var(--gold); }
+
+    .form-section { display: none; }
+    .form-section.active { display: block; }
+
+    .form-group { margin-bottom: 20px; }
+
+    .form-group label {
+      display: block; font-size: 10px; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      background: var(--input-bg, rgba(255,255,255,0.04));
+      border: 0.5px solid var(--input-border, var(--border));
+      color: var(--text);
+      padding: 12px 16px; border-radius: 3px;
+      font-size: 13px; outline: none;
+      font-family: 'DM Sans', sans-serif; appearance: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: rgba(201,169,110,0.4); }
+    .form-group select option { background: var(--bg2); }
+    .form-group textarea { height: 110px; resize: none; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    /* Submit button */
+    .submit-btn {
+      width: 100%; display: flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 13px 24px;
+      background: var(--gold); color: #0d0d0b;
+      border: none; border-radius: 3px; cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500;
+    }
+    .submit-btn:hover { opacity: 0.85; }
+    .submit-btn:disabled { opacity: 0.55; pointer-events: none; }
+
+    /* Spinner inside button */
+    .btn-spinner {
+      width: 14px; height: 14px;
+      border: 2px solid rgba(13,13,11,0.3);
+      border-top-color: #0d0d0b;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      transition: none !important;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Error message */
+    .form-error {
+      background: rgba(224,92,92,0.1);
+      border: 0.5px solid rgba(224,92,92,0.3);
+      color: #e05c5c;
+      border-radius: 3px; padding: 10px 14px;
+      font-size: 12px; margin-bottom: 16px;
+      display: none;
+    }
+    .form-error.show { display: block; }
+
+    /* Success state */
+    .form-success {
+      display: none; text-align: center; padding: 32px 0;
+    }
+    .form-success-icon { font-size: 40px; color: var(--gold); margin-bottom: 16px; }
+    .form-success-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: var(--text); margin-bottom: 10px; }
+    .form-success-sub { font-size: 13px; color: var(--text-dim); line-height: 1.7; }
+
+    .btn-gold {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 22px; background: var(--gold); color: #0d0d0b;
+      border: none; border-radius: 3px; cursor: pointer; text-decoration: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500;
+    }
+    .btn-gold:hover { opacity: 0.85; }
+
+    .btn-outline-w {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 22px;
+      background: none; border: 0.5px solid var(--border);
+      color: var(--text-dim); border-radius: 3px; cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .btn-outline-w:hover { border-color: var(--gold); color: var(--text); }
+
+    @media (max-width: 768px) {
+      .contact-layout { grid-template-columns: 1fr; }
+      .contact-info, .contact-form-panel { padding: 32px 20px; }
+      .contact-info-heading { font-size: 28px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="nav-placeholder"></div>
+
+  <div class="page-hero">
+    <div class="page-hero-grid" aria-hidden="true"></div>
+    <div class="page-hero-label">Get in Touch</div>
+    <h1>Contact Us</h1>
+    <p>Book a viewing, request a valuation, or simply ask us anything about the Nairobi property market.</p>
+  </div>
+
+  <div class="contact-layout">
+
+    <!-- INFO PANEL -->
+    <div class="contact-info">
+      <div class="contact-info-label">We'd love to hear from you</div>
+      <h2 class="contact-info-heading">Let's find your<br>perfect property.</h2>
+
+      <div class="contact-details">
+        <div class="contact-detail">
+          <div class="cd-icon"><i class="ti ti-map-pin"></i></div>
+          <div>
+            <div class="cd-label">Office</div>
+            <div class="cd-val">Delta Corner Annex, Westlands<br>Nairobi, Kenya</div>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="cd-icon"><i class="ti ti-phone"></i></div>
+          <div>
+            <div class="cd-label">Call Us</div>
+            <div class="cd-val"><a href="tel:+254737665665">+254 737 665 665</a></div>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="cd-icon"><i class="ti ti-brand-whatsapp"></i></div>
+          <div>
+            <div class="cd-label">WhatsApp</div>
+            <div class="cd-val">
+              <a href="https://wa.me/254737665665" target="_blank">+254 737 665 665</a><br>
+              <span style="font-size:11px;color:var(--text-faint);">We reply within the hour</span>
+            </div>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="cd-icon"><i class="ti ti-mail"></i></div>
+          <div>
+            <div class="cd-label">Email</div>
+            <div class="cd-val"><a href="mailto:info@visionhomeskenya.co.ke">info@visionhomeskenya.co.ke</a></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-hours">
+        <div class="hours-title">Office Hours</div>
+        <div class="hours-row"><span class="day">Monday – Friday</span><span class="time">8:00 AM – 6:00 PM</span></div>
+        <div class="hours-row"><span class="day">Saturday</span><span class="time">9:00 AM – 4:00 PM</span></div>
+        <div class="hours-row"><span class="day">Sunday</span><span class="time">Viewings by appointment</span></div>
+      </div>
+
+      <div class="contact-map">
+        <iframe
+          src="https://maps.google.com/maps?q=Delta+Corner+Annex,+Westlands,+Nairobi&z=15&output=embed"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+
+    <!-- FORM PANEL -->
+    <div class="contact-form-panel">
+
+      <div class="form-tabs" role="tablist">
+        <button class="form-tab active" data-tab="viewing" role="tab">Book a Viewing</button>
+        <button class="form-tab" data-tab="valuation" id="valuation-tab" role="tab">Free Valuation</button>
+        <button class="form-tab" data-tab="general" role="tab">General Enquiry</button>
+      </div>
+
+      <div class="form-error" id="form-error"></div>
+
+      <!-- ── VIEWING FORM ── -->
+      <div class="form-section active" id="tab-viewing">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="v-name">Full Name *</label>
+            <input type="text" id="v-name" placeholder="Your name">
+          </div>
+          <div class="form-group">
+            <label for="v-phone">Phone Number *</label>
+            <input type="tel" id="v-phone" placeholder="+254 700 000 000">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="v-whatsapp">WhatsApp Number</label>
+          <input type="tel" id="v-whatsapp" placeholder="Same as phone or different?">
+        </div>
+        <div class="form-group">
+          <label for="v-prop">Property / Neighborhood of Interest</label>
+          <select id="v-prop">
+            <option value="">Select neighborhood…</option>
+            <option>Karen</option>
+            <option>Runda</option>
+            <option>Westlands</option>
+            <option>Kilimani</option>
+            <option>Lavington</option>
+            <option>Kileleshwa</option>
+            <option>Not sure — need guidance</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="v-buy-rent">Looking to</label>
+            <select id="v-buy-rent">
+              <option value="">Buy or Rent?</option>
+              <option>Buy</option>
+              <option>Rent</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="v-date">Preferred Date</label>
+            <input type="date" id="v-date">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="v-notes">Additional Notes</label>
+          <textarea id="v-notes" placeholder="Any specific requirements, budget, or questions…"></textarea>
+        </div>
+        <button class="submit-btn" id="btn-viewing">
+          <i class="ti ti-calendar"></i> Book My Viewing
+        </button>
+      </div>
+
+      <!-- ── VALUATION FORM ── -->
+      <div class="form-section" id="tab-valuation">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="val-name">Full Name *</label>
+            <input type="text" id="val-name" placeholder="Your name">
+          </div>
+          <div class="form-group">
+            <label for="val-phone">Phone Number *</label>
+            <input type="tel" id="val-phone" placeholder="+254 700 000 000">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="val-whatsapp">WhatsApp Number</label>
+          <input type="tel" id="val-whatsapp" placeholder="Same as phone or different?">
+        </div>
+        <div class="form-group">
+          <label for="val-addr">Property Address *</label>
+          <input type="text" id="val-addr" placeholder="Street, neighborhood, Nairobi">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="val-type">Property Type</label>
+            <select id="val-type">
+              <option>Apartment</option>
+              <option>Townhouse</option>
+              <option>Villa / Bungalow</option>
+              <option>Commercial</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="val-beds">Bedrooms</label>
+            <select id="val-beds">
+              <option>1</option><option>2</option><option>3</option>
+              <option>4</option><option>5</option><option>6+</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="val-notes">Additional Information</label>
+          <textarea id="val-notes" placeholder="Plot size, current condition, recent renovations…"></textarea>
+        </div>
+        <button class="submit-btn" id="btn-valuation">
+          <i class="ti ti-home-check"></i> Request Free Valuation
+        </button>
+      </div>
+
+      <!-- ── GENERAL FORM ── -->
+      <div class="form-section" id="tab-general">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="g-name">Full Name *</label>
+            <input type="text" id="g-name" placeholder="Your name">
+          </div>
+          <div class="form-group">
+            <label for="g-phone">Phone Number</label>
+            <input type="tel" id="g-phone" placeholder="+254 700 000 000">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="g-whatsapp">WhatsApp Number</label>
+          <input type="tel" id="g-whatsapp" placeholder="Optional">
+        </div>
+        <div class="form-group">
+          <label for="g-subject">Subject</label>
+          <input type="text" id="g-subject" placeholder="How can we help?">
+        </div>
+        <div class="form-group">
+          <label for="g-msg">Message *</label>
+          <textarea id="g-msg" placeholder="Tell us what you need…" style="height:140px;"></textarea>
+        </div>
+        <button class="submit-btn" id="btn-general">
+          <i class="ti ti-send"></i> Send Message
+        </button>
+      </div>
+
+      <!-- ── SUCCESS ── -->
+      <div class="form-success" id="form-success">
+        <div class="form-success-icon"><i class="ti ti-circle-check"></i></div>
+        <div class="form-success-title">Message Received</div>
+        <p class="form-success-sub">
+          Thank you! A Vision Homes agent will be in touch within the hour during business hours.<br><br>
+          You can also reach us immediately on WhatsApp.
+        </p>
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
+          <a class="btn-gold" href="https://wa.me/254737665665" target="_blank"><i class="ti ti-brand-whatsapp"></i> Open WhatsApp</a>
+          <button class="btn-outline-w" id="new-msg-btn"><i class="ti ti-refresh"></i> New Message</button>
+        </div>
+      </div>
+
+    </div><!-- /contact-form-panel -->
+  </div><!-- /contact-layout -->
+
+  <div id="footer-placeholder"></div>
+
+  <script src="js/supabase.js"></script>
+  <script src="js/newsletter.js"></script>
+  <script src="js/theme.js" defer></script>
+
+  <script>
+    // ── Load nav/footer components ──
+    function loadComponent(id, file) {
+      fetch(file).then(r => r.text()).then(html => {
+        document.getElementById(id).innerHTML = html;
+      }).catch(() => {});
+    }
+    loadComponent('nav-placeholder',    'components/nav.html');
+    loadComponent('footer-placeholder', 'components/footer.html');
+
+    // ── Use shared Supabase client from supabase.js ──
+    const _sb = getDB();
+
+    // ── Tab switching ──
+    document.querySelectorAll('.form-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.form-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+        document.getElementById('form-success').style.display = 'none';
+        hideError();
+      });
+    });
+
+    // ── URL hash: jump to valuation tab ──
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.location.hash === '#valuation') {
+        document.querySelector('[data-tab="valuation"]').click();
+      }
+    });
+
+    // ── Error helpers ──
+    function showError(msg) {
+      const el = document.getElementById('form-error');
+      el.textContent = msg;
+      el.classList.add('show');
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    function hideError() {
+      document.getElementById('form-error').classList.remove('show');
+    }
+
+    // ── Loading state helpers ──
+    function setLoading(btn, loading) {
+      if (loading) {
+        btn.disabled = true;
+        btn._originalHTML = btn.innerHTML;
+        btn.innerHTML = '<div class="btn-spinner"></div> Sending…';
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = btn._originalHTML;
+      }
+    }
+
+    // ── Show success ──
+    function showSuccess() {
+      document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+      const el = document.getElementById('form-success');
+      el.style.display = 'block';
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // ── Reset form ──
+    document.getElementById('new-msg-btn').addEventListener('click', () => {
+      document.getElementById('form-success').style.display = 'none';
+      document.querySelector('[data-tab="viewing"]').click();
+    });
+
+    // ── SUBMIT: VIEWING ──
+    document.getElementById('btn-viewing').addEventListener('click', async () => {
+      hideError();
+      const name  = document.getElementById('v-name').value.trim();
+      const phone = document.getElementById('v-phone').value.trim();
+      if (!name)  { showError('Please enter your full name.'); return; }
+      if (!phone) { showError('Please enter your phone number.'); return; }
+
+      const prop    = document.getElementById('v-prop').value;
+      const buyRent = document.getElementById('v-buy-rent').value;
+      const date    = document.getElementById('v-date').value;
+      const notes   = document.getElementById('v-notes').value.trim();
+      const wa      = document.getElementById('v-whatsapp').value.trim();
+
+      // Build a readable message
+      const msgParts = [];
+      if (prop)    msgParts.push(`Interested in: ${prop}`);
+      if (buyRent) msgParts.push(`Looking to: ${buyRent}`);
+      if (date)    msgParts.push(`Preferred date: ${date}`);
+      if (notes)   msgParts.push(notes);
+
+      const payload = {
+        type:           'property',
+        name,
+        phone,
+        whatsapp:       wa || phone,
+        property_title: prop || null,
+        subject:        `Viewing Request${prop ? ' — ' + prop : ''}`,
+        message:        msgParts.join('\n') || null,
+      };
+
+      const btn = document.getElementById('btn-viewing');
+      setLoading(btn, true);
+      await insertEnquiry(payload, btn);
+    });
+
+    // ── SUBMIT: VALUATION ──
+    document.getElementById('btn-valuation').addEventListener('click', async () => {
+      hideError();
+      const name  = document.getElementById('val-name').value.trim();
+      const phone = document.getElementById('val-phone').value.trim();
+      const addr  = document.getElementById('val-addr').value.trim();
+      if (!name)  { showError('Please enter your full name.'); return; }
+      if (!phone) { showError('Please enter your phone number.'); return; }
+      if (!addr)  { showError('Please enter the property address.'); return; }
+
+      const propType = document.getElementById('val-type').value;
+      const beds     = document.getElementById('val-beds').value;
+      const notes    = document.getElementById('val-notes').value.trim();
+      const wa       = document.getElementById('val-whatsapp').value.trim();
+
+      const msgParts = [
+        `Address: ${addr}`,
+        `Type: ${propType}`,
+        `Bedrooms: ${beds}`,
+      ];
+      if (notes) msgParts.push(notes);
+
+      const payload = {
+        type:           'valuation',
+        name,
+        phone,
+        whatsapp:       wa || phone,
+        property_title: addr,
+        subject:        `Valuation Request — ${addr}`,
+        message:        msgParts.join('\n'),
+      };
+
+      const btn = document.getElementById('btn-valuation');
+      setLoading(btn, true);
+      await insertEnquiry(payload, btn);
+    });
+
+    // ── SUBMIT: GENERAL ──
+    document.getElementById('btn-general').addEventListener('click', async () => {
+      hideError();
+      const name = document.getElementById('g-name').value.trim();
+      const msg  = document.getElementById('g-msg').value.trim();
+      if (!name) { showError('Please enter your full name.'); return; }
+      if (!msg)  { showError('Please enter a message.'); return; }
+
+      const payload = {
+        type:     'general',
+        name,
+        phone:    document.getElementById('g-phone').value.trim() || null,
+        whatsapp: document.getElementById('g-whatsapp').value.trim() || null,
+        subject:  document.getElementById('g-subject').value.trim() || null,
+        message:  msg,
+      };
+
+      const btn = document.getElementById('btn-general');
+      setLoading(btn, true);
+      await insertEnquiry(payload, btn);
+    });
+
+    // ── Core insert function ──
+    function openWhatsAppFallback(payload) {
+      const number = typeof WA_NUMBER !== 'undefined' ? WA_NUMBER : '254737665665';
+      const lines = [
+        `Name: ${payload.name || ''}`,
+        `Phone: ${payload.phone || ''}`,
+        payload.whatsapp ? `WhatsApp: ${payload.whatsapp}` : '',
+        `Type: ${payload.type || 'general'}`,
+        payload.property_title ? `Property: ${payload.property_title}` : '',
+        payload.subject ? `Subject: ${payload.subject}` : '',
+        payload.message ? `Message: ${payload.message}` : ''
+      ].filter(Boolean);
+      const text = encodeURIComponent(`Hello Vision Homes, please assist with this enquiry:\n\n${lines.join('\n')}`);
+      window.open(`https://wa.me/${number}?text=${text}`, '_blank');
+    }
+
+    async function insertEnquiry(payload, btn) {
+      try {
+        const db = getDB();
+        if (!db) throw new Error('Database not initialised — check config.js is loaded.');
+        const { error } = await db.from('enquiries').insert(payload);
+        if (error) throw error;
+        showSuccess();
+      } catch (err) {
+        console.error('Enquiry insert failed:', err);
+        const raw = String((err && err.message) || '').toLowerCase();
+        const policyBlocked = raw.includes('policy') || raw.includes('rls') || raw.includes('permission denied');
+        if (policyBlocked) {
+          openWhatsAppFallback(payload);
+          showSuccess();
+          return;
+        }
+        // Show a human-friendly error
+        let msg = 'Something went wrong. Please try again or reach us on WhatsApp.';
+        if (err.message) {
+          if (err.message.toLowerCase().includes('network') || err.message.toLowerCase().includes('fetch')) {
+            msg = 'Network error — please check your connection and try again.';
+          } else {
+            msg = err.message;
+          }
+        }
+        showError(msg);
+        setLoading(btn, false);
+      }
+    }
+  </script>
+</body>
+</html>

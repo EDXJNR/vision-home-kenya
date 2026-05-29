@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us — Vision Homes Kenya</title>
+  <meta name="description" content="Learn about Vision Homes Kenya — Nairobi's premier luxury real estate agency since 2010.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/hero.css">
+
+  <!-- Theme: apply saved theme before first paint to avoid flash -->
+  <script>
+  (function(){
+    var root = document.documentElement;
+    root.classList.add('no-transition');
+    var t = localStorage.getItem('vhk-theme');
+    if (t === 'light') root.setAttribute('data-theme', 'light');
+    window.addEventListener('load', function () {
+      root.classList.remove('no-transition');
+    });
+  })();
+  </script>
+
+  <style>
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      margin-bottom: 1px;
+    }
+
+    .about-copy {
+      background: var(--bg);
+      padding: 64px 56px;
+    }
+
+    .about-visual {
+      background: var(--bg2);
+      min-height: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-visual-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201,169,110,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,169,110,0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    .about-visual-text {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .about-visual-year {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 100px;
+      color: var(--gold);
+      opacity: 0.2;
+      line-height: 1;
+    }
+
+    .about-visual-label {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.7;
+    }
+
+    .about-label {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .about-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 36px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+
+    .about-body {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.9;
+      margin-bottom: 16px;
+    }
+
+    /* Milestones */
+    .milestones {
+      padding: 56px 2rem;
+      background: var(--bg2);
+      border-top: 0.5px solid var(--border);
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .milestones-inner {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .milestone {
+      background: var(--bg);
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    .milestone-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 36px;
+      font-weight: 500;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+
+    .milestone-label {
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+
+    /* Team */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .team-card {
+      background: var(--bg);
+      padding: 36px 28px;
+    }
+
+    .team-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--bg);
+      margin-bottom: 16px;
+    }
+
+    .team-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .team-role {
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+
+    .team-bio {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.75;
+    }
+
+    @media (max-width: 768px) {
+      .about-grid { grid-template-columns: 1fr; }
+      .about-copy { padding: 36px 20px; }
+      .about-visual { min-height: 200px; }
+      .about-heading { font-size: 28px; }
+      .milestones-inner { grid-template-columns: 1fr 1fr; }
+      .team-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="nav-placeholder"></div>
+
+  <div class="page-hero">
+    <div class="page-hero-grid" aria-hidden="true"></div>
+    <div class="page-hero-label">Our Story</div>
+    <h1>About Vision Homes Kenya</h1>
+    <p>Founded in Nairobi in 2021 — with a single mission: to make finding the perfect home effortless, transparent, and even enjoyable.</p>
+  </div>
+
+  <!-- Our Story -->
+  <div class="about-grid">
+    <div class="about-copy">
+      <div class="about-label">Founded 2021</div>
+      <h2 class="about-heading">Built on trust,<br>driven by results.</h2>
+      <p class="about-body">Vision Homes Kenya was born from a frustration shared by thousands of Nairobi homebuyers: the search for a quality home was opaque, stressful and riddled with unreliable information. Our founders set out to build something different.</p>
+      <p class="about-body">Today we are Nairobi's most trusted luxury agency, with a dedicated team of specialists covering every prime neighborhood. We have placed over 2,400 families and handled transactions exceeding KES 5 Million.</p>
+      <p class="about-body">Our promise is simple: we will never show you a property we have not personally visited and verified, and we will work tirelessly until you find the right fit — not just any fit.</p>
+    </div>
+    <div class="about-visual">
+      <div class="about-visual-grid" aria-hidden="true"></div>
+      <div class="about-visual-text">
+        <div class="about-visual-year">2021</div>
+        <div class="about-visual-label">Established in Nairobi</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Milestones -->
+  <div class="milestones">
+    <div style="text-align:center;margin-bottom:36px;">
+      <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">5 Years of Impact</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--text);">The Numbers Speak</div>
+    </div>
+    <div class="milestones-inner">
+      <div class="milestone">
+        <div class="milestone-num">540+</div>
+        <div class="milestone-label">Families Placed</div>
+      </div>
+      <div class="milestone">
+        <div class="milestone-num">480+</div>
+        <div class="milestone-label">Active Listings</div>
+      </div>
+      <div class="milestone">
+        <div class="milestone-num">5</div>
+        <div class="milestone-label">Years Operating</div>
+      </div>
+      <div class="milestone">
+        <div class="milestone-num">98%</div>
+        <div class="milestone-label">Client Satisfaction</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Our Values -->
+  <div class="about-grid">
+    <div class="about-visual">
+      <div class="about-visual-grid" aria-hidden="true"></div>
+      <div class="about-visual-text">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:80px;color:var(--gold);opacity:.12;line-height:1;">Values</div>
+        <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);opacity:.7;">How we work</div>
+      </div>
+    </div>
+    <div class="about-copy">
+      <div class="about-label">Our Values</div>
+      <h2 class="about-heading">Integrity in every<br>transaction.</h2>
+      <p class="about-body"><strong style="color:var(--text);font-weight:500;">Transparency</strong> — No hidden fees, no misleading photography, no inflated prices. What you see is exactly what you get.</p>
+      <p class="about-body"><strong style="color:var(--text);font-weight:500;">Expertise</strong> — Every agent carries deep knowledge of their assigned neighborhoods, built through years of active work in the market.</p>
+      <p class="about-body"><strong style="color:var(--text);font-weight:500;">Speed</strong> — We respond within the hour on WhatsApp, arrange viewings within 48 hours, and execute transactions with minimal friction.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Team -->
+  <section class="section" id="team" aria-labelledby="team-title">
+    <div class="sec-head">
+      <div>
+        <div class="sec-label">The People Behind the Work</div>
+        <h2 class="sec-title" id="team-title">Our Team</h2>
+      </div>
+    </div>
+
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">JK</div>
+        <div class="team-name">Marrylyn Achieng</div>
+        <div class="team-role">Founder & CEO</div>
+        <p class="team-bio">Marrylyn founded Vision Homes after 12 years in property investment. She personally oversees all high-value transactions and sets the standard for client experience across the agency.</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">EO</div>
+        <div class="team-name">Edwin Otieno</div>
+        <div class="team-role">Senior Property Consultant</div>
+        <p class="team-bio">Edwin specialises in Karen, Runda and Lavington. With over 300 successful placements, he is the go-to agent for buyers seeking ultra-premium residential properties.</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">DO</div>
+        <div class="team-name">Dennis Ochieng</div>
+        <div class="team-role">Rentals Specialist</div>
+        <p class="team-bio">Dennis leads our rental division, managing a portfolio of over 180 units in Kilimani, Westlands and Kileleshwa. He is known for his speed and thoroughness.</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">GA</div>
+        <div class="team-name">Gerald Ayugi</div>
+        <div class="team-role">Legal & Compliance</div>
+        <p class="team-bio">Gerald ensures every transaction is fully compliant with Kenyan property law. His due diligence process protects buyers and sellers alike from title and contractual risks.</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">PA</div>
+        <div class="team-name">Phoebe Akinyi</div>
+        <div class="team-role">Client Relations</div>
+        <p class="team-bio">Phoebe is often the first voice you hear at Vision Homes. She coordinates viewings, manages client communications and ensures no enquiry falls through the cracks.</p>
+      </div>
+      <div class="team-card" style="background:var(--bg2);display:flex;flex-direction:column;align-items:flex-start;justify-content:center;">
+        <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Join the Team</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--text);margin-bottom:14px;">We're always looking for exceptional agents.</div>
+        <a class="btn-outline-w" href="contact.html"><i class="ti ti-send"></i> Get in Touch</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-strip">
+    <div>
+      <h2>Ready to find your next home?</h2>
+      <p>Speak with a Vision Homes agent today — no commitment, just great advice.</p>
+    </div>
+    <div class="cta-strip-btns">
+      <a class="btn-dark" href="listings.html"><i class="ti ti-building-estate"></i> Browse Listings</a>
+      <a class="btn-outline-d" href="contact.html"><i class="ti ti-phone"></i> Contact Us</a>
+    </div>
+  </div>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/newsletter.js"></script>
+  <script src="js/theme.js" defer></script>
+
+  <script>
+    function loadComponent(id, file) {
+      fetch(file).then(r => r.text()).then(html => { document.getElementById(id).innerHTML = html; }).catch(() => {});
+    }
+    loadComponent('nav-placeholder', 'components/nav.html');
+    loadComponent('footer-placeholder', 'components/footer.html');
+  </script>
+</body>
+</html>

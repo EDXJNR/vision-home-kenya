@@ -1,0 +1,383 @@
+/* ═══════════════════════════════════════════
+   VISION HOMES KENYA — Hero & Ticker Styles
+   ═══════════════════════════════════════════ */
+
+/* ── HERO ── */
+.hero {
+  position: relative;
+  min-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.hero-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(201,169,110,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,169,110,0.05) 1px, transparent 1px);
+  background-size: 52px 52px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Two-column layout */
+.hero-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  align-items: center;
+  padding: 64px 2rem 64px;
+  position: relative;
+  z-index: 1;
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.hero-content {
+  max-width: 600px;
+}
+
+/* Badge */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 0.5px solid rgba(201,169,110,0.35);
+  padding: 6px 14px;
+  border-radius: 2px;
+  margin-bottom: 24px;
+}
+
+.hero-badge-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+
+/* Headline */
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 60px;
+  font-weight: 500;
+  line-height: 1.05;
+  color: var(--text);
+  margin-bottom: 20px;
+  letter-spacing: -0.01em;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+/* Subtitle */
+.hero-sub {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.8;
+  max-width: 480px;
+  margin-bottom: 36px;
+}
+
+/* CTA row */
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* House illustration */
+.hero-illustration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.15;
+}
+
+/* Scroll indicator */
+.hero-scroll {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-faint);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.hero-scroll-line {
+  width: 0.5px;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, var(--gold));
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.4; transform: scaleY(1); }
+  50%       { opacity: 1;   transform: scaleY(1.1); }
+}
+
+/* ── SEARCH BAR ── */
+.search-bar-wrap {
+  background: var(--bg2);
+  border-top: 0.5px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
+  padding: 20px 2rem;
+}
+
+.search-bar {
+  display: flex;
+  gap: 0;
+  max-width: 860px;
+}
+
+.search-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 20px;
+  border: 0.5px solid var(--border);
+  border-right: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.search-field:hover {
+  border-color: rgba(201,169,110,0.3);
+}
+
+.search-field:first-child {
+  border-radius: 3px 0 0 3px;
+}
+
+.search-field label {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  cursor: pointer;
+}
+
+.search-field select,
+.search-field input {
+  background: none;
+  border: none;
+  outline: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.search-field select option {
+  background: #1a1a1a;
+  color: var(--text);
+}
+
+.search-btn {
+  background: var(--gold);
+  color: var(--bg);
+  border: none;
+  padding: 0 28px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  border-radius: 0 3px 3px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.search-btn:hover {
+  background: var(--gold-light);
+}
+
+/* ── TICKER ── */
+.ticker-wrap {
+  overflow: hidden;
+  border-top: 0.5px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
+  background: rgba(201,169,110,0.04);
+  padding: 10px 0;
+}
+
+.ticker-inner {
+  display: flex;
+  white-space: nowrap;
+  animation: ticker 28s linear infinite;
+}
+
+.ticker-inner:hover {
+  animation-play-state: paused;
+}
+
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 32px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.ticker-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+
+/* ── PAGE HERO (listings, contact, about) ── */
+.page-hero {
+  padding: 64px 2rem 48px;
+  border-bottom: 0.5px solid var(--border);
+  background: var(--bg2);
+  position: relative;
+  overflow: hidden;
+}
+
+.page-hero::after {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -40px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,169,110,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.page-hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(201,169,110,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,169,110,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+.page-hero-label {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-hero-label::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 0.5px;
+  background: var(--gold);
+}
+
+.page-hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 40px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 1;
+  line-height: 1.1;
+}
+
+.page-hero p {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.75;
+  max-width: 480px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .hero {
+    min-height: 80vh;
+  }
+
+  .hero-body {
+    grid-template-columns: 1fr;
+    padding: 40px 1.2rem 48px;
+  }
+
+  .hero h1 {
+    font-size: 36px;
+  }
+
+  .hero-illustration {
+    display: none;
+  }
+
+  .hero-scroll {
+    display: none;
+  }
+
+  .search-bar {
+    flex-direction: column;
+  }
+
+  .search-field {
+    border-right: 0.5px solid var(--border);
+    border-bottom: none;
+    border-radius: 0;
+  }
+
+  .search-field:first-child {
+    border-radius: 3px 3px 0 0;
+  }
+
+  .search-btn {
+    border-radius: 0 0 3px 3px;
+    padding: 16px 24px;
+    justify-content: center;
+  }
+
+  .page-hero {
+    padding: 36px 1.2rem 28px;
+  }
+
+  .page-hero h1 {
+    font-size: 28px;
+  }
+}

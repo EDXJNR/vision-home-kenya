@@ -1,0 +1,78 @@
+<!-- ═══════════════════════════════════════════
+     VISION HOMES KENYA — Reusable Nav Component
+     ═══════════════════════════════════════════ -->
+<nav class="nav" role="navigation" aria-label="Main navigation">
+  <a class="nav-logo" href="/index.html">VISION<em>HOMES</em></a>
+
+  <ul class="nav-links" role="list">
+    <li><a href="/index.html"         data-page="index">Home</a></li>
+    <li><a href="/listings.html"      data-page="listings">Listings</a></li>
+    <li><a href="/neighborhoods.html" data-page="neighborhoods">Neighborhoods</a></li>
+    <li><a href="/about.html"         data-page="about">About</a></li>
+    <li><a href="/contact.html"       data-page="contact">Contact</a></li>
+  </ul>
+
+  <div class="nav-right">
+    <!-- Theme toggle -->
+    <button class="theme-toggle" id="theme-toggle-btn" aria-label="Toggle light/dark mode" title="Toggle theme">
+      <i class="ti ti-moon icon-dark"></i>
+      <i class="ti ti-sun icon-light"></i>
+    </button>
+
+    <button class="nav-icon" aria-label="Search" onclick="toggleSearch()">
+      <i class="ti ti-search"></i>
+    </button>
+    <button class="nav-icon" aria-label="Saved properties" title="Saved properties" onclick="window.location='/listings.html?saved=1'">
+      <i class="ti ti-heart"></i>
+    </button>
+    <button class="nav-cta" onclick="window.location='/contact.html'">Book Viewing</button>
+  </div>
+</nav>
+
+<!-- Mobile search overlay -->
+<div id="search-overlay" style="display:none;position:fixed;inset:0;z-index:150;background:rgba(0,0,0,0.92);padding:2rem;align-items:flex-start;justify-content:center;padding-top:100px;">
+  <div style="width:100%;max-width:560px;position:relative;">
+    <input id="overlay-search-input" type="text" placeholder="Search by neighborhood, type, price…"
+      style="width:100%;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.15);color:var(--text);padding:16px 20px;font-size:16px;border-radius:3px;outline:none;font-family:'DM Sans',sans-serif;"
+      onkeydown="if(event.key==='Enter')doOverlaySearch()">
+    <button onclick="toggleSearch()" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-dim);font-size:20px;cursor:pointer;">
+      <i class="ti ti-x"></i>
+    </button>
+  </div>
+</div>
+
+<script>
+  // ── Active nav link ──
+  (function () {
+    const path = window.location.pathname.split('/').pop() || 'index.html';
+    const page = path.replace('.html', '');
+    const link = document.querySelector(`.nav-links a[data-page="${page}"]`);
+    if (link) link.classList.add('active');
+  })();
+
+  // ── Search overlay ──
+  function toggleSearch() {
+    const ov = document.getElementById('search-overlay');
+    const open = ov.style.display === 'flex';
+    ov.style.display = open ? 'none' : 'flex';
+    if (!open) {
+      document.getElementById('overlay-search-input').focus();
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }
+
+  function doOverlaySearch() {
+    const q = document.getElementById('overlay-search-input').value.trim();
+    if (!q) return;
+    window.location = `/listings.html?q=${encodeURIComponent(q)}`;
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      const ov = document.getElementById('search-overlay');
+      if (ov && ov.style.display === 'flex') toggleSearch();
+    }
+  });
+</script>

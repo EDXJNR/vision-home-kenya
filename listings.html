@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Listings — Vision Homes Kenya</title>
+  <meta name="description" content="Browse all luxury properties for sale and rent across Nairobi's finest neighborhoods.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/hero.css">
+  <link rel="stylesheet" href="css/modal.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Theme: apply saved theme before first paint to avoid flash -->
+  <script>
+  (function(){
+    var root = document.documentElement;
+    root.classList.add('no-transition');
+    var t = localStorage.getItem('vhk-theme');
+    if (t === 'light') root.setAttribute('data-theme', 'light');
+    window.addEventListener('load', function () {
+      root.classList.remove('no-transition');
+    });
+  })();
+  </script>
+
+  <style>
+    /* Listings-page-specific styles */
+    .listings-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 0;
+      min-height: 60vh;
+    }
+
+    /* Sidebar */
+    .listings-sidebar {
+      border-right: 0.5px solid var(--border);
+      padding: 28px 24px 56px;
+      position: sticky;
+      top: 60px;
+      height: calc(100vh - 60px);
+      overflow-y: auto;
+      background: var(--bg);
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .sidebar-cta {
+      margin-top: 4px;
+      padding-bottom: 8px;
+    }
+
+    .sidebar-cta .saved-btn {
+      margin-top: 10px;
+    }
+
+    .sidebar-section {
+      margin-bottom: 28px;
+      padding-bottom: 28px;
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .sidebar-section:last-child {
+      border-bottom: none;
+    }
+
+    .sidebar-label {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 14px;
+    }
+
+    .sidebar-opts {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sidebar-opt {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 13px;
+      color: var(--text-dim);
+      cursor: pointer;
+      padding: 6px 0;
+      border-radius: 2px;
+      transition: color 0.15s;
+    }
+
+    .sidebar-opt:hover, .sidebar-opt.active {
+      color: var(--text);
+    }
+
+    .sidebar-opt.active .sopt-dot {
+      background: var(--gold);
+    }
+
+    .sopt-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border);
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+
+    .sopt-count {
+      margin-left: auto;
+      font-size: 10px;
+      color: var(--text-faint);
+    }
+
+    .price-range {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .price-range label {
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+
+    .price-range select {
+      background: rgba(255,255,255,0.04);
+      border: 0.5px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 3px;
+      font-size: 12px;
+      outline: none;
+      font-family: 'DM Sans', sans-serif;
+      appearance: none;
+      cursor: pointer;
+    }
+
+    .price-range select option {
+      background: #1a1a1a;
+    }
+
+    /* Main content */
+    .listings-main {
+      padding: 28px 28px 48px;
+    }
+
+    .listings-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .listings-count {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .listings-count strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .sort-select {
+      background: rgba(255,255,255,0.04);
+      border: 0.5px solid var(--border);
+      color: var(--text-dim);
+      padding: 7px 14px;
+      border-radius: 3px;
+      font-size: 12px;
+      outline: none;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      appearance: none;
+    }
+
+    .sort-select option {
+      background: #1a1a1a;
+    }
+
+    /* Active filters chips */
+    .active-filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--gold);
+      border: 0.5px solid rgba(201,169,110,0.3);
+      border-radius: 2px;
+      padding: 4px 10px;
+      cursor: pointer;
+    }
+
+    .filter-chip i {
+      font-size: 12px;
+    }
+
+    .filter-chip:hover {
+      border-color: var(--gold);
+    }
+
+    .saved-btn {
+      margin-top: 10px;
+      width: 100%;
+      justify-content: center;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 0.5px solid rgba(201,169,110,0.35);
+      background: rgba(201,169,110,0.06);
+      color: var(--gold);
+      padding: 10px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+
+    .saved-btn:hover {
+      background: rgba(201,169,110,0.14);
+      border-color: var(--gold);
+      color: var(--gold-light);
+    }
+
+    .saved-count-pill {
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      background: var(--gold);
+      color: var(--bg);
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .listings-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .listings-sidebar {
+        position: static;
+        height: auto;
+        border-right: none;
+        border-bottom: 0.5px solid var(--border);
+        display: none; /* toggled by mobile filter button */
+      }
+
+      .listings-sidebar.open {
+        display: block;
+      }
+
+      .listings-main {
+        padding: 20px 16px 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="nav-placeholder"></div>
+
+  <!-- Page hero -->
+<div class="page-hero">
+    <div class="page-hero-grid" aria-hidden="true"></div>
+    <a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:0.06em;color:var(--gold);text-decoration:none;margin-bottom:20px;padding:8px 16px;border:0.5px solid rgba(201,169,110,0.4);border-radius:3px;transition:all 0.2s;background:rgba(201,169,110,0.06);" onmouseover="this.style.background='rgba(201,169,110,0.14)';this.style.borderColor='var(--gold)'" onmouseout="this.style.background='rgba(201,169,110,0.06)';this.style.borderColor='rgba(201,169,110,0.4)'">
+      <i class="ti ti-arrow-left"></i> Back to Home
+    </a>
+    <div class="page-hero-label">All Properties</div>
+    <h1>Listings</h1>
+    <p>Explore our curated selection of homes for sale and rent across Nairobi's finest neighborhoods.</p>
+  </div>
+
+  <!-- Mobile filter toggle -->
+  <div style="display:none;padding:12px 16px;border-bottom:0.5px solid var(--border);" id="mobile-filter-toggle">
+    <button class="btn-outline-w" style="width:100%;justify-content:center;" onclick="document.getElementById('sidebar').classList.toggle('open')">
+      <i class="ti ti-adjustments-horizontal"></i> Filters
+    </button>
+  </div>
+
+  <div class="listings-layout">
+    <!-- SIDEBAR -->
+    <aside class="listings-sidebar" id="sidebar" aria-label="Property filters">
+
+      <!-- Type -->
+      <div class="sidebar-section">
+        <div class="sidebar-label">Listing Type</div>
+        <div class="sidebar-opts">
+          <div class="sidebar-opt active" data-filter-type="all" onclick="sidebarType('all', this)">
+            <span class="sopt-dot"></span> All Listings <span class="sopt-count" id="count-all"></span>
+          </div>
+          <div class="sidebar-opt" data-filter-type="sale" onclick="sidebarType('sale', this)">
+            <span class="sopt-dot"></span> For Sale <span class="sopt-count" id="count-sale"></span>
+          </div>
+          <div class="sidebar-opt" data-filter-type="rent" onclick="sidebarType('rent', this)">
+            <span class="sopt-dot"></span> For Rent <span class="sopt-count" id="count-rent"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Neighborhood -->
+      <div class="sidebar-section">
+        <div class="sidebar-label">Neighborhood</div>
+        <div class="sidebar-opts" id="hood-filters">
+          <div class="sidebar-opt active" onclick="sidebarHood('', this)">
+            <span class="sopt-dot"></span> All Areas
+          </div>
+          <div class="sidebar-opt" onclick="sidebarHood('Karen', this)">
+            <span class="sopt-dot"></span> Karen <span class="sopt-count" id="cnt-karen"></span>
+          </div>
+          <div class="sidebar-opt" onclick="sidebarHood('Runda', this)">
+            <span class="sopt-dot"></span> Runda <span class="sopt-count" id="cnt-runda"></span>
+          </div>
+          <div class="sidebar-opt" onclick="sidebarHood('Westlands', this)">
+            <span class="sopt-dot"></span> Westlands <span class="sopt-count" id="cnt-westlands"></span>
+          </div>
+          <div class="sidebar-opt" onclick="sidebarHood('Kilimani', this)">
+            <span class="sopt-dot"></span> Kilimani <span class="sopt-count" id="cnt-kilimani"></span>
+          </div>
+          <div class="sidebar-opt" onclick="sidebarHood('Lavington', this)">
+            <span class="sopt-dot"></span> Lavington <span class="sopt-count" id="cnt-lavington"></span>
+          </div>
+          <div class="sidebar-opt" onclick="sidebarHood('Kileleshwa', this)">
+            <span class="sopt-dot"></span> Kileleshwa <span class="sopt-count" id="cnt-kileleshwa"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bedrooms -->
+      <div class="sidebar-section">
+        <div class="sidebar-label">Bedrooms</div>
+        <div class="sidebar-opts">
+        <div class="sidebar-opt active" onclick="sidebarBeds(0, this)"><span class="sopt-dot"></span> Any</div>
+        <div class="sidebar-opt" onclick="sidebarBeds(1, this)"><span class="sopt-dot"></span> 1 bed</div>
+        <div class="sidebar-opt" onclick="sidebarBeds(2, this)"><span class="sopt-dot"></span> 2 beds</div>
+        <div class="sidebar-opt" onclick="sidebarBeds(3, this)"><span class="sopt-dot"></span> 3 beds</div>
+        <div class="sidebar-opt" onclick="sidebarBeds(4, this)"><span class="sopt-dot"></span> 4 beds</div>
+        <div class="sidebar-opt" onclick="sidebarBeds(5, this)"><span class="sopt-dot"></span> 5 beds</div>
+        </div>
+      </div>
+
+      <div class="sidebar-cta">
+        <a class="btn-gold" href="contact.html" style="width:100%;justify-content:center;">
+          <i class="ti ti-calendar"></i> Book Viewing
+        </a>
+        <button class="saved-btn" onclick="showSaved()">
+          <i class="ti ti-heart"></i> Saved Listings <span class="saved-count-pill" id="saved-count">0</span>
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="listings-main">
+      <div class="listings-top">
+        <div class="listings-count">Showing <strong id="result-count">—</strong> properties</div>
+        <select class="sort-select" id="sort-select" onchange="renderProperties()">
+          <option value="newest">Newest First</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+        </select>
+      </div>
+
+      <div class="active-filters" id="active-filters"></div>
+
+      <div id="props-container" class="loading-grid" role="list">
+        <div class="loading-card"></div>
+        <div class="loading-card"></div>
+        <div class="loading-card"></div>
+        <div class="loading-card"></div>
+        <div class="loading-card"></div>
+        <div class="loading-card"></div>
+      </div>
+    </main>
+  </div>
+
+  <div id="footer-placeholder"></div>
+
+  <!-- Modal -->
+  <div class="modal-bg" id="modal" role="dialog" aria-modal="true" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">&times;</button>
+      <div class="modal-img" id="modal-img"></div>
+      <div class="modal-body">
+        <div class="modal-hood" id="modal-hood"></div>
+        <div class="modal-price" id="modal-price"></div>
+        <div class="modal-name" id="modal-name"></div>
+        <div class="modal-meta" id="modal-meta"></div>
+        <div class="modal-desc" id="modal-desc"></div>
+        <div class="modal-actions">
+          <button class="btn-gold" id="modal-wa"><i class="ti ti-brand-whatsapp"></i> Enquire on WhatsApp</button>
+          <button class="btn-outline-w" id="modal-view-btn"><i class="ti ti-external-link"></i> Full Details</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/properties.js"></script>
+  <script src="js/modal.js"></script>
+  <script src="js/newsletter.js"></script>
+  <script src="js/theme.js" defer></script>
+
+  <script>
+    // Sidebar filter state
+    let sidebarTypeFilter = 'all';
+    let sidebarHoodFilter = '';
+    let sidebarBedsFilter = 0;
+    let searchQuery = '';
+
+    function sidebarType(type, el) {
+      sidebarTypeFilter = type;
+      activeFilter = type;
+      highlightSidebarOpt(el, '[data-filter-type]');
+      applyFilters();
+    }
+
+    function sidebarHood(hood, el) {
+      sidebarHoodFilter = hood;
+      activeNeighborhood = hood || null;
+      highlightSidebarOpt(el, '#hood-filters .sidebar-opt');
+      applyFilters();
+    }
+
+    function sidebarBeds(beds, el) {
+      sidebarBedsFilter = beds;
+      highlightSidebarOpt(el, '.sidebar-section:nth-child(3) .sidebar-opt');
+      applyFilters();
+    }
+
+    function highlightSidebarOpt(el, selector) {
+      document.querySelectorAll(selector).forEach(o => o.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function applyFilters() {
+      renderProperties();
+      updateActiveChips();
+    }
+
+    function updateActiveChips() {
+      const chips = [];
+      if (sidebarTypeFilter !== 'all') chips.push({ label: sidebarTypeFilter === 'sale' ? 'For Sale' : 'For Rent', clear: () => sidebarType('all', document.querySelector('[data-filter-type="all"]')) });
+      if (sidebarHoodFilter)           chips.push({ label: sidebarHoodFilter, clear: () => sidebarHood('', document.querySelector('#hood-filters .sidebar-opt')) });
+      if (sidebarBedsFilter > 0)       chips.push({ label: `${sidebarBedsFilter}+ beds`, clear: () => sidebarBeds(0, document.querySelector('.sidebar-section:nth-child(3) .sidebar-opt')) });
+      const el = document.getElementById('active-filters');
+      el.innerHTML = chips.map(c =>
+        `<div class="filter-chip" onclick="(${c.clear.toString()})()">${c.label} <i class="ti ti-x"></i></div>`
+      ).join('');
+    }
+
+    // Override renderProperties to count results and apply bed filter
+    const _origRender = renderProperties;
+    renderProperties = function() {
+      let filtered = allProperties;
+      if (activeFilter !== 'all') filtered = filtered.filter(p => p.type === activeFilter);
+      if (activeNeighborhood)     filtered = filtered.filter(p => p.neighborhood.toLowerCase() === activeNeighborhood.toLowerCase());
+      if (sidebarBedsFilter > 0)  filtered = filtered.filter(p => (p.beds || 0) >= sidebarBedsFilter);
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        filtered = filtered.filter(p =>
+          String(p.title || '').toLowerCase().includes(q) ||
+          String(p.neighborhood || '').toLowerCase().includes(q) ||
+          String(p.type || '').toLowerCase().includes(q) ||
+          String(p.price || '').toLowerCase().includes(q)
+        );
+      }
+
+      // Sort
+      const sort = document.getElementById('sort-select');
+      if (sort) {
+        if (sort.value === 'price-asc')  filtered = [...filtered].sort((a,b) => extractNum(a.price) - extractNum(b.price));
+        if (sort.value === 'price-desc') filtered = [...filtered].sort((a,b) => extractNum(b.price) - extractNum(a.price));
+      }
+
+      const container = document.getElementById('props-container');
+      const countEl   = document.getElementById('result-count');
+      if (countEl) countEl.textContent = filtered.length;
+      if (!container) return;
+      container.className = 'props-grid';
+
+      if (!filtered.length) {
+        container.innerHTML = '<div class="no-listings"><i class="ti ti-home-off" style="font-size:32px;display:block;margin-bottom:12px;color:var(--gold)"></i>No listings found.<br>Try adjusting your filters.</div>';
+        return;
+      }
+
+      const total = filtered.length;
+      container.innerHTML = filtered.map((p, idx) => {
+        const firstImage = p.property_images && p.property_images.length > 0 ? p.property_images[0].url : null;
+        const img = firstImage
+        ? `<img src="${firstImage}" alt="${p.title}" loading="lazy"/>`
+            : getPlaceholderSVG(p.neighborhood);
+        const soloClass = total === 1
+          ? ' prop-card--solo'
+          : (total % 3 === 1 && idx === total - 1 ? ' prop-card--orphan' : '');
+        return `
+        <div class="prop-card${soloClass}" onclick="openModal(${p.id})" role="listitem">
+          <div class="prop-img">
+            <div class="prop-img-inner prop-img-placeholder">
+              ${img}
+            </div>
+            <span class="prop-badge ${p.type==='rent'?'badge-r':'badge-s'}">${p.type==='rent'?'For rent':'For sale'}</span>
+            <div class="prop-fav" onclick="event.stopPropagation();toggleFav(this,${p.id})" title="Save property"><i class="ti ti-heart"></i></div>
+          </div>
+          <div class="prop-body">
+            <div class="prop-hood">${p.neighborhood}</div>
+            <div class="prop-price">${p.price}</div>
+            <div class="prop-name">${p.title}</div>
+            <div class="prop-meta">
+              ${p.beds  ? `<span><i class="ti ti-bed"></i> ${p.beds} beds</span>` : ''}
+              ${p.baths ? `<span><i class="ti ti-bath"></i> ${p.baths} baths</span>` : ''}
+              ${p.size  ? `<span><i class="ti ti-ruler-measure"></i> ${p.size}</span>` : ''}
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    };
+
+    function extractNum(price) {
+      return parseInt((price || '').replace(/[^0-9]/g, '')) || 0;
+    }
+
+    function toggleFav(el, id) {
+      const saved = JSON.parse(localStorage.getItem('vhk-saved') || '[]');
+      const i = saved.indexOf(id);
+      if (i === -1) { saved.push(id); el.style.color = 'var(--gold)'; }
+      else          { saved.splice(i,1); el.style.color = ''; }
+      localStorage.setItem('vhk-saved', JSON.stringify(saved));
+    }
+
+    function loadComponent(id, file) {
+      fetch(file).then(r => r.text()).then(html => { document.getElementById(id).innerHTML = html; }).catch(() => {});
+    }
+    loadComponent('nav-placeholder', 'components/nav.html');
+    loadComponent('footer-placeholder', 'components/footer.html');
+
+    // Modal "Full Details"
+document.getElementById('modal-view-btn').addEventListener('click', () => {
+  const id = document.getElementById('modal').dataset.propId;
+  if (id) window.location = `property.html?id=${id}`;
+});
+    
+
+
+function updateSavedCount() {
+  const saved = JSON.parse(localStorage.getItem('vhk-saved') || '[]');
+  const el = document.getElementById('saved-count');
+  if (el) el.textContent = saved.length;
+}
+
+function showSaved() {
+  const saved = JSON.parse(localStorage.getItem('vhk-saved') || '[]');
+  if (!saved.length) {
+    alert('No saved properties yet. Click the ♡ on any listing to save it.');
+    return;
+  }
+  // Filter to only saved
+  sidebarHoodFilter = '';
+  sidebarTypeFilter = 'all';
+  sidebarBedsFilter = 0;
+  activeFilter = 'all';
+  activeNeighborhood = null;
+
+  const container = document.getElementById('props-container');
+  container.className = 'props-grid';
+  const filtered = allProperties.filter(p => saved.includes(p.id));
+
+  if (!filtered.length) {
+    container.innerHTML = '<div class="no-listings"><i class="ti ti-heart-off" style="font-size:32px;display:block;margin-bottom:12px;color:var(--gold)"></i>None of your saved properties are currently listed.</div>';
+    return;
+  }
+  // Reuse existing render by temporarily overriding allProperties
+  const _orig = allProperties;
+  // render manually
+  const total = filtered.length;
+  container.innerHTML = filtered.map((p, idx) => {
+    const firstImage = p.property_images && p.property_images.length > 0 ? p.property_images[0].url : null;
+    const img = firstImage ? `<img src="${firstImage}" alt="${p.title}" loading="lazy"/>` : getPlaceholderSVG(p.neighborhood);
+    const soloClass = total === 1
+      ? ' prop-card--solo'
+      : (total % 3 === 1 && idx === total - 1 ? ' prop-card--orphan' : '');
+    return `<div class="prop-card${soloClass}" onclick="openModal(${p.id})" role="listitem">
+      <div class="prop-img">
+        <div class="prop-img-inner prop-img-placeholder">${img}</div>
+        <span class="prop-badge ${p.type==='rent'?'badge-r':'badge-s'}">${p.type==='rent'?'For rent':'For sale'}</span>
+        <div class="prop-fav" onclick="event.stopPropagation();toggleFav(this,${p.id})" title="Save property" style="color:var(--gold)"><i class="ti ti-heart"></i></div>
+      </div>
+      <div class="prop-body">
+        <div class="prop-hood">${p.neighborhood}</div>
+        <div class="prop-price">${p.price}</div>
+        <div class="prop-name">${p.title}</div>
+        <div class="prop-meta">
+          ${p.beds  ? `<span><i class="ti ti-bed"></i> ${p.beds} beds</span>` : ''}
+          ${p.baths ? `<span><i class="ti ti-bath"></i> ${p.baths} baths</span>` : ''}
+          ${p.size  ? `<span><i class="ti ti-ruler-measure"></i> ${p.size}</span>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('result-count').textContent = filtered.length;
+}
+
+// Also update toggleFav to refresh the count
+const _origToggleFav = toggleFav;
+toggleFav = function(el, id) {
+  _origToggleFav(el, id);
+  updateSavedCount();
+};
+
+// Call on load
+document.addEventListener('DOMContentLoaded', async () => {
+  updateSavedCount();
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('type')) { sidebarTypeFilter = params.get('type'); activeFilter = params.get('type'); }
+  if (params.get('hood')) { sidebarHoodFilter = params.get('hood'); activeNeighborhood = params.get('hood'); }
+  if (params.get('beds')) { sidebarBedsFilter = parseInt(params.get('beds')) || 0; }
+  const q = (params.get('q') || '').trim();
+  if (q) searchQuery = q;
+  await loadProperties();
+  if (params.get('saved') === '1') {
+    showSaved();
+  } else if (searchQuery) {
+    renderProperties();
+  }
+  if (window.innerWidth <= 768) document.getElementById('mobile-filter-toggle').style.display = 'block';
+});
+  </script>
+</body>
+</html>
