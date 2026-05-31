@@ -1,8 +1,5 @@
-/* ═══════════════════════════════════════════
-   VISION HOMES KENYA — Modal Styles
-   ═══════════════════════════════════════════ */
 
-/* ── MODAL BACKDROP ── */
+
 .modal-bg {
   display: none;
   position: fixed;
@@ -25,7 +22,6 @@
   to   { opacity: 1; }
 }
 
-/* ── MODAL PANEL ── */
 .modal {
   background: var(--card-bg);
   border: 0.5px solid var(--border);
@@ -49,7 +45,6 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── CLOSE BUTTON ── */
 .modal-close {
   position: absolute;
   top: 16px;
@@ -75,7 +70,6 @@
   border-color: rgba(201, 169, 110, 0.4);
 }
 
-/* ── PROPERTY IMAGE ── */
 .modal-img {
   height: 300px;
   background: var(--bg2);
@@ -104,7 +98,6 @@
   color: var(--bg);
 }
 
-/* ── BODY ── */
 .modal-body {
   padding: 28px 32px 36px;
 }
@@ -144,7 +137,6 @@
   line-height: 1.5;
 }
 
-/* ── STATS ROW ── */
 .modal-meta {
   display: flex;
   gap: 0;
@@ -174,7 +166,6 @@
   font-size: 14px;
 }
 
-/* ── DESCRIPTION ── */
 .modal-desc {
   font-size: 13px;
   color: var(--text-dim);
@@ -184,7 +175,6 @@
   border-bottom: 0.5px solid var(--border);
 }
 
-/* ── FEATURES GRID ── */
 .modal-features {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -207,14 +197,12 @@
   text-align: center;
 }
 
-/* ── ACTIONS ── */
 .modal-actions {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-/* ── AGENT STRIP ── */
 .modal-agent {
   display: flex;
   align-items: center;
@@ -258,7 +246,6 @@
   letter-spacing: 0.04em;
 }
 
-/* ── RESPONSIVE ── */
 @media (max-width: 768px) {
   .modal-bg {
     padding: 0;

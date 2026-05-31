@@ -1,13 +1,9 @@
-// ═══════════════════════════════════════════
-// VISION HOMES KENYA — Configuration
-// ═══════════════════════════════════════════
+
 
 const SUPABASE_URL      = 'https://yehfldakoefwixaysevs.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InllaGZsZGFrb2Vmd2l4YXlzZXZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTY0NDYsImV4cCI6MjA5NTM5MjQ0Nn0.H8BCmR5BkAdWqMG7ZHCryYanTMp02ISt85GEJXiUfgc';
 const WA_NUMBER         = '254737665665';
-const STORAGE_BUCKET = 'property-images'; // match your bucket name
+const STORAGE_BUCKET = 'property-images';
 
-
-// Expose to window so admin.js and other scripts can access them
 window.SUPABASE_URL      = SUPABASE_URL;
 window.SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;

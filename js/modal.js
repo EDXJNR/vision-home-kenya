@@ -1,6 +1,4 @@
-// ═══════════════════════════════════════════
-// VISION HOMES KENYA — Property Modal
-// ═══════════════════════════════════════════
+
 
 function openModal(id) {
   const p = allProperties.find(x => x.id === id);
@@ -24,7 +22,6 @@ imgEl.innerHTML = firstImage
   ? `<img src="${firstImage}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover"/>`
   : `<div style="height:100%;background:${getGradient(p.neighborhood)};display:flex;align-items:center;justify-content:center;">${getPlaceholderSVG(p.neighborhood)}</div>`;
 
-
   document.getElementById('modal-wa').onclick = () => {
     const msg = encodeURIComponent(`Hi, I'm interested in: ${p.title} (${p.neighborhood}) at ${p.price}`);
     window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`);
@@ -39,7 +36,6 @@ function closeModal() {
   document.body.style.overflow = '';
 }
 
-// Close on Escape key
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeModal();
 });

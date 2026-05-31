@@ -1,12 +1,21 @@
-// ═══════════════════════════════════════════
-// VISION HOMES KENYA — Properties Logic
-// ═══════════════════════════════════════════
+
 
 let allProperties   = [];
 let activeFilter    = 'all';
 let activeNeighborhood = null;
+let activeBudgetMax = null;
 
-// ── FETCH FROM SUPABASE ──
+function parsePrice(price) {
+  if (!price) return 0;
+  return parseInt(String(price).replace(/[^0-9]/g, ''), 10) || 0;
+}
+
+function setBudgetFilter(value) {
+  const n = parseInt(String(value || '').replace(/[^0-9]/g, ''), 10);
+  activeBudgetMax = n > 0 ? n : null;
+  renderProperties();
+}
+
 async function loadProperties() {
   try {
     const db = getDB();
@@ -27,7 +36,6 @@ async function loadProperties() {
 
     if (error) throw error;
 
-    // Sort images by sort_order on each property
     allProperties = (data || []).map(p => ({
       ...p,
       property_images: (p.property_images || []).sort((a, b) => a.sort_order - b.sort_order)
@@ -41,8 +49,6 @@ async function loadProperties() {
   updateNeighborhoodCounts();
 }
 
-// ── DEMO DATA ──
-// Demo now includes lat/lng and property_images[]
 function getDemoProperties() {
   return [
     { id:1, type:'rent', neighborhood:'Kilimani', price:'KES 120,000 / mo', title:'3-bedroom luxury apartment', beds:3, baths:2, size:'1,400 sqft', description:'Stunning modern apartment in the heart of Kilimani with breathtaking city views, full security, and ample parking.', lat:-1.2921, lng:36.7870, property_images:[] },
@@ -54,12 +60,11 @@ function getDemoProperties() {
   ];
 }
 
-// ── GET FIRST IMAGE URL from property_images ──
 function getFirstImage(p) {
   if (p.property_images && p.property_images.length > 0) {
     return p.property_images[0].url;
   }
-  return null; // no legacy image_url fallback
+  return null;
 }
 
 function getRenderLimit() {
@@ -69,11 +74,11 @@ function getRenderLimit() {
   return Number.isFinite(n) && n > 0 ? n : null;
 }
 
-// ── RENDER CARDS ──
 function renderProperties(limit = null) {
   let filtered = allProperties;
   if (activeFilter !== 'all')  filtered = filtered.filter(p => p.type === activeFilter);
   if (activeNeighborhood)      filtered = filtered.filter(p => p.neighborhood.toLowerCase() === activeNeighborhood.toLowerCase());
+  if (activeBudgetMax)         filtered = filtered.filter(p => parsePrice(p.price) <= activeBudgetMax);
   const effectiveLimit = limit ?? getRenderLimit();
   if (effectiveLimit)          filtered = filtered.slice(0, effectiveLimit);
 
@@ -121,7 +126,6 @@ function renderProperties(limit = null) {
   }).join('');
 }
 
-// ── FILTERS ──
 function setFilter(type, btn, neighborhood = null) {
   activeFilter = type;
   activeNeighborhood = neighborhood;
@@ -134,7 +138,6 @@ function setFilter(type, btn, neighborhood = null) {
   }
 }
 
-// ── NEIGHBORHOOD COUNTS ──
 function updateNeighborhoodCounts() {
   ['westlands','kilimani','kileleshwa','lavington','karen','runda'].forEach(h => {
     const count = allProperties.filter(p => p.neighborhood.toLowerCase() === h).length;
@@ -143,7 +146,6 @@ function updateNeighborhoodCounts() {
   });
 }
 
-// ── SAVED / FAV ──
 function toggleFav(el, id) {
   const saved = JSON.parse(localStorage.getItem('vhk-saved') || '[]');
   const i = saved.indexOf(id);
@@ -152,7 +154,6 @@ function toggleFav(el, id) {
   localStorage.setItem('vhk-saved', JSON.stringify(saved));
 }
 
-// ── HELPERS ──
 function getGradient(hood) {
   const isLight = document.documentElement.getAttribute('data-theme') === 'light';
   if (isLight) {

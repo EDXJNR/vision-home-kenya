@@ -1,8 +1,5 @@
-/* ═══════════════════════════════════════════
-   VISION HOMES KENYA — Hero & Ticker Styles
-   ═══════════════════════════════════════════ */
 
-/* ── HERO ── */
+
 .hero {
   position: relative;
   min-height: 88vh;
@@ -23,7 +20,6 @@
   z-index: 0;
 }
 
-/* Two-column layout */
 .hero-body {
   flex: 1;
   display: grid;
@@ -42,7 +38,6 @@
   max-width: 600px;
 }
 
-/* Badge */
 .hero-badge {
   display: inline-flex;
   align-items: center;
@@ -65,7 +60,6 @@
   flex-shrink: 0;
 }
 
-/* Headline */
 .hero h1 {
   font-family: 'Cormorant Garamond', serif;
   font-size: 60px;
@@ -81,7 +75,6 @@
   color: var(--gold);
 }
 
-/* Subtitle */
 .hero-sub {
   font-size: 14px;
   color: var(--text-dim);
@@ -90,14 +83,12 @@
   margin-bottom: 36px;
 }
 
-/* CTA row */
 .hero-actions {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
 }
 
-/* House illustration */
 .hero-illustration {
   display: flex;
   align-items: center;
@@ -105,7 +96,6 @@
   opacity: 0.15;
 }
 
-/* Scroll indicator */
 .hero-scroll {
   position: absolute;
   bottom: 2rem;
@@ -133,18 +123,21 @@
   50%       { opacity: 1;   transform: scaleY(1.1); }
 }
 
-/* ── SEARCH BAR ── */
 .search-bar-wrap {
   background: var(--bg2);
   border-top: 0.5px solid var(--border);
   border-bottom: 0.5px solid var(--border);
   padding: 20px 2rem;
+  display: flex;
+  justify-content: center;
 }
 
 .search-bar {
   display: flex;
   gap: 0;
-  max-width: 860px;
+  max-width: 1080px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .search-field {
@@ -215,7 +208,6 @@
   background: var(--gold-light);
 }
 
-/* ── TICKER ── */
 .ticker-wrap {
   overflow: hidden;
   border-top: 0.5px solid var(--border);
@@ -258,7 +250,6 @@
   flex-shrink: 0;
 }
 
-/* ── PAGE HERO (listings, contact, about) ── */
 .page-hero {
   padding: 64px 2rem 48px;
   border-bottom: 0.5px solid var(--border);
@@ -330,7 +321,12 @@
   z-index: 1;
 }
 
-/* ── RESPONSIVE ── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .search-field { padding: 10px 14px; }
+  .search-field select, .search-field input { font-size: 12px; }
+  .search-btn { padding: 0 20px; font-size: 11px; }
+}
+
 @media (max-width: 768px) {
   .hero {
     min-height: 80vh;

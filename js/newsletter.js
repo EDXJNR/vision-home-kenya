@@ -1,5 +1,4 @@
-// Newsletter subscription handler.
-// Inserts emails into `public.subscribers`.
+
 
 async function subscribe() {
   const input = document.getElementById('nl-email');
@@ -21,7 +20,7 @@ async function subscribe() {
   try {
     const { error } = await db.from('subscribers').insert({ email });
     if (error) {
-      // Handle duplicate-email style messages gracefully.
+
       const msg = String(error.message || '').toLowerCase();
       if (msg.includes('duplicate') || msg.includes('unique')) {
         alert('This email is already subscribed.');

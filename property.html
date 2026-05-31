@@ -5,23 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Property Detail — Vision Homes Kenya</title>
   <meta name="description" content="Full property details, photos and contact — Vision Homes Kenya.">
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="apple-touch-icon" href="images/logo.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Vision Homes Kenya">
+  <meta property="og:image" content="images/logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="images/logo.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 
-  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/hero.css">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Leaflet JS -->
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- Theme: apply saved theme before first paint to avoid flash -->
   <script>
   (function(){
     var root = document.documentElement;
@@ -35,7 +40,7 @@
   </script>
 
   <style>
-    /* ── LAYOUT ── */
+
     .prop-detail-layout {
       display: grid;
       grid-template-columns: 1fr 360px;
@@ -46,7 +51,6 @@
     }
     .prop-detail-main { padding-right: 48px; }
 
-    /* ── GALLERY ── */
     .gallery {
       width: 100%;
       margin-bottom: 32px;
@@ -139,7 +143,6 @@
     .gallery-thumb.active,
     .gallery-thumb:hover { opacity: 1; border-color: var(--gold); }
 
-    /* ── BREADCRUMB / INFO ── */
     .prop-breadcrumb {
       font-size: 11px;
       color: var(--text-faint);
@@ -232,7 +235,65 @@
     .prop-feature { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-dim); }
     .prop-feature i { color: var(--gold); font-size: 14px; width: 18px; text-align: center; }
 
-    /* ── MAP ── */
+    .video-tour-grid { display: flex; flex-direction: column; gap: 16px; margin-bottom: 36px; }
+    .video-embed-wrap {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      height: 0;
+      border-radius: 3px;
+      overflow: hidden;
+      border: 0.5px solid var(--border);
+      background: #000;
+    }
+    .video-embed-wrap iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .video-embed-wrap .video-thumb {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .video-play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(201, 169, 110, 0.95);
+      color: #0d0d0b;
+      font-size: 28px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.45);
+      z-index: 2;
+    }
+    .video-play-btn:hover { transform: translate(-50%, -50%) scale(1.06); }
+    .video-open-yt {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.85);
+      background: rgba(0,0,0,0.55);
+      padding: 4px 8px;
+      border-radius: 2px;
+      text-decoration: none;
+      z-index: 2;
+    }
+    .video-open-yt:hover { color: var(--gold); }
+
     .prop-map-wrap {
       margin-bottom: 36px;
     }
@@ -265,7 +326,6 @@
       line-height: 1.5;
     }
 
-    /* ── SIDEBAR ── */
     .prop-detail-sidebar { position: sticky; top: 80px; align-self: start; }
 
     .enquiry-card {
@@ -314,7 +374,6 @@
 
     .enquiry-form-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
 
-    /* Success state */
     .enquiry-success {
       display: none;
       text-align: center;
@@ -349,7 +408,16 @@
       padding: 5px 12px; border-radius: 2px; margin-bottom: 16px;
     }
 
-    /* ── RESPONSIVE ── */
+    @media (min-width: 769px) {
+      .prop-detail-layout {
+        grid-template-columns: 1fr 360px;
+      }
+      .prop-detail-main { padding-right: 48px; }
+      .prop-detail-sidebar { position: sticky; top: 80px; }
+      .prop-features-grid { grid-template-columns: 1fr 1fr; }
+      .gallery-main { height: 420px; }
+    }
+
     @media (max-width: 768px) {
       .prop-detail-layout { grid-template-columns: 1fr; padding: 20px 16px 48px; }
       .prop-detail-main { padding-right: 0; }
@@ -381,26 +449,19 @@
 
   <script src="js/config.js"></script>
   <script src="js/supabase.js"></script>
+  <script src="js/booking.js"></script>
   <script src="js/properties.js"></script>
   <script src="js/newsletter.js"></script>
+  <script src="js/layout.js"></script>
   <script src="js/theme.js" defer></script>
 
   <script>
-    // ── Apply saved theme before render (prevents flash) ──
+
     (function(){
       var t = localStorage.getItem('vhk-theme');
       if(t === 'light') document.documentElement.setAttribute('data-theme','light');
     })();
 
-    function loadComponent(id, file) {
-      fetch(file).then(r => r.text()).then(html => {
-        document.getElementById(id).innerHTML = html;
-      }).catch(() => {});
-    }
-    loadComponent('nav-placeholder', 'components/nav.html');
-    loadComponent('footer-placeholder', 'components/footer.html');
-
-    // ── GALLERY STATE ──
     let galleryImages = [];
     let galleryIndex  = 0;
     let leafletMap    = null;
@@ -417,44 +478,94 @@
       }
       if (counter) counter.textContent = `${galleryIndex + 1} / ${galleryImages.length}`;
       thumbs.forEach((t, i) => t.classList.toggle('active', i === galleryIndex));
-      // Scroll active thumb into view
+
       if (thumbs[galleryIndex]) thumbs[galleryIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
 
+    function buildVideoTourHTML(videoLinks) {
+      return typeof vhkBuildVideoTourHTML === 'function'
+        ? vhkBuildVideoTourHTML(videoLinks)
+        : '';
+    }
+
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    async function fetchPropertyById(id) {
+      const db = getDB();
+      if (db) {
+        const { data, error } = await db
+          .from('properties')
+          .select('*, property_images(id, url, sort_order)')
+          .eq('id', id)
+          .single();
+        if (!error && data) {
+          return {
+            ...data,
+            video_links: vhkNormalizeVideoLinks(data.video_links),
+            amenities: Array.isArray(data.amenities) ? data.amenities : [],
+            property_images: (data.property_images || []).sort((a, b) => a.sort_order - b.sort_order),
+          };
+        }
+      }
+      await loadProperties();
+      const found = allProperties.find(x => x.id === id) || null;
+      if (!found) return null;
+      return {
+        ...found,
+        video_links: vhkNormalizeVideoLinks(found.video_links),
+        amenities: Array.isArray(found.amenities) ? found.amenities : [],
+      };
+    }
+
+    function amenityIcon(name) {
+      const n = String(name).toLowerCase();
+      if (n.includes('pool')) return 'ti-swimming';
+      if (n.includes('gym') || n.includes('fitness')) return 'ti-barbell';
+      if (n.includes('garage') || n.includes('parking')) return 'ti-car-garage';
+      if (n.includes('security') || n.includes('cctv')) return 'ti-shield-check';
+      if (n.includes('garden') || n.includes('outdoor')) return 'ti-trees';
+      if (n.includes('wifi') || n.includes('internet')) return 'ti-wifi';
+      if (n.includes('air conditioning') || n.includes('heating')) return 'ti-temperature';
+      if (n.includes('elevator') || n.includes('lift')) return 'ti-elevator';
+      if (n.includes('generator') || n.includes('solar')) return 'ti-bolt';
+      return 'ti-check';
+    }
+
+    function buildAmenitiesHTML(amenities, p) {
+      const items = [];
+      if (Array.isArray(amenities) && amenities.length) {
+        amenities.forEach(a => {
+          items.push(`<div class="prop-feature"><i class="ti ${amenityIcon(a)}"></i> ${escHtml(a)}</div>`);
+        });
+      }
+      if (p.beds)  items.push(`<div class="prop-feature"><i class="ti ti-bed"></i> ${p.beds} Bedrooms</div>`);
+      if (p.baths) items.push(`<div class="prop-feature"><i class="ti ti-bath"></i> ${p.baths} Bathrooms</div>`);
+      if (p.size)  items.push(`<div class="prop-feature"><i class="ti ti-ruler-measure"></i> ${escHtml(p.size)}</div>`);
+      items.push(`<div class="prop-feature"><i class="ti ti-map-pin"></i> ${escHtml(p.neighborhood)}, Nairobi</div>`);
+      items.push(`<div class="prop-feature"><i class="ti ti-key"></i> ${p.type === 'rent' ? 'Available to Rent' : 'Available to Buy'}</div>`);
+      return items.join('');
+    }
+
     function buildGallery(images, neighborhood, title) {
-      // images = p.property_images array [{id, url, sort_order}]
       if (!images || images.length === 0) {
         return `<div class="gallery-placeholder" style="background:${getGradient(neighborhood)}">${getPlaceholderSVG(neighborhood)}</div>`;
       }
-
       galleryImages = images.map(img => img.url);
       galleryIndex  = 0;
-
       const thumbsHTML = galleryImages.length > 1
-        ? `<div class="gallery-thumbs" id="gallery-thumbs-strip">
-            ${galleryImages.map((url, i) =>
-              `<img class="gallery-thumb ${i === 0 ? 'active' : ''}" src="${url}" alt="Photo ${i+1}" onclick="galleryGo(${i})">`
-            ).join('')}
-          </div>`
-        : '';
-
+        ? `<div class="gallery-thumbs" id="gallery-thumbs-strip">${galleryImages.map((url, i) =>
+            `<img class="gallery-thumb ${i === 0 ? 'active' : ''}" src="${url}" alt="Photo ${i+1}" onclick="galleryGo(${i})">`).join('')}</div>` : '';
       const arrowsHTML = galleryImages.length > 1
-        ? `<button class="gallery-arrow prev" onclick="galleryGo(galleryIndex - 1)"><i class="ti ti-chevron-left"></i></button>
-           <button class="gallery-arrow next" onclick="galleryGo(galleryIndex + 1)"><i class="ti ti-chevron-right"></i></button>`
-        : '';
-
-      return `
-        <div class="gallery">
-          <div class="gallery-main">
-            <img id="gallery-main-img" src="${galleryImages[0]}" alt="${title}">
-            ${arrowsHTML}
-            ${galleryImages.length > 1 ? `<div class="gallery-counter" id="gallery-counter">1 / ${galleryImages.length}</div>` : ''}
-          </div>
-          ${thumbsHTML}
-        </div>`;
+        ? `<button class="gallery-arrow prev" onclick="galleryGo(galleryIndex - 1)"><i class="ti ti-chevron-left"></i></button><button class="gallery-arrow next" onclick="galleryGo(galleryIndex + 1)"><i class="ti ti-chevron-right"></i></button>` : '';
+      return `<div class="gallery"><div class="gallery-main"><img id="gallery-main-img" src="${galleryImages[0]}" alt="${escHtml(title)}">${arrowsHTML}${galleryImages.length > 1 ? `<div class="gallery-counter" id="gallery-counter">1 / ${galleryImages.length}</div>` : ''}</div>${thumbsHTML}</div>`;
     }
 
-    // ── LEAFLET MAP ──
     function buildMap(lat, lng, title, neighborhood) {
       if (!lat || !lng) {
         return `<div class="prop-map-wrap">
@@ -487,13 +598,11 @@
         zoomControl: true,
       });
 
-      // Use OpenStreetMap tiles
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        attribution: '&copy; OpenStreetMap contributors',
         maxZoom: 19,
       }).addTo(leafletMap);
 
-      // Custom gold marker
       const goldIcon = L.divIcon({
         className: '',
         html: `<div style="
@@ -516,56 +625,60 @@
         </div>
       `, { maxWidth: 200 }).openPopup();
 
-      // Re-apply tile filter when theme changes
       const observer = new MutationObserver(() => {
         leafletMap.invalidateSize();
       });
       observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     }
 
-    // ── ENQUIRY SUBMIT ──
-    async function submitEnquiry(title, hood, price) {
-      const name  = document.getElementById('eq-name').value.trim();
-      const phone = document.getElementById('eq-phone').value.trim();
-      const email = document.getElementById('eq-email').value.trim();
-      const msg   = document.getElementById('eq-msg').value.trim();
+    async function submitPropertyEnquiry(p) {
+      const name  = document.getElementById('eq-name')?.value.trim();
+      const phone = document.getElementById('eq-phone')?.value.trim();
+      const msg   = document.getElementById('eq-msg')?.value.trim();
 
-      if (!name || !phone) { alert('Please enter your name and phone number.'); return; }
+      if (!name || !phone) {
+        alert('Please enter your name and phone number.');
+        return;
+      }
 
       const btn = document.getElementById('enquiry-submit-btn');
       btn.disabled = true;
       btn.innerHTML = '<i class="ti ti-loader" style="animation:spin 1s linear infinite;display:inline-block;"></i> Sending…';
 
+      const payload = {
+        name,
+        phone,
+        whatsapp: phone,
+        type: 'property',
+        property_title: p.title,
+        subject: `Enquiry: ${p.title}`,
+        message: msg || `Interested in ${p.title} (${p.neighborhood}) at ${p.price}. Please contact me.`,
+        status: 'pending',
+      };
+
       try {
         const db = getDB();
-        if (db) {
-          await db.from('enquiries').insert({
-            name,
-            phone,
-            whatsapp: phone,
-            type: 'property',
-            property_title: title,
-            subject: `Viewing request: ${title}`,
-            message: msg || `Interested in ${title} (${hood}) at ${price}. Please contact me.`,
-          });
-        }
-      } catch(e) { console.warn('Enquiry DB insert failed:', e); }
+        if (!db) throw new Error('Could not connect to server. Please try WhatsApp instead.');
+        const { error } = await db.from('enquiries').insert(payload);
+        if (error) throw error;
 
-      // Show success state
-      document.getElementById('enquiry-form-inner').style.display = 'none';
-      document.getElementById('enquiry-success').style.display = 'block';
+        document.getElementById('enquiry-form-inner').style.display = 'none';
+        document.getElementById('enquiry-success').style.display = 'block';
 
-      // Auto-open WhatsApp
-      const waText = encodeURIComponent(`Hi, I'm ${name} (${phone}). I'm interested in: ${title} (${hood}) at ${price}. ${msg ? 'Message: ' + msg : ''}`);
-      window.open(`https://wa.me/${WA_NUMBER}?text=${waText}`, '_blank');
+        const waText = encodeURIComponent(`Hi, I'm ${name} (${phone}). I'm interested in: ${p.title} (${p.neighborhood}) at ${p.price}. ${msg ? 'Message: ' + msg : ''}`);
+        window.open(`https://wa.me/${WA_NUMBER}?text=${waText}`, '_blank');
+      } catch (err) {
+        console.error(err);
+        alert(err.message || 'Could not send enquiry. Please use WhatsApp or call us.');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ti ti-send"></i> Send Enquiry';
+      }
     }
 
-    // ── INIT PAGE ──
     async function initPropertyPage() {
-      await loadProperties();
       const params = new URLSearchParams(window.location.search);
-      const id = parseInt(params.get('id'));
-      const p  = allProperties.find(x => x.id === id);
+      const id = parseInt(params.get('id'), 10);
+      const p  = await fetchPropertyById(id);
 
       if (!p) {
         document.getElementById('prop-content').innerHTML = `
@@ -582,18 +695,10 @@
 
       const galleryHTML  = buildGallery(p.property_images, p.neighborhood, p.title);
       const mapHTML      = buildMap(p.lat, p.lng, p.title, p.neighborhood);
+      const videoHTML    = buildVideoTourHTML(p.video_links);
+      const amenitiesHTML = buildAmenitiesHTML(p.amenities, p);
       const waMsg        = encodeURIComponent(`Hi, I'm interested in: ${p.title} (${p.neighborhood}) at ${p.price}`);
-
-      const features = [
-        p.beds  ? `<div class="prop-feature"><i class="ti ti-bed"></i> ${p.beds} Bedrooms</div>` : '',
-        p.baths ? `<div class="prop-feature"><i class="ti ti-bath"></i> ${p.baths} Bathrooms</div>` : '',
-        p.size  ? `<div class="prop-feature"><i class="ti ti-ruler-measure"></i> ${p.size}</div>` : '',
-        `<div class="prop-feature"><i class="ti ti-map-pin"></i> ${p.neighborhood}, Nairobi</div>`,
-        `<div class="prop-feature"><i class="ti ti-shield-check"></i> Verified Listing</div>`,
-        `<div class="prop-feature"><i class="ti ti-key"></i> ${p.type === 'rent' ? 'Available to Rent' : 'Available to Buy'}</div>`,
-        `<div class="prop-feature"><i class="ti ti-home"></i> Residential Property</div>`,
-        `<div class="prop-feature"><i class="ti ti-star"></i> Premium Location</div>`,
-      ].join('');
+      const viewingUrl   = `contact.html?type=appointment&property=${encodeURIComponent(p.title)}&hood=${encodeURIComponent(p.neighborhood || '')}&price=${encodeURIComponent(p.price || '')}`;
 
       const specsHTML = [
         p.beds  ? `<div class="spec-item"><div class="spec-val">${p.beds}</div><div class="spec-key">Bedrooms</div></div>` : '',
@@ -604,7 +709,6 @@
       document.getElementById('prop-content').innerHTML = `
         <div class="prop-detail-layout">
 
-          <!-- LEFT COLUMN -->
           <div class="prop-detail-main">
 
             <div class="prop-breadcrumb">
@@ -630,24 +734,24 @@
             <div class="prop-section-title">About this property</div>
             <div class="prop-desc">${p.description || 'Contact us for more details about this exceptional property in ' + p.neighborhood + '.'}</div>
 
+            ${videoHTML}
+
             <div class="prop-section-title">Features &amp; Amenities</div>
-            <div class="prop-features-grid">${features}</div>
+            <div class="prop-features-grid">${amenitiesHTML}</div>
 
             ${mapHTML}
 
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
               <a class="btn-gold" href="https://wa.me/${WA_NUMBER}?text=${waMsg}" target="_blank"><i class="ti ti-brand-whatsapp"></i> Enquire on WhatsApp</a>
-              <a class="btn-outline-w" href="contact.html"><i class="ti ti-calendar"></i> Book a Viewing</a>
+              <a class="btn-outline-w" href="${viewingUrl}"><i class="ti ti-calendar"></i> Book a Viewing</a>
               <a class="btn-outline-w" href="listings.html"><i class="ti ti-arrow-left"></i> Back to Listings</a>
             </div>
           </div>
 
-          <!-- RIGHT SIDEBAR -->
           <aside class="prop-detail-sidebar">
             <div class="enquiry-card">
               <div class="enquiry-card-title">Enquire About This Property</div>
 
-              <!-- FORM -->
               <div id="enquiry-form-inner">
                 <div class="enquiry-form">
                   <label for="eq-name">Full Name *</label>
@@ -659,10 +763,12 @@
                   <label for="eq-msg">Message</label>
                   <textarea id="eq-msg">I'm interested in this property and would like to arrange a viewing.</textarea>
                   <div class="enquiry-form-actions">
-                    <button id="enquiry-submit-btn" class="btn-gold" style="width:100%;justify-content:center;"
-                      onclick="submitEnquiry(${JSON.stringify(p.title)}, ${JSON.stringify(p.neighborhood)}, ${JSON.stringify(p.price)})">
+                    <button type="button" id="enquiry-submit-btn" class="btn-gold" style="width:100%;justify-content:center;">
                       <i class="ti ti-send"></i> Send Enquiry
                     </button>
+                    <a class="btn-outline-w" style="justify-content:center;" href="${viewingUrl}">
+                      <i class="ti ti-calendar"></i> Book a Viewing
+                    </a>
                     <a class="btn-outline-w" style="justify-content:center;"
                       href="https://wa.me/${WA_NUMBER}?text=${waMsg}" target="_blank">
                       <i class="ti ti-brand-whatsapp"></i> WhatsApp Instead
@@ -671,7 +777,6 @@
                 </div>
               </div>
 
-              <!-- SUCCESS STATE -->
               <div class="enquiry-success" id="enquiry-success">
                 <div class="enquiry-success-icon"><i class="ti ti-circle-check"></i></div>
                 <div class="enquiry-success-title">Message Received</div>
@@ -692,10 +797,12 @@
           </aside>
         </div>`;
 
-      // Init Leaflet map after DOM is ready
+      document.getElementById('enquiry-submit-btn').addEventListener('click', () => submitPropertyEnquiry(p));
+
+      if (typeof vhkInitVideoEmbeds === 'function') vhkInitVideoEmbeds(document.getElementById('prop-content'));
+
       setTimeout(() => initLeafletMap(p.lat, p.lng, p.title, p.neighborhood), 100);
 
-      // Keyboard nav for gallery
       document.addEventListener('keydown', function(e) {
         if (galleryImages.length < 2) return;
         if (e.key === 'ArrowLeft')  galleryGo(galleryIndex - 1);
@@ -703,7 +810,18 @@
       });
     }
 
-    document.addEventListener('DOMContentLoaded', initPropertyPage);
+    document.addEventListener('DOMContentLoaded', () => {
+      initPropertyPage().catch(err => {
+        console.error(err);
+        document.getElementById('prop-content').innerHTML = `
+          <div style="padding:80px 2rem;text-align:center;">
+            <div style="font-size:32px;margin-bottom:16px;color:var(--gold)"><i class="ti ti-alert-circle"></i></div>
+            <div style="font-size:20px;font-family:'Cormorant Garamond',serif;color:var(--text);margin-bottom:10px;">Could not load property</div>
+            <div style="font-size:13px;color:var(--text-dim);margin-bottom:24px;">Please refresh the page or return to listings.</div>
+            <a class="btn-gold" href="listings.html"><i class="ti ti-arrow-left"></i> Back to Listings</a>
+          </div>`;
+      });
+    });
   </script>
 </body>
 </html>

@@ -3,8 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Property Detail — Vision Homes Kenya</title>
-  <meta name="description" content="Full property details, photos and contact — Vision Homes Kenya.">
+  <title>Neighborhoods — Vision Homes Kenya</title>
+  <meta name="description" content="Explore Nairobi's finest neighborhoods — Karen, Runda, Westlands, Kilimani, Lavington and Kileleshwa.">
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="apple-touch-icon" href="images/logo.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Vision Homes Kenya">
+  <meta property="og:title" content="Neighborhoods — Vision Homes Kenya">
+  <meta property="og:description" content="Explore Nairobi's finest neighborhoods with Vision Homes Kenya.">
+  <meta property="og:image" content="images/logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="images/logo.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,297 +24,139 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Theme: apply saved theme before first paint to avoid flash -->
   <script>
-  (function(){
-    var root = document.documentElement;
-    root.classList.add('no-transition');
-    var t = localStorage.getItem('vhk-theme');
-    if (t === 'light') root.setAttribute('data-theme', 'light');
-    window.addEventListener('load', function () {
-      root.classList.remove('no-transition');
-    });
-  })();
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('no-transition');
+      var t = localStorage.getItem('vhk-theme');
+      if (t === 'light') root.setAttribute('data-theme', 'light');
+      window.addEventListener('load', function () { root.classList.remove('no-transition'); });
+    })();
   </script>
 
   <style>
-    .prop-detail-layout {
+    .hood-page-intro {
+      max-width: 720px;
+      margin: 0 auto 48px;
+      text-align: center;
+      font-size: 15px;
+      color: var(--text-dim);
+      line-height: 1.8;
+    }
+
+    .hood-detail-grid {
       display: grid;
-      grid-template-columns: 1fr 360px;
-      gap: 0;
-      max-width: 1200px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      max-width: 1100px;
       margin: 0 auto;
-      padding: 40px 2rem 64px;
+      padding: 0 2rem 80px;
     }
 
-    /* LEFT COLUMN */
-    .prop-detail-main { padding-right: 48px; }
-
-    .prop-detail-hero-img {
-      width: 100%;
-      height: 420px;
-      object-fit: cover;
-      border-radius: 3px;
-      background: var(--bg2);
-      display: block;
-      margin-bottom: 32px;
-    }
-
-    .prop-detail-hero-placeholder {
-      width: 100%;
-      height: 420px;
-      border-radius: 3px;
-      margin-bottom: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .prop-breadcrumb {
-      font-size: 11px;
-      color: var(--text-faint);
-      letter-spacing: 0.06em;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .prop-breadcrumb a {
-      color: var(--text-faint);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .prop-breadcrumb a:hover { color: var(--gold); }
-
-    .prop-detail-hood {
-      font-size: 10px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .prop-detail-hood::before {
-      content: '';
-      display: block;
-      width: 20px;
-      height: 0.5px;
-      background: var(--gold);
-    }
-
-    .prop-detail-price {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 38px;
-      font-weight: 500;
-      color: var(--text);
-      line-height: 1.1;
-      margin-bottom: 8px;
-    }
-
-    .prop-detail-title {
-      font-size: 16px;
-      color: var(--text-dim);
-      margin-bottom: 28px;
-      line-height: 1.6;
-    }
-
-    .prop-detail-specs {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: var(--border);
-      border-radius: 3px;
-      overflow: hidden;
-      margin-bottom: 36px;
-    }
-
-    .spec-item {
-      background: var(--bg2);
-      padding: 18px 20px;
-      text-align: center;
-    }
-
-    .spec-val {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 4px;
-    }
-
-    .spec-key {
-      font-size: 10px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-faint);
-    }
-
-    .prop-section-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 20px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 14px;
-    }
-
-    .prop-desc {
-      font-size: 14px;
-      color: var(--text-dim);
-      line-height: 1.9;
-      margin-bottom: 36px;
-    }
-
-    .prop-features-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 36px;
-    }
-
-    .prop-feature {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      color: var(--text-dim);
-    }
-
-    .prop-feature i {
-      color: var(--gold);
-      font-size: 14px;
-      width: 18px;
-      text-align: center;
-    }
-
-    /* Map placeholder */
-    .prop-map {
-      height: 220px;
-      background: var(--bg2);
-      border: 0.5px solid var(--border);
-      border-radius: 3px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-faint);
-      font-size: 13px;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    /* RIGHT COLUMN — sticky enquiry card */
-    .prop-detail-sidebar { position: sticky; top: 80px; align-self: start; }
-
-    .enquiry-card {
+    .hood-card {
       background: var(--bg2);
       border: 0.5px solid var(--border);
       border-radius: 4px;
-      padding: 28px 24px;
-      margin-bottom: 16px;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .hood-card:hover {
+      border-color: rgba(201,169,110,0.35);
+      transform: translateY(-2px);
     }
 
-    .enquiry-card-title {
+    .hood-card-top {
+      padding: 28px 28px 20px;
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .hood-card-num {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+
+    .hood-card-name {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 18px;
+      font-size: 28px;
       font-weight: 500;
       color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .hood-card-tagline {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    .hood-card-body { padding: 20px 28px 24px; }
+
+    .hood-highlights {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .hood-highlight {
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border: 0.5px solid var(--border);
+      border-radius: 2px;
+      color: var(--text-faint);
+    }
+
+    .hood-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
       margin-bottom: 20px;
     }
 
-    .enquiry-form label {
-      display: block;
-      font-size: 10px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-faint);
-      margin-bottom: 6px;
-      margin-top: 16px;
-    }
-
-    .enquiry-form input,
-    .enquiry-form textarea {
-      width: 100%;
-      background: rgba(255,255,255,0.04);
-      border: 0.5px solid var(--border);
-      color: var(--text);
-      padding: 10px 14px;
-      border-radius: 3px;
-      font-size: 13px;
-      outline: none;
-      font-family: 'DM Sans', sans-serif;
-      transition: border-color 0.2s;
-      resize: none;
-    }
-
-    .enquiry-form input:focus,
-    .enquiry-form textarea:focus {
-      border-color: rgba(201,169,110,0.4);
-    }
-
-    .enquiry-form textarea { height: 90px; }
-
-    .enquiry-form-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 20px;
-    }
-
-    .agent-mini {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 16px;
+    .hood-stat {
       background: var(--bg);
       border: 0.5px solid var(--border);
       border-radius: 3px;
+      padding: 12px 14px;
     }
 
-    .agent-mini-avatar {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: var(--gold);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .hood-stat-val {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--bg);
-      flex-shrink: 0;
+      font-size: 20px;
+      color: var(--text);
+      margin-bottom: 2px;
     }
 
-    .agent-mini-name { font-size: 13px; font-weight: 500; color: var(--text); }
-    .agent-mini-role { font-size: 11px; color: var(--text-faint); }
-
-    /* Badge on detail page */
-    .prop-detail-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 10px;
+    .hood-stat-label {
+      font-size: 9px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      padding: 5px 12px;
-      border-radius: 2px;
-      margin-bottom: 16px;
+      color: var(--text-faint);
+    }
+
+    .hood-card-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .hood-cta-strip {
+      max-width: 1100px;
+      margin: 0 auto 64px;
+      padding: 0 2rem;
+    }
+
+    @media (min-width: 769px) {
+      .hood-detail-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
     @media (max-width: 768px) {
-      .prop-detail-layout {
-        grid-template-columns: 1fr;
-        padding: 20px 16px 48px;
-      }
-      .prop-detail-main { padding-right: 0; }
-      .prop-detail-hero-img, .prop-detail-hero-placeholder { height: 240px; }
-      .prop-detail-price { font-size: 28px; }
-      .prop-detail-sidebar { position: static; }
-      .prop-features-grid { grid-template-columns: 1fr; }
+      .hood-detail-grid { grid-template-columns: 1fr; padding: 0 16px 56px; }
+      .hood-card-top, .hood-card-body { padding-left: 20px; padding-right: 20px; }
     }
   </style>
 </head>
@@ -313,13 +164,35 @@
 
   <div id="nav-placeholder"></div>
 
-  <div id="prop-content">
-    <!-- Loading state -->
-    <div style="padding:80px 2rem;text-align:center;color:var(--text-dim);">
-      <div style="font-size:32px;margin-bottom:12px;color:var(--gold);opacity:.5;"><i class="ti ti-loader" style="animation:spin 1s linear infinite;display:inline-block;"></i></div>
-      <div style="font-size:14px;">Loading property…</div>
-    </div>
+  <div class="page-hero">
+    <div class="page-hero-grid" aria-hidden="true"></div>
+    <div class="page-hero-label">Explore Nairobi</div>
+    <h1>Prime Neighborhoods</h1>
+    <p>Discover the character, lifestyle, and property market of Nairobi's most sought-after residential areas.</p>
   </div>
+
+  <section class="section" style="padding-top:48px;">
+    <p class="hood-page-intro">
+      Whether you are buying, renting, or investing from abroad, choosing the right neighborhood is as important as choosing the right home. Each area below includes lifestyle highlights, typical property types, and a link to our current listings.
+    </p>
+
+    <div class="hood-detail-grid" id="hood-grid">
+
+    </div>
+
+    <div class="hood-cta-strip">
+      <div class="cta-strip">
+        <div>
+          <h2>Not sure which area suits you?</h2>
+          <p>Speak with a Vision Homes agent — we'll match you to the right neighborhood based on your budget, lifestyle, and investment goals.</p>
+        </div>
+        <div class="cta-strip-btns">
+          <a class="btn-gold" href="contact.html"><i class="ti ti-calendar"></i> Book a Consultation</a>
+          <a class="btn-outline-d" href="listings.html"><i class="ti ti-building-estate"></i> Browse All Listings</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <div id="footer-placeholder"></div>
 
@@ -327,152 +200,106 @@
   <script src="js/supabase.js"></script>
   <script src="js/properties.js"></script>
   <script src="js/newsletter.js"></script>
+  <script src="js/layout.js"></script>
   <script src="js/theme.js" defer></script>
 
-  <style>@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}</style>
-
   <script>
-    function loadComponent(id, file) {
-      fetch(file).then(r => r.text()).then(html => { document.getElementById(id).innerHTML = html; }).catch(() => {});
+    const NEIGHBORHOODS = [
+      {
+        slug: 'Karen',
+        num: '01',
+        tagline: 'Expansive estates, lush gardens, and serene surroundings near the Ngong Hills.',
+        highlights: ['Family estates', 'International schools', 'Half-acre plots', 'Gated communities'],
+        vibe: 'Quiet & spacious',
+        types: 'Villas, townhouses',
+      },
+      {
+        slug: 'Runda',
+        num: '02',
+        tagline: 'Elite gated enclave favoured by diplomats and executives. Ultra-private.',
+        highlights: ['Diplomatic zone', 'Ambassadorial homes', 'Maximum privacy', 'Large plots'],
+        vibe: 'Exclusive & secure',
+        types: 'Mansionettes, villas',
+      },
+      {
+        slug: 'Westlands',
+        num: '03',
+        tagline: 'Nairobi\'s commercial and entertainment hub — vibrant, connected, modern.',
+        highlights: ['Shopping & dining', 'Office proximity', 'Apartments', 'Nightlife'],
+        vibe: 'Urban & connected',
+        types: 'Apartments, penthouses',
+      },
+      {
+        slug: 'Kilimani',
+        num: '04',
+        tagline: 'Central location with a premium mix of apartments and townhouses.',
+        highlights: ['CBD access', 'Young professionals', 'Modern builds', 'Strong rental yield'],
+        vibe: 'Central & trendy',
+        types: 'Apartments, townhouses',
+      },
+      {
+        slug: 'Lavington',
+        num: '05',
+        tagline: 'Tree-lined streets, top schools, and elegant family homes.',
+        highlights: ['Top schools', 'Family-friendly', 'Leafy streets', 'Mixed housing'],
+        vibe: 'Established & leafy',
+        types: 'Townhouses, apartments',
+      },
+      {
+        slug: 'Kileleshwa',
+        num: '06',
+        tagline: 'Quiet, leafy suburb with great value and a strong community feel.',
+        highlights: ['Great value', 'Growing market', 'Community feel', 'Easy commute'],
+        vibe: 'Relaxed & accessible',
+        types: 'Apartments, maisonettes',
+      },
+    ];
+
+    function countForHood(name) {
+      return allProperties.filter(p => (p.neighborhood || '').toLowerCase() === name.toLowerCase()).length;
     }
-    loadComponent('nav-placeholder', 'components/nav.html');
-    loadComponent('footer-placeholder', 'components/footer.html');
 
-    async function initPropertyPage() {
-      await loadProperties();
-      const params = new URLSearchParams(window.location.search);
-      const id = parseInt(params.get('id'));
-      const p  = allProperties.find(x => x.id === id);
-
-      if (!p) {
-        document.getElementById('prop-content').innerHTML = `
-          <div style="padding:80px 2rem;text-align:center;">
-            <div style="font-size:32px;margin-bottom:16px;color:var(--gold)"><i class="ti ti-home-off"></i></div>
-            <div style="font-size:20px;font-family:'Cormorant Garamond',serif;color:var(--text);margin-bottom:10px;">Property Not Found</div>
-            <div style="font-size:13px;color:var(--text-dim);margin-bottom:24px;">This listing may have been removed or the link is incorrect.</div>
-            <a class="btn-gold" href="listings.html"><i class="ti ti-arrow-left"></i> Back to Listings</a>
-          </div>`;
-        return;
-      }
-
-      // Update page title
-      document.title = `${p.title} — Vision Homes Kenya`;
-
-      const heroImg = p.image_url
-        ? `<img class="prop-detail-hero-img" src="${p.image_url}" alt="${p.title}">`
-        : `<div class="prop-detail-hero-placeholder" style="background:${getGradient(p.neighborhood)}">${getPlaceholderSVG(p.neighborhood)}</div>`;
-
-      const features = [
-        p.beds  ? `<div class="prop-feature"><i class="ti ti-bed"></i> ${p.beds} Bedrooms</div>` : '',
-        p.baths ? `<div class="prop-feature"><i class="ti ti-bath"></i> ${p.baths} Bathrooms</div>` : '',
-        p.size  ? `<div class="prop-feature"><i class="ti ti-ruler-measure"></i> ${p.size}</div>` : '',
-        `<div class="prop-feature"><i class="ti ti-map-pin"></i> ${p.neighborhood}, Nairobi</div>`,
-        `<div class="prop-feature"><i class="ti ti-shield-check"></i> Verified Listing</div>`,
-        `<div class="prop-feature"><i class="ti ti-key"></i> ${p.type === 'rent' ? 'Available to Rent' : 'Available to Buy'}</div>`,
-        `<div class="prop-feature"><i class="ti ti-home"></i> Residential Property</div>`,
-        `<div class="prop-feature"><i class="ti ti-star"></i> Premium Location</div>`,
-      ].join('');
-
-      const waMsg = encodeURIComponent(`Hi, I'm interested in: ${p.title} (${p.neighborhood}) at ${p.price}`);
-
-      document.getElementById('prop-content').innerHTML = `
-        <div class="prop-detail-layout">
-          <div class="prop-detail-main">
-            <div class="prop-breadcrumb">
-              <a href="index.html">Home</a> <i class="ti ti-chevron-right" style="font-size:10px;"></i>
-              <a href="listings.html">Listings</a> <i class="ti ti-chevron-right" style="font-size:10px;"></i>
-              <span style="color:var(--text-dim)">${p.neighborhood}</span>
+    function renderHoodGrid() {
+      const grid = document.getElementById('hood-grid');
+      grid.innerHTML = NEIGHBORHOODS.map(h => {
+        const count = countForHood(h.slug);
+        return `
+          <article class="hood-card">
+            <div class="hood-card-top">
+              <div class="hood-card-num">${h.num}</div>
+              <h2 class="hood-card-name">${h.slug}</h2>
+              <p class="hood-card-tagline">${h.tagline}</p>
             </div>
-
-            ${heroImg}
-
-            <span class="prop-detail-badge ${p.type === 'rent' ? 'badge-r' : 'badge-s'}" style="margin-bottom:14px;">
-              ${p.type === 'rent' ? '<i class="ti ti-key"></i> For Rent' : '<i class="ti ti-tag"></i> For Sale'}
-            </span>
-
-            <div class="prop-detail-hood">${p.neighborhood}</div>
-            <div class="prop-detail-price">${p.price}</div>
-            <div class="prop-detail-title">${p.title}</div>
-
-            <div class="prop-detail-specs">
-              ${p.beds  ? `<div class="spec-item"><div class="spec-val">${p.beds}</div><div class="spec-key">Bedrooms</div></div>` : ''}
-              ${p.baths ? `<div class="spec-item"><div class="spec-val">${p.baths}</div><div class="spec-key">Bathrooms</div></div>` : ''}
-              ${p.size  ? `<div class="spec-item"><div class="spec-val" style="font-size:16px">${p.size}</div><div class="spec-key">Floor Area</div></div>` : ''}
-            </div>
-
-            <div class="prop-section-title">About this property</div>
-            <div class="prop-desc">${p.description || 'Contact us for more details about this exceptional property in ' + p.neighborhood + '.'}</div>
-
-            <div class="prop-section-title">Features & Amenities</div>
-            <div class="prop-features-grid">${features}</div>
-
-            <div class="prop-section-title">Location</div>
-            <div class="prop-map"><i class="ti ti-map-pin"></i> ${p.neighborhood}, Nairobi, Kenya</div>
-            <div style="font-size:12px;color:var(--text-faint);margin-bottom:40px;">Exact address provided upon confirmed appointment.</div>
-
-            <div style="display:flex;gap:10px;flex-wrap:wrap;">
-              <a class="btn-gold" href="https://wa.me/${WA_NUMBER}?text=${waMsg}" target="_blank"><i class="ti ti-brand-whatsapp"></i> Enquire on WhatsApp</a>
-              <a class="btn-outline-w" href="contact.html"><i class="ti ti-calendar"></i> Book a Viewing</a>
-              <a class="btn-outline-w" href="listings.html"><i class="ti ti-arrow-left"></i> Back to Listings</a>
-            </div>
-          </div>
-
-          <aside class="prop-detail-sidebar">
-            <div class="enquiry-card">
-              <div class="enquiry-card-title">Enquire About This Property</div>
-              <div class="enquiry-form">
-                <label for="eq-name">Full Name</label>
-                <input type="text" id="eq-name" placeholder="Your name">
-                <label for="eq-phone">Phone Number</label>
-                <input type="tel" id="eq-phone" placeholder="+254 700 000 000">
-                <label for="eq-email">Email Address</label>
-                <input type="email" id="eq-email" placeholder="you@example.com">
-                <label for="eq-msg">Message</label>
-                <textarea id="eq-msg">I'm interested in this property and would like to arrange a viewing.</textarea>
-                <div class="enquiry-form-actions">
-                  <button class="btn-gold" style="width:100%;justify-content:center;" onclick="submitEnquiry('${p.title}', '${p.neighborhood}', '${p.price}')">
-                    <i class="ti ti-send"></i> Send Enquiry
-                  </button>
-                  <a class="btn-outline-w" style="justify-content:center;" href="https://wa.me/${WA_NUMBER}?text=${waMsg}" target="_blank">
-                    <i class="ti ti-brand-whatsapp"></i> WhatsApp Instead
-                  </a>
+            <div class="hood-card-body">
+              <div class="hood-highlights">
+                ${h.highlights.map(x => `<span class="hood-highlight">${x}</span>`).join('')}
+              </div>
+              <div class="hood-stats">
+                <div class="hood-stat">
+                  <div class="hood-stat-val">${count}</div>
+                  <div class="hood-stat-label">Active listings</div>
+                </div>
+                <div class="hood-stat">
+                  <div class="hood-stat-val" style="font-size:14px;padding-top:4px;">${h.vibe}</div>
+                  <div class="hood-stat-label">Character</div>
                 </div>
               </div>
-            </div>
-
-            <div class="agent-mini">
-              <div class="agent-mini-avatar">AK</div>
-              <div>
-                <div class="agent-mini-name">Alex Kamau</div>
-                <div class="agent-mini-role">Senior Property Consultant</div>
+              <div style="font-size:12px;color:var(--text-faint);margin-bottom:16px;">
+                <i class="ti ti-home" style="color:var(--gold);"></i> Typical: ${h.types}
+              </div>
+              <div class="hood-card-actions">
+                <a class="btn-gold" href="listings.html?hood=${encodeURIComponent(h.slug)}"><i class="ti ti-building-estate"></i> View Listings</a>
+                <a class="btn-outline-w" href="contact.html"><i class="ti ti-message-circle"></i> Enquire</a>
               </div>
             </div>
-          </aside>
-        </div>`;
+          </article>`;
+      }).join('');
     }
 
-    async function submitEnquiry(title, hood, price) {
-      const name  = document.getElementById('eq-name').value.trim();
-      const phone = document.getElementById('eq-phone').value.trim();
-      const email = document.getElementById('eq-email').value.trim();
-      const msg   = document.getElementById('eq-msg').value.trim();
-
-      if (!name || !phone) { alert('Please enter your name and phone number.'); return; }
-
-      // Try to save to Supabase, else fall back to WhatsApp
-      try {
-        const db = getDB();
-        if (db) {
-          await db.from('enquiries').insert({ name, phone, email, message: msg, property_title: title, neighborhood: hood, price });
-        }
-      } catch(e) { console.warn('DB not available for enquiry.'); }
-
-      // Always send WhatsApp message as reliable fallback
-      const waMsg = encodeURIComponent(`Hi, I'm ${name} (${phone}). I'm interested in: ${title} (${hood}) at ${price}. Message: ${msg}`);
-      window.open(`https://wa.me/${WA_NUMBER}?text=${waMsg}`, '_blank');
-    }
-
-    document.addEventListener('DOMContentLoaded', initPropertyPage);
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadProperties();
+      renderHoodGrid();
+    });
   </script>
 </body>
 </html>

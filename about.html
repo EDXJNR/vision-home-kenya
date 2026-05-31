@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About Us — Vision Homes Kenya</title>
   <meta name="description" content="Learn about Vision Homes Kenya — Nairobi's premier luxury real estate agency since 2010.">
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="apple-touch-icon" href="images/logo.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Vision Homes Kenya">
+  <meta property="og:title" content="About Us — Vision Homes Kenya">
+  <meta property="og:image" content="images/logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="images/logo.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,7 +21,6 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/hero.css">
 
-  <!-- Theme: apply saved theme before first paint to avoid flash -->
   <script>
   (function(){
     var root = document.documentElement;
@@ -105,7 +112,6 @@
       margin-bottom: 16px;
     }
 
-    /* Milestones */
     .milestones {
       padding: 56px 2rem;
       background: var(--bg2);
@@ -145,7 +151,6 @@
       color: var(--text-faint);
     }
 
-    /* Team */
     .team-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -216,7 +221,6 @@
     <p>Founded in Nairobi in 2021 — with a single mission: to make finding the perfect home effortless, transparent, and even enjoyable.</p>
   </div>
 
-  <!-- Our Story -->
   <div class="about-grid">
     <div class="about-copy">
       <div class="about-label">Founded 2021</div>
@@ -234,7 +238,6 @@
     </div>
   </div>
 
-  <!-- Milestones -->
   <div class="milestones">
     <div style="text-align:center;margin-bottom:36px;">
       <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">5 Years of Impact</div>
@@ -260,7 +263,6 @@
     </div>
   </div>
 
-  <!-- Our Values -->
   <div class="about-grid">
     <div class="about-visual">
       <div class="about-visual-grid" aria-hidden="true"></div>
@@ -280,7 +282,6 @@
 
   <div class="divider"></div>
 
-  <!-- Team -->
   <section class="section" id="team" aria-labelledby="team-title">
     <div class="sec-head">
       <div>
@@ -328,7 +329,6 @@
     </div>
   </section>
 
-  <!-- CTA -->
   <div class="cta-strip">
     <div>
       <h2>Ready to find your next home?</h2>
@@ -344,14 +344,10 @@
 
   <script src="js/config.js"></script>
   <script src="js/newsletter.js"></script>
+  <script src="js/layout.js"></script>
   <script src="js/theme.js" defer></script>
 
   <script>
-    function loadComponent(id, file) {
-      fetch(file).then(r => r.text()).then(html => { document.getElementById(id).innerHTML = html; }).catch(() => {});
-    }
-    loadComponent('nav-placeholder', 'components/nav.html');
-    loadComponent('footer-placeholder', 'components/footer.html');
   </script>
 </body>
 </html>

@@ -5,24 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vision Homes Kenya — Luxury Real Estate in Nairobi</title>
   <meta name="description" content="Nairobi's premier luxury real estate agency. Find your perfect home in Karen, Runda, Westlands, Kilimani and beyond.">
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="apple-touch-icon" href="images/logo.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Vision Homes Kenya">
+  <meta property="og:title" content="Vision Homes Kenya — Luxury Real Estate in Nairobi">
+  <meta property="og:description" content="Nairobi's premier luxury real estate agency. Find your perfect home in Karen, Runda, Westlands, Kilimani and beyond.">
+  <meta property="og:image" content="images/logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="images/logo.png">
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
-  <!-- Tabler Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 
-  <!-- Styles -->
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/hero.css">
   <link rel="stylesheet" href="css/modal.css">
 
-  <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Theme: apply saved theme before first paint to avoid flash -->
   <script>
     (function () {
       var root = document.documentElement;
@@ -37,10 +41,8 @@
 </head>
 <body>
 
-  <!-- ── NAV ── -->
   <div id="nav-placeholder"></div>
 
-  <!-- ── HERO ── -->
 <section class="hero" aria-label="Hero">
   <div class="hero-grid-overlay" aria-hidden="true"></div>
 
@@ -83,7 +85,6 @@
   </div>
 </section>
 
-  <!-- ── SEARCH BAR ── -->
   <div class="search-bar-wrap">
     <div class="search-bar">
       <div class="search-field">
@@ -117,20 +118,22 @@
           <option value="5">5+</option>
         </select>
       </div>
+      <div class="search-field">
+        <label for="s-budget">Max Budget (KES)</label>
+        <input type="text" id="s-budget" inputmode="numeric" placeholder="e.g. 50000000">
+      </div>
       <button class="search-btn" onclick="doSearch()">
         <i class="ti ti-search"></i> Search Properties
       </button>
     </div>
   </div>
 
-  <!-- ── TICKER ── -->
   <div class="ticker-wrap" aria-label="Featured properties ticker" aria-live="off">
     <div class="ticker-inner" id="ticker-inner">
-      <!-- Populated by JS, doubled for seamless loop -->
+
     </div>
   </div>
 
-  <!-- ── FEATURED LISTINGS ── -->
   <section class="section" id="listings" aria-labelledby="listings-title">
     <div class="sec-head">
       <div>
@@ -140,14 +143,16 @@
       <a class="sec-link" href="listings.html">All properties <i class="ti ti-arrow-right"></i></a>
     </div>
 
-    <!-- Filter bar -->
     <div class="filter-bar" role="group" aria-label="Property type filter">
       <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
       <button class="filter-btn" onclick="setFilter('sale', this)">For Sale</button>
       <button class="filter-btn" onclick="setFilter('rent', this)">For Rent</button>
+      <div class="budget-filter">
+        <label for="home-budget">Max budget (KES)</label>
+        <input type="text" id="home-budget" inputmode="numeric" placeholder="e.g. 120000" oninput="setBudgetFilter(this.value)">
+      </div>
     </div>
 
-    <!-- Cards -->
     <div id="props-container" class="loading-grid" data-limit="9" role="list">
       <div class="loading-card"></div>
       <div class="loading-card"></div>
@@ -157,7 +162,6 @@
 
   <div class="divider"></div>
 
-  <!-- ── NEIGHBORHOODS ── -->
   <section class="section" aria-labelledby="hoods-title">
     <div class="sec-head">
       <div>
@@ -209,7 +213,6 @@
 
   <div class="divider"></div>
 
-
   <section class="section" aria-labelledby="trust-title">
     <div class="sec-head" style="margin-bottom:0;">
       <div>
@@ -241,7 +244,6 @@
     </div>
   </div>
 
-  <!-- ── CTA STRIP ── -->
   <div class="cta-strip">
     <div>
       <h2>Thinking of selling or letting your property?</h2>
@@ -253,10 +255,8 @@
     </div>
   </div>
 
-  <!-- ── FOOTER ── -->
   <div id="footer-placeholder"></div>
 
-  <!-- ── PROPERTY MODAL ── -->
   <div class="modal-bg" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-name" onclick="if(event.target===this)closeModal()">
     <div class="modal">
       <button class="modal-close" onclick="closeModal()" aria-label="Close">&times;</button>
@@ -275,49 +275,37 @@
     </div>
   </div>
 
-  <!-- ── SCRIPTS ── -->
   <script src="js/config.js"></script>
   <script src="js/supabase.js"></script>
   <script src="js/properties.js"></script>
   <script src="js/modal.js"></script>
   <script src="js/newsletter.js"></script>
+  <script src="js/layout.js"></script>
   <script src="js/theme.js" defer></script>
 
   <script>
-    // Load nav + footer components
-    function loadComponent(id, file) {
-      fetch(file)
-        .then(r => r.text())
-        .then(html => { document.getElementById(id).innerHTML = html; })
-        .catch(() => console.warn(`Could not load ${file}`));
-    }
-    loadComponent('nav-placeholder', 'components/nav.html');
-    loadComponent('footer-placeholder', 'components/footer.html');
-
-    // Kick off property load
     document.addEventListener('DOMContentLoaded', () => {
       loadProperties();
       buildTicker();
     });
 
-    // Search redirect
     function doSearch() {
       const type  = document.getElementById('s-type').value;
       const hood  = document.getElementById('s-hood').value;
       const beds  = document.getElementById('s-beds').value;
+      const budget = document.getElementById('s-budget').value.trim();
       const params = new URLSearchParams();
       if (type) params.set('type', type);
       if (hood) params.set('hood', hood);
       if (beds) params.set('beds', beds);
+      if (budget) params.set('budget', budget.replace(/[^0-9]/g, ''));
       window.location = `listings.html?${params.toString()}`;
     }
 
-    // Neighborhood shortcut
     function goNeighborhood(hood) {
       window.location = `listings.html?hood=${encodeURIComponent(hood)}`;
     }
 
-    // Modal "Full Details" button
 document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('modal-view-btn');
   if (btn) {
@@ -327,8 +315,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-
-
 
     function buildTicker() {
       setTimeout(() => {

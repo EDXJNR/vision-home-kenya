@@ -1,7 +1,4 @@
-// Shared theme toggle logic for the public site.
-// - Uses `data-theme="light"` on <html> for light mode.
-// - Stores preference in localStorage `vhk-theme` ("light" | "dark").
-// - Adds `.theme-changing` briefly so CSS can animate the swap.
+
 
 (function () {
   const STORAGE_KEY = 'vhk-theme';
@@ -31,10 +28,8 @@
   function withTransition(fn) {
     if (prefersReducedMotion()) return fn();
 
-    // Restart transition cleanly if user clicks rapidly.
     ROOT.classList.remove(TRANSITION_CLASS);
-    // Force reflow so the class removal is applied.
-    // eslint-disable-next-line no-unused-expressions
+
     ROOT.offsetHeight;
     ROOT.classList.add(TRANSITION_CLASS);
 

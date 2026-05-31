@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>All Listings — Vision Homes Kenya</title>
   <meta name="description" content="Browse all luxury properties for sale and rent across Nairobi's finest neighborhoods.">
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="apple-touch-icon" href="images/logo.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Vision Homes Kenya">
+  <meta property="og:title" content="All Listings — Vision Homes Kenya">
+  <meta property="og:image" content="images/logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="images/logo.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +24,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Theme: apply saved theme before first paint to avoid flash -->
   <script>
   (function(){
     var root = document.documentElement;
@@ -30,7 +37,7 @@
   </script>
 
   <style>
-    /* Listings-page-specific styles */
+
     .listings-layout {
       display: grid;
       grid-template-columns: 260px 1fr;
@@ -38,7 +45,6 @@
       min-height: 60vh;
     }
 
-    /* Sidebar */
     .listings-sidebar {
       border-right: 0.5px solid var(--border);
       padding: 28px 24px 56px;
@@ -147,7 +153,6 @@
       background: #1a1a1a;
     }
 
-    /* Main content */
     .listings-main {
       padding: 28px 28px 48px;
     }
@@ -188,7 +193,6 @@
       background: #1a1a1a;
     }
 
-    /* Active filters chips */
     .active-filters {
       display: flex;
       gap: 8px;
@@ -253,6 +257,21 @@
       font-weight: 500;
     }
 
+    .mobile-filter-bar {
+      display: none;
+      padding: 12px 16px;
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    @media (min-width: 769px) {
+      .listings-sidebar {
+        display: block !important;
+      }
+      #mobile-filter-toggle {
+        display: none !important;
+      }
+    }
+
     @media (max-width: 768px) {
       .listings-layout {
         grid-template-columns: 1fr;
@@ -263,7 +282,7 @@
         height: auto;
         border-right: none;
         border-bottom: 0.5px solid var(--border);
-        display: none; /* toggled by mobile filter button */
+        display: none;
       }
 
       .listings-sidebar.open {
@@ -273,6 +292,10 @@
       .listings-main {
         padding: 20px 16px 40px;
       }
+
+      .mobile-filter-bar {
+        display: block;
+      }
     }
   </style>
 </head>
@@ -280,7 +303,6 @@
 
   <div id="nav-placeholder"></div>
 
-  <!-- Page hero -->
 <div class="page-hero">
     <div class="page-hero-grid" aria-hidden="true"></div>
     <a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:0.06em;color:var(--gold);text-decoration:none;margin-bottom:20px;padding:8px 16px;border:0.5px solid rgba(201,169,110,0.4);border-radius:3px;transition:all 0.2s;background:rgba(201,169,110,0.06);" onmouseover="this.style.background='rgba(201,169,110,0.14)';this.style.borderColor='var(--gold)'" onmouseout="this.style.background='rgba(201,169,110,0.06)';this.style.borderColor='rgba(201,169,110,0.4)'">
@@ -291,18 +313,16 @@
     <p>Explore our curated selection of homes for sale and rent across Nairobi's finest neighborhoods.</p>
   </div>
 
-  <!-- Mobile filter toggle -->
-  <div style="display:none;padding:12px 16px;border-bottom:0.5px solid var(--border);" id="mobile-filter-toggle">
+  <div class="mobile-filter-bar" id="mobile-filter-toggle">
     <button class="btn-outline-w" style="width:100%;justify-content:center;" onclick="document.getElementById('sidebar').classList.toggle('open')">
       <i class="ti ti-adjustments-horizontal"></i> Filters
     </button>
   </div>
 
   <div class="listings-layout">
-    <!-- SIDEBAR -->
+
     <aside class="listings-sidebar" id="sidebar" aria-label="Property filters">
 
-      <!-- Type -->
       <div class="sidebar-section">
         <div class="sidebar-label">Listing Type</div>
         <div class="sidebar-opts">
@@ -318,7 +338,6 @@
         </div>
       </div>
 
-      <!-- Neighborhood -->
       <div class="sidebar-section">
         <div class="sidebar-label">Neighborhood</div>
         <div class="sidebar-opts" id="hood-filters">
@@ -346,7 +365,6 @@
         </div>
       </div>
 
-      <!-- Bedrooms -->
       <div class="sidebar-section">
         <div class="sidebar-label">Bedrooms</div>
         <div class="sidebar-opts">
@@ -356,6 +374,16 @@
         <div class="sidebar-opt" onclick="sidebarBeds(3, this)"><span class="sopt-dot"></span> 3 beds</div>
         <div class="sidebar-opt" onclick="sidebarBeds(4, this)"><span class="sopt-dot"></span> 4 beds</div>
         <div class="sidebar-opt" onclick="sidebarBeds(5, this)"><span class="sopt-dot"></span> 5 beds</div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Max Budget (KES)</div>
+        <div class="price-range">
+          <input type="text" id="sidebar-budget" inputmode="numeric" placeholder="e.g. 50000000"
+            style="background:rgba(255,255,255,0.04);border:0.5px solid var(--border);color:var(--text);padding:8px 12px;border-radius:3px;font-size:12px;outline:none;font-family:'DM Sans',sans-serif;width:100%;"
+            oninput="sidebarBudget(this.value)">
+          <span style="font-size:10px;color:var(--text-faint);">Shows properties at or below this amount</span>
         </div>
       </div>
 
@@ -370,7 +398,6 @@
 
     </aside>
 
-    <!-- MAIN -->
     <main class="listings-main">
       <div class="listings-top">
         <div class="listings-count">Showing <strong id="result-count">—</strong> properties</div>
@@ -396,7 +423,6 @@
 
   <div id="footer-placeholder"></div>
 
-  <!-- Modal -->
   <div class="modal-bg" id="modal" role="dialog" aria-modal="true" onclick="if(event.target===this)closeModal()">
     <div class="modal">
       <button class="modal-close" onclick="closeModal()" aria-label="Close">&times;</button>
@@ -420,14 +446,23 @@
   <script src="js/properties.js"></script>
   <script src="js/modal.js"></script>
   <script src="js/newsletter.js"></script>
+  <script src="js/layout.js"></script>
   <script src="js/theme.js" defer></script>
 
   <script>
-    // Sidebar filter state
+
     let sidebarTypeFilter = 'all';
     let sidebarHoodFilter = '';
     let sidebarBedsFilter = 0;
+    let sidebarBudgetFilter = null;
     let searchQuery = '';
+
+    function sidebarBudget(value) {
+      const n = parseInt(String(value || '').replace(/[^0-9]/g, ''), 10);
+      sidebarBudgetFilter = n > 0 ? n : null;
+      activeBudgetMax = sidebarBudgetFilter;
+      applyFilters();
+    }
 
     function sidebarType(type, el) {
       sidebarTypeFilter = type;
@@ -464,19 +499,20 @@
       if (sidebarTypeFilter !== 'all') chips.push({ label: sidebarTypeFilter === 'sale' ? 'For Sale' : 'For Rent', clear: () => sidebarType('all', document.querySelector('[data-filter-type="all"]')) });
       if (sidebarHoodFilter)           chips.push({ label: sidebarHoodFilter, clear: () => sidebarHood('', document.querySelector('#hood-filters .sidebar-opt')) });
       if (sidebarBedsFilter > 0)       chips.push({ label: `${sidebarBedsFilter}+ beds`, clear: () => sidebarBeds(0, document.querySelector('.sidebar-section:nth-child(3) .sidebar-opt')) });
+      if (sidebarBudgetFilter)         chips.push({ label: `≤ KES ${sidebarBudgetFilter.toLocaleString()}`, clear: () => { document.getElementById('sidebar-budget').value = ''; sidebarBudget(''); } });
       const el = document.getElementById('active-filters');
       el.innerHTML = chips.map(c =>
         `<div class="filter-chip" onclick="(${c.clear.toString()})()">${c.label} <i class="ti ti-x"></i></div>`
       ).join('');
     }
 
-    // Override renderProperties to count results and apply bed filter
     const _origRender = renderProperties;
     renderProperties = function() {
       let filtered = allProperties;
       if (activeFilter !== 'all') filtered = filtered.filter(p => p.type === activeFilter);
       if (activeNeighborhood)     filtered = filtered.filter(p => p.neighborhood.toLowerCase() === activeNeighborhood.toLowerCase());
       if (sidebarBedsFilter > 0)  filtered = filtered.filter(p => (p.beds || 0) >= sidebarBedsFilter);
+      if (sidebarBudgetFilter)  filtered = filtered.filter(p => parsePrice(p.price) <= sidebarBudgetFilter);
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
         filtered = filtered.filter(p =>
@@ -487,7 +523,6 @@
         );
       }
 
-      // Sort
       const sort = document.getElementById('sort-select');
       if (sort) {
         if (sort.value === 'price-asc')  filtered = [...filtered].sort((a,b) => extractNum(a.price) - extractNum(b.price));
@@ -549,19 +584,10 @@
       localStorage.setItem('vhk-saved', JSON.stringify(saved));
     }
 
-    function loadComponent(id, file) {
-      fetch(file).then(r => r.text()).then(html => { document.getElementById(id).innerHTML = html; }).catch(() => {});
-    }
-    loadComponent('nav-placeholder', 'components/nav.html');
-    loadComponent('footer-placeholder', 'components/footer.html');
-
-    // Modal "Full Details"
 document.getElementById('modal-view-btn').addEventListener('click', () => {
   const id = document.getElementById('modal').dataset.propId;
   if (id) window.location = `property.html?id=${id}`;
 });
-    
-
 
 function updateSavedCount() {
   const saved = JSON.parse(localStorage.getItem('vhk-saved') || '[]');
@@ -575,7 +601,7 @@ function showSaved() {
     alert('No saved properties yet. Click the ♡ on any listing to save it.');
     return;
   }
-  // Filter to only saved
+
   sidebarHoodFilter = '';
   sidebarTypeFilter = 'all';
   sidebarBedsFilter = 0;
@@ -590,9 +616,9 @@ function showSaved() {
     container.innerHTML = '<div class="no-listings"><i class="ti ti-heart-off" style="font-size:32px;display:block;margin-bottom:12px;color:var(--gold)"></i>None of your saved properties are currently listed.</div>';
     return;
   }
-  // Reuse existing render by temporarily overriding allProperties
+
   const _orig = allProperties;
-  // render manually
+
   const total = filtered.length;
   container.innerHTML = filtered.map((p, idx) => {
     const firstImage = p.property_images && p.property_images.length > 0 ? p.property_images[0].url : null;
@@ -621,29 +647,35 @@ function showSaved() {
   document.getElementById('result-count').textContent = filtered.length;
 }
 
-// Also update toggleFav to refresh the count
 const _origToggleFav = toggleFav;
 toggleFav = function(el, id) {
   _origToggleFav(el, id);
   updateSavedCount();
 };
 
-// Call on load
 document.addEventListener('DOMContentLoaded', async () => {
   updateSavedCount();
   const params = new URLSearchParams(window.location.search);
   if (params.get('type')) { sidebarTypeFilter = params.get('type'); activeFilter = params.get('type'); }
   if (params.get('hood')) { sidebarHoodFilter = params.get('hood'); activeNeighborhood = params.get('hood'); }
   if (params.get('beds')) { sidebarBedsFilter = parseInt(params.get('beds')) || 0; }
+  if (params.get('budget')) {
+    const b = parseInt(params.get('budget'), 10);
+    if (b > 0) {
+      sidebarBudgetFilter = b;
+      activeBudgetMax = b;
+      const budgetInput = document.getElementById('sidebar-budget');
+      if (budgetInput) budgetInput.value = b;
+    }
+  }
   const q = (params.get('q') || '').trim();
   if (q) searchQuery = q;
   await loadProperties();
   if (params.get('saved') === '1') {
     showSaved();
-  } else if (searchQuery) {
-    renderProperties();
+  } else {
+    applyFilters();
   }
-  if (window.innerWidth <= 768) document.getElementById('mobile-filter-toggle').style.display = 'block';
 });
   </script>
 </body>

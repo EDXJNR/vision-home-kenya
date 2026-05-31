@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact Us — Vision Homes Kenya</title>
   <meta name="description" content="Get in touch with Vision Homes Kenya — book a viewing, request a valuation, or just say hello.">
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="apple-touch-icon" href="images/logo.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Vision Homes Kenya">
+  <meta property="og:title" content="Contact Us — Vision Homes Kenya">
+  <meta property="og:image" content="images/logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="images/logo.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,139 +21,446 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/hero.css">
 
-  <!-- Supabase + config BEFORE any other script so client is ready -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/config.js"></script>
 
-  <!-- Theme: must run before first paint to kill the flash -->
   <script>
     (function(){
       var root = document.documentElement;
       root.classList.add('no-transition');
       var t = localStorage.getItem('vhk-theme');
       if (t === 'light') root.setAttribute('data-theme', 'light');
-      window.addEventListener('load', function () {
-        root.classList.remove('no-transition');
-      });
+      window.addEventListener('load', function () { root.classList.remove('no-transition'); });
     })();
   </script>
 
   <style>
-    /* ── Smooth theme transitions — exclude images & spinners ── */
     *, *::before, *::after {
       transition: background-color 0.25s ease, color 0.25s ease,
                   border-color 0.25s ease, box-shadow 0.25s ease;
     }
-    img, video, iframe { transition: none !important; }
+    img, video, iframe, .btn-spinner { transition: none !important; }
 
-    .contact-layout {
-      display: grid;
-      grid-template-columns: 1fr 480px;
-      gap: 1px;
-      background: var(--border);
-      min-height: 60vh;
+    .contact-shell {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 60px 24px 100px;
     }
 
-    /* LEFT — info panel */
-    .contact-info {
-      background: var(--bg);
-      padding: 56px 48px;
+    .wizard-progress {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 52px;
     }
 
-    .contact-info-label {
-      font-size: 10px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 16px;
-    }
-
-    .contact-info-heading {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 36px;
-      font-weight: 500;
-      color: var(--text);
-      line-height: 1.15;
-      margin-bottom: 32px;
-    }
-
-    .contact-details {
+    .wp-step {
       display: flex;
       flex-direction: column;
-      gap: 24px;
-      margin-bottom: 40px;
+      align-items: center;
+      gap: 8px;
+      position: relative;
     }
 
-    .contact-detail { display: flex; gap: 16px; }
+    .wp-bubble {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; font-weight: 500;
+      color: var(--text-faint);
+      background: var(--bg2);
+      position: relative; z-index: 2;
+      transition: border-color 0.3s, color 0.3s, background 0.3s;
+    }
 
-    .cd-icon {
+    .wp-step.active .wp-bubble {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(201,169,110,0.08);
+    }
+
+    .wp-step.done .wp-bubble {
+      border-color: var(--gold);
+      background: var(--gold);
+      color: #0d0d0b;
+    }
+
+    .wp-label {
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      white-space: nowrap;
+    }
+
+    .wp-step.active .wp-label,
+    .wp-step.done .wp-label {
+      color: var(--text-dim);
+    }
+
+    .wp-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+      max-width: 120px;
+      margin-bottom: 22px;
+      transition: background 0.3s;
+    }
+
+    .wp-line.done { background: var(--gold); opacity: 0.5; }
+
+    .wizard-panel {
+      display: none;
+      animation: fadeUp 0.35s ease both;
+    }
+    .wizard-panel.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-heading {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .step-label {
+      font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 12px;
+    }
+    .step-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 36px; font-weight: 500;
+      color: var(--text); line-height: 1.15;
+    }
+    .step-sub {
+      font-size: 14px; color: var(--text-faint); margin-top: 10px;
+      line-height: 1.7;
+    }
+
+    .type-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .type-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 36px 28px 32px;
+      cursor: pointer;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .type-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(201,169,110,0.06) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .type-card:hover::before,
+    .type-card.selected::before { opacity: 1; }
+
+    .type-card:hover,
+    .type-card.selected {
+      border-color: rgba(201,169,110,0.5);
+    }
+
+    .type-card.selected {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 1px rgba(201,169,110,0.2);
+    }
+
+    .tc-icon {
+      width: 56px; height: 56px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; color: var(--gold);
+      margin: 0 auto 20px;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    .type-card.selected .tc-icon,
+    .type-card:hover .tc-icon {
+      border-color: rgba(201,169,110,0.4);
+      background: rgba(201,169,110,0.07);
+    }
+
+    .tc-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px; font-weight: 500;
+      color: var(--text); margin-bottom: 10px;
+    }
+
+    .tc-desc {
+      font-size: 12px; color: var(--text-faint);
+      line-height: 1.7;
+    }
+
+    .type-card .tc-check {
+      position: absolute; top: 14px; right: 14px;
+      width: 18px; height: 18px;
+      border-radius: 50%; border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; color: transparent;
+      transition: all 0.2s;
+    }
+
+    .type-card.selected .tc-check {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #0d0d0b;
+    }
+
+    .calendar-shell {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+    }
+
+    .calendar-main {
+      background: var(--bg2);
+      border: 0.5px solid var(--border);
+      border-radius: 4px;
+      padding: 32px;
+    }
+
+    .cal-nav {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .cal-month {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px; font-weight: 500;
+      color: var(--text);
+    }
+
+    .cal-nav-btn {
       width: 36px; height: 36px;
       border: 0.5px solid var(--border);
       border-radius: 50%;
+      background: none; cursor: pointer;
+      color: var(--text-dim); font-size: 14px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 14px; color: var(--gold); flex-shrink: 0;
+    }
+    .cal-nav-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    .cal-grid-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      margin-bottom: 8px;
     }
 
-    .cd-label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 4px; }
-    .cd-val   { font-size: 14px; color: var(--text-dim); line-height: 1.6; }
-    .cd-val a { color: var(--text-dim); text-decoration: none; }
-    .cd-val a:hover { color: var(--gold); }
+    .cal-day-label {
+      text-align: center;
+      font-size: 10px; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text-faint);
+      padding: 6px 0;
+    }
 
-    .contact-hours {
-      background: var(--bg2);
-      border: 0.5px solid var(--border);
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .cal-cell {
+      aspect-ratio: 1;
+      display: flex; align-items: center; justify-content: center;
       border-radius: 3px;
-      padding: 20px 24px;
-      margin-bottom: 32px;
-    }
-
-    .hours-title { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 14px; }
-
-    .hours-row {
-      display: flex; justify-content: space-between;
       font-size: 13px; color: var(--text-dim);
-      padding: 6px 0; border-bottom: 0.5px solid var(--border);
+      cursor: default;
+      position: relative;
     }
-    .hours-row:last-child { border-bottom: none; }
-    .hours-row .time { color: var(--text); }
 
-    .contact-map {
-      height: 200px;
+    .cal-cell.empty { pointer-events: none; }
+
+    .cal-cell.past {
+      color: var(--text-faint);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .cal-cell.today {
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    .cal-cell.today::after {
+      content: '';
+      position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--gold);
+    }
+
+    .cal-cell.has-slots {
+      cursor: pointer;
+    }
+
+    .cal-cell.has-slots:hover {
+      background: rgba(201,169,110,0.1);
+      color: var(--gold);
+    }
+
+    .cal-cell.full {
+      color: var(--text-faint);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .cal-cell.full::before {
+      content: '';
+      position: absolute; inset: 3px;
+      border-radius: 2px;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 2px,
+        rgba(255,255,255,0.03) 2px,
+        rgba(255,255,255,0.03) 4px
+      );
+    }
+
+    .cal-cell.selected {
+      background: var(--gold) !important;
+      color: #0d0d0b !important;
+      font-weight: 500;
+    }
+
+    .cal-cell .slot-dots {
+      position: absolute;
+      bottom: 3px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 2px;
+    }
+
+    .slot-dot {
+      width: 4px; height: 4px; border-radius: 50%;
+    }
+
+    .slot-dot.open { background: rgba(100,200,120,0.7); }
+    .slot-dot.taken { background: rgba(200,80,80,0.5); }
+
+    .slot-panel {
       background: var(--bg2);
       border: 0.5px solid var(--border);
+      border-radius: 4px;
+      padding: 28px 24px;
+      display: flex; flex-direction: column; gap: 0;
+    }
+
+    .slot-panel-title {
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-faint); margin-bottom: 20px;
+    }
+
+    .slot-date-selected {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px; color: var(--text); margin-bottom: 20px;
+      line-height: 1.3;
+    }
+
+    .slot-item {
+      border: 0.5px solid var(--border);
       border-radius: 3px;
-      overflow: hidden;
+      padding: 16px 18px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      position: relative;
+      transition: border-color 0.2s, background 0.2s;
     }
-    .contact-map iframe { width: 100%; height: 100%; border: none; }
 
-    /* RIGHT — form panel */
-    .contact-form-panel {
+    .slot-item:hover:not(.taken) {
+      border-color: rgba(201,169,110,0.5);
+      background: rgba(201,169,110,0.05);
+    }
+
+    .slot-item.selected {
+      border-color: var(--gold);
+      background: rgba(201,169,110,0.08);
+    }
+
+    .slot-item.taken {
+      opacity: 0.4; cursor: not-allowed;
+      background: rgba(200,80,80,0.04);
+      border-color: rgba(200,80,80,0.2);
+    }
+
+    .slot-time {
+      font-size: 15px; color: var(--text); font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .slot-status {
+      font-size: 11px; color: var(--text-faint);
+    }
+
+    .slot-item.taken .slot-status { color: rgba(200,80,80,0.7); }
+    .slot-item.selected .slot-status { color: var(--gold); }
+
+    .slot-status-dot {
+      display: inline-block; width: 6px; height: 6px;
+      border-radius: 50%; margin-right: 5px; vertical-align: middle;
+    }
+    .slot-status-dot.open  { background: rgba(100,200,120,0.8); }
+    .slot-status-dot.taken { background: rgba(200,80,80,0.6); }
+
+    .slot-placeholder {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      flex: 1; text-align: center;
+      padding: 40px 0;
+      color: var(--text-faint); font-size: 13px; line-height: 1.7;
+    }
+    .slot-placeholder i { font-size: 32px; opacity: 0.3; margin-bottom: 12px; }
+
+    .slot-loading {
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; padding: 40px 0; color: var(--text-faint); font-size: 13px;
+    }
+
+    .details-shell {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .booking-summary {
       background: var(--bg2);
-      padding: 56px 48px;
+      border: 0.5px solid var(--border);
+      border-radius: 4px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+      display: flex; align-items: center; gap: 16px;
     }
 
-    .form-tabs {
-      display: flex;
-      margin-bottom: 32px;
-      border-bottom: 0.5px solid var(--border);
+    .bs-icon {
+      width: 40px; height: 40px;
+      border-radius: 50%; border: 0.5px solid rgba(201,169,110,0.3);
+      background: rgba(201,169,110,0.08);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: var(--gold); flex-shrink: 0;
     }
 
-    .form-tab {
-      padding: 10px 18px;
-      font-size: 12px; letter-spacing: 0.04em;
-      color: var(--text-faint); cursor: pointer;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -0.5px;
-      background: none; border-top: none; border-left: none; border-right: none;
-      font-family: 'DM Sans', sans-serif;
+    .bs-type {
+      font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 4px;
     }
-    .form-tab.active { color: var(--text); border-bottom-color: var(--gold); }
 
-    .form-section { display: none; }
-    .form-section.active { display: block; }
+    .bs-detail {
+      font-size: 13px; color: var(--text-dim);
+    }
 
     .form-group { margin-bottom: 20px; }
-
     .form-group label {
       display: block; font-size: 10px; letter-spacing: 0.08em;
       text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px;
@@ -154,63 +469,89 @@
     .form-group input,
     .form-group select,
     .form-group textarea {
-      width: 100%;
+      width: 100%; box-sizing: border-box;
       background: var(--input-bg, rgba(255,255,255,0.04));
       border: 0.5px solid var(--input-border, var(--border));
       color: var(--text);
-      padding: 12px 16px; border-radius: 3px;
+      padding: 13px 16px; border-radius: 3px;
       font-size: 13px; outline: none;
       font-family: 'DM Sans', sans-serif; appearance: none;
     }
     .form-group input:focus,
     .form-group select:focus,
     .form-group textarea:focus { border-color: rgba(201,169,110,0.4); }
-    .form-group select option { background: var(--bg2); }
-    .form-group textarea { height: 110px; resize: none; }
+    .form-group textarea { height: 100px; resize: none; }
 
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
-    /* Submit button */
-    .submit-btn {
-      width: 100%; display: flex; align-items: center; justify-content: center;
-      gap: 8px; padding: 13px 24px;
+    .wizard-actions {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 36px;
+    }
+
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 11px 20px;
+      background: none; border: 0.5px solid var(--border);
+      color: var(--text-dim); border-radius: 3px; cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .btn-back:hover { border-color: var(--gold); color: var(--text); }
+
+    .btn-next, .btn-submit {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px;
       background: var(--gold); color: #0d0d0b;
       border: none; border-radius: 3px; cursor: pointer;
       font-family: 'DM Sans', sans-serif;
       font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500;
     }
-    .submit-btn:hover { opacity: 0.85; }
-    .submit-btn:disabled { opacity: 0.55; pointer-events: none; }
+    .btn-next:hover, .btn-submit:hover { opacity: 0.85; }
+    .btn-next:disabled, .btn-submit:disabled { opacity: 0.5; pointer-events: none; }
 
-    /* Spinner inside button */
     .btn-spinner {
       width: 14px; height: 14px;
       border: 2px solid rgba(13,13,11,0.3);
       border-top-color: #0d0d0b;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
-      transition: none !important;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Error message */
     .form-error {
       background: rgba(224,92,92,0.1);
       border: 0.5px solid rgba(224,92,92,0.3);
-      color: #e05c5c;
-      border-radius: 3px; padding: 10px 14px;
-      font-size: 12px; margin-bottom: 16px;
-      display: none;
+      color: #e05c5c; border-radius: 3px;
+      padding: 10px 14px; font-size: 12px;
+      margin-bottom: 16px; display: none;
     }
     .form-error.show { display: block; }
 
-    /* Success state */
-    .form-success {
-      display: none; text-align: center; padding: 32px 0;
+    .wizard-success {
+      display: none;
+      text-align: center; padding: 64px 24px;
+      animation: fadeUp 0.4s ease both;
     }
-    .form-success-icon { font-size: 40px; color: var(--gold); margin-bottom: 16px; }
-    .form-success-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: var(--text); margin-bottom: 10px; }
-    .form-success-sub { font-size: 13px; color: var(--text-dim); line-height: 1.7; }
+    .wizard-success.show { display: block; }
+    .success-icon { font-size: 56px; color: var(--gold); margin-bottom: 20px; }
+    .success-title { font-family: 'Cormorant Garamond', serif; font-size: 36px; color: var(--text); margin-bottom: 12px; }
+    .success-sub { font-size: 14px; color: var(--text-dim); line-height: 1.8; max-width: 440px; margin: 0 auto; }
+
+    .success-summary {
+      display: inline-flex; flex-wrap: wrap; gap: 10px;
+      justify-content: center; margin: 24px 0 32px;
+    }
+    .ss-chip {
+      background: var(--bg2); border: 0.5px solid var(--border);
+      border-radius: 20px; padding: 6px 16px;
+      font-size: 12px; color: var(--text-dim);
+    }
+    .ss-chip strong { color: var(--text); }
+
+    .success-actions {
+      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+    }
 
     .btn-gold {
       display: inline-flex; align-items: center; gap: 8px;
@@ -220,22 +561,57 @@
       font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500;
     }
     .btn-gold:hover { opacity: 0.85; }
-
     .btn-outline-w {
       display: inline-flex; align-items: center; gap: 8px;
-      padding: 11px 22px;
-      background: none; border: 0.5px solid var(--border);
+      padding: 11px 22px; background: none; border: 0.5px solid var(--border);
       color: var(--text-dim); border-radius: 3px; cursor: pointer;
       font-family: 'DM Sans', sans-serif;
       font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+      text-decoration: none;
     }
     .btn-outline-w:hover { border-color: var(--gold); color: var(--text); }
 
+    .contact-strip {
+      border-top: 0.5px solid var(--border);
+      margin-top: 0;
+      padding: 48px 24px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .cs-item {
+      background: var(--bg);
+      padding: 28px 24px;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+
+    .cs-icon {
+      width: 32px; height: 32px; flex-shrink: 0;
+      border: 0.5px solid var(--border); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; color: var(--gold);
+    }
+
+    .cs-label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 4px; }
+    .cs-val   { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+    .cs-val a { color: var(--text-dim); text-decoration: none; }
+    .cs-val a:hover { color: var(--gold); }
+
     @media (max-width: 768px) {
-      .contact-layout { grid-template-columns: 1fr; }
-      .contact-info, .contact-form-panel { padding: 32px 20px; }
-      .contact-info-heading { font-size: 28px; }
+      .type-cards { grid-template-columns: 1fr; }
+      .calendar-shell { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; }
+      .contact-strip { grid-template-columns: 1fr 1fr; }
+      .step-title { font-size: 28px; }
+      .cal-cell { font-size: 12px; }
+      .wp-label { display: none; }
+      .wp-line { max-width: 48px; }
+    }
+
+    @media (max-width: 480px) {
+      .contact-strip { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -250,259 +626,545 @@
     <p>Book a viewing, request a valuation, or simply ask us anything about the Nairobi property market.</p>
   </div>
 
-  <div class="contact-layout">
+  <div class="contact-shell">
 
-    <!-- INFO PANEL -->
-    <div class="contact-info">
-      <div class="contact-info-label">We'd love to hear from you</div>
-      <h2 class="contact-info-heading">Let's find your<br>perfect property.</h2>
-
-      <div class="contact-details">
-        <div class="contact-detail">
-          <div class="cd-icon"><i class="ti ti-map-pin"></i></div>
-          <div>
-            <div class="cd-label">Office</div>
-            <div class="cd-val">Delta Corner Annex, Westlands<br>Nairobi, Kenya</div>
-          </div>
-        </div>
-        <div class="contact-detail">
-          <div class="cd-icon"><i class="ti ti-phone"></i></div>
-          <div>
-            <div class="cd-label">Call Us</div>
-            <div class="cd-val"><a href="tel:+254737665665">+254 737 665 665</a></div>
-          </div>
-        </div>
-        <div class="contact-detail">
-          <div class="cd-icon"><i class="ti ti-brand-whatsapp"></i></div>
-          <div>
-            <div class="cd-label">WhatsApp</div>
-            <div class="cd-val">
-              <a href="https://wa.me/254737665665" target="_blank">+254 737 665 665</a><br>
-              <span style="font-size:11px;color:var(--text-faint);">We reply within the hour</span>
-            </div>
-          </div>
-        </div>
-        <div class="contact-detail">
-          <div class="cd-icon"><i class="ti ti-mail"></i></div>
-          <div>
-            <div class="cd-label">Email</div>
-            <div class="cd-val"><a href="mailto:info@visionhomeskenya.co.ke">info@visionhomeskenya.co.ke</a></div>
-          </div>
-        </div>
+    <div class="wizard-progress" id="wizard-progress">
+      <div class="wp-step active" id="prog-1">
+        <div class="wp-bubble">1</div>
+        <div class="wp-label">Contact Type</div>
       </div>
-
-      <div class="contact-hours">
-        <div class="hours-title">Office Hours</div>
-        <div class="hours-row"><span class="day">Monday – Friday</span><span class="time">8:00 AM – 6:00 PM</span></div>
-        <div class="hours-row"><span class="day">Saturday</span><span class="time">9:00 AM – 4:00 PM</span></div>
-        <div class="hours-row"><span class="day">Sunday</span><span class="time">Viewings by appointment</span></div>
+      <div class="wp-line" id="line-1"></div>
+      <div class="wp-step" id="prog-2">
+        <div class="wp-bubble">2</div>
+        <div class="wp-label">Date &amp; Time</div>
       </div>
-
-      <div class="contact-map">
-        <iframe
-          src="https://maps.google.com/maps?q=Delta+Corner+Annex,+Westlands,+Nairobi&z=15&output=embed"
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-          allowfullscreen>
-        </iframe>
+      <div class="wp-line" id="line-2"></div>
+      <div class="wp-step" id="prog-3">
+        <div class="wp-bubble">3</div>
+        <div class="wp-label">Your Details</div>
       </div>
     </div>
 
-    <!-- FORM PANEL -->
-    <div class="contact-form-panel">
-
-      <div class="form-tabs" role="tablist">
-        <button class="form-tab active" data-tab="viewing" role="tab">Book a Viewing</button>
-        <button class="form-tab" data-tab="valuation" id="valuation-tab" role="tab">Free Valuation</button>
-        <button class="form-tab" data-tab="general" role="tab">General Enquiry</button>
+    <div class="wizard-panel active" id="step-1">
+      <div class="step-heading">
+        <div class="step-label">Step 1 of 3</div>
+        <h2 class="step-title">How can we help you?</h2>
+        <p class="step-sub">Select the nature of your visit and we'll match you with the right agent.</p>
       </div>
 
-      <div class="form-error" id="form-error"></div>
+      <div class="type-cards">
+        <div class="type-card" data-type="appointment" data-icon="ti-calendar" tabindex="0">
+          <div class="tc-check"><i class="ti ti-check"></i></div>
+          <div class="tc-icon"><i class="ti ti-calendar"></i></div>
+          <div class="tc-title">Property Viewing</div>
+          <div class="tc-desc">Schedule a guided tour of a property or shortlisted neighborhood with one of our agents.</div>
+        </div>
+        <div class="type-card" data-type="valuation" data-icon="ti-home-check" tabindex="0">
+          <div class="tc-check"><i class="ti ti-check"></i></div>
+          <div class="tc-icon"><i class="ti ti-home-check"></i></div>
+          <div class="tc-title">Free Valuation</div>
+          <div class="tc-desc">Get a professional market valuation for your property — no obligation, no cost.</div>
+        </div>
+        <div class="type-card" data-type="general" data-icon="ti-message-circle" tabindex="0">
+          <div class="tc-check"><i class="ti ti-check"></i></div>
+          <div class="tc-icon"><i class="ti ti-message-circle"></i></div>
+          <div class="tc-title">General Enquiry</div>
+          <div class="tc-desc">Questions about the market, listings, investments, or anything else? We're happy to chat.</div>
+        </div>
+      </div>
 
-      <!-- ── VIEWING FORM ── -->
-      <div class="form-section active" id="tab-viewing">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="v-name">Full Name *</label>
-            <input type="text" id="v-name" placeholder="Your name">
-          </div>
-          <div class="form-group">
-            <label for="v-phone">Phone Number *</label>
-            <input type="tel" id="v-phone" placeholder="+254 700 000 000">
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="v-whatsapp">WhatsApp Number</label>
-          <input type="tel" id="v-whatsapp" placeholder="Same as phone or different?">
-        </div>
-        <div class="form-group">
-          <label for="v-prop">Property / Neighborhood of Interest</label>
-          <select id="v-prop">
-            <option value="">Select neighborhood…</option>
-            <option>Karen</option>
-            <option>Runda</option>
-            <option>Westlands</option>
-            <option>Kilimani</option>
-            <option>Lavington</option>
-            <option>Kileleshwa</option>
-            <option>Not sure — need guidance</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="v-buy-rent">Looking to</label>
-            <select id="v-buy-rent">
-              <option value="">Buy or Rent?</option>
-              <option>Buy</option>
-              <option>Rent</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="v-date">Preferred Date</label>
-            <input type="date" id="v-date">
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="v-notes">Additional Notes</label>
-          <textarea id="v-notes" placeholder="Any specific requirements, budget, or questions…"></textarea>
-        </div>
-        <button class="submit-btn" id="btn-viewing">
-          <i class="ti ti-calendar"></i> Book My Viewing
+      <div class="wizard-actions">
+        <span></span>
+        <button class="btn-next" id="btn-next-1" disabled>
+          Continue <i class="ti ti-arrow-right"></i>
         </button>
       </div>
+    </div>
 
-      <!-- ── VALUATION FORM ── -->
-      <div class="form-section" id="tab-valuation">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="val-name">Full Name *</label>
-            <input type="text" id="val-name" placeholder="Your name">
+    <div class="wizard-panel" id="step-2">
+      <div class="step-heading">
+        <div class="step-label">Step 2 of 3</div>
+        <h2 class="step-title">Pick your date &amp; time</h2>
+        <p class="step-sub">Available slots are shown below. Each session is 3 hours — we limit bookings to 3 per day.</p>
+      </div>
+
+      <div class="calendar-shell">
+
+        <div class="calendar-main">
+          <div class="cal-nav">
+            <button class="cal-nav-btn" id="cal-prev"><i class="ti ti-chevron-left"></i></button>
+            <div class="cal-month" id="cal-month-label">—</div>
+            <button class="cal-nav-btn" id="cal-next"><i class="ti ti-chevron-right"></i></button>
           </div>
-          <div class="form-group">
-            <label for="val-phone">Phone Number *</label>
-            <input type="tel" id="val-phone" placeholder="+254 700 000 000">
+
+          <div class="cal-grid-header">
+            <div class="cal-day-label">Sun</div>
+            <div class="cal-day-label">Mon</div>
+            <div class="cal-day-label">Tue</div>
+            <div class="cal-day-label">Wed</div>
+            <div class="cal-day-label">Thu</div>
+            <div class="cal-day-label">Fri</div>
+            <div class="cal-day-label">Sat</div>
+          </div>
+
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+
+        <div class="slot-panel">
+          <div class="slot-panel-title">Available Slots</div>
+          <div id="slot-date-label" class="slot-date-selected" style="display:none;"></div>
+          <div id="slot-content">
+            <div class="slot-placeholder">
+              <i class="ti ti-calendar-event"></i>
+              <span>Select a date from the calendar<br>to view available time slots</span>
+            </div>
           </div>
         </div>
-        <div class="form-group">
-          <label for="val-whatsapp">WhatsApp Number</label>
-          <input type="tel" id="val-whatsapp" placeholder="Same as phone or different?">
-        </div>
-        <div class="form-group">
-          <label for="val-addr">Property Address *</label>
-          <input type="text" id="val-addr" placeholder="Street, neighborhood, Nairobi">
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="val-type">Property Type</label>
-            <select id="val-type">
-              <option>Apartment</option>
-              <option>Townhouse</option>
-              <option>Villa / Bungalow</option>
-              <option>Commercial</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="val-beds">Bedrooms</label>
-            <select id="val-beds">
-              <option>1</option><option>2</option><option>3</option>
-              <option>4</option><option>5</option><option>6+</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="val-notes">Additional Information</label>
-          <textarea id="val-notes" placeholder="Plot size, current condition, recent renovations…"></textarea>
-        </div>
-        <button class="submit-btn" id="btn-valuation">
-          <i class="ti ti-home-check"></i> Request Free Valuation
+
+      </div>
+
+      <div class="wizard-actions">
+        <button class="btn-back" id="btn-back-2"><i class="ti ti-arrow-left"></i> Back</button>
+        <button class="btn-next" id="btn-next-2" disabled>
+          Continue <i class="ti ti-arrow-right"></i>
         </button>
       </div>
+    </div>
 
-      <!-- ── GENERAL FORM ── -->
-      <div class="form-section" id="tab-general">
+    <div class="wizard-panel" id="step-3">
+      <div class="step-heading">
+        <div class="step-label">Step 3 of 3</div>
+        <h2 class="step-title">Your details</h2>
+        <p class="step-sub">Almost done — just tell us who you are so we can reach you.</p>
+      </div>
+
+      <div class="details-shell">
+        <div class="booking-summary" id="booking-summary">
+          <div class="bs-icon" id="bs-icon"><i class="ti ti-calendar"></i></div>
+          <div>
+            <div class="bs-type" id="bs-type">—</div>
+            <div class="bs-detail" id="bs-detail">—</div>
+          </div>
+        </div>
+
+        <div class="form-error" id="form-error"></div>
+
         <div class="form-row">
           <div class="form-group">
-            <label for="g-name">Full Name *</label>
-            <input type="text" id="g-name" placeholder="Your name">
+            <label for="d-name">Full Name *</label>
+            <input type="text" id="d-name" placeholder="Your full name" autocomplete="name">
           </div>
           <div class="form-group">
-            <label for="g-phone">Phone Number</label>
-            <input type="tel" id="g-phone" placeholder="+254 700 000 000">
+            <label for="d-phone">Phone Number *</label>
+            <input type="tel" id="d-phone" placeholder="+254 700 000 000" autocomplete="tel">
           </div>
         </div>
         <div class="form-group">
-          <label for="g-whatsapp">WhatsApp Number</label>
-          <input type="tel" id="g-whatsapp" placeholder="Optional">
+          <label for="d-whatsapp">WhatsApp Number</label>
+          <input type="tel" id="d-whatsapp" placeholder="Leave blank if same as phone">
+        </div>
+        <div class="form-group" id="d-subject-group">
+          <label for="d-subject">Subject / Property of Interest</label>
+          <input type="text" id="d-subject" placeholder="e.g. 3BR in Kilimani, or leave blank">
         </div>
         <div class="form-group">
-          <label for="g-subject">Subject</label>
-          <input type="text" id="g-subject" placeholder="How can we help?">
+          <label for="d-notes">Additional Notes</label>
+          <textarea id="d-notes" placeholder="Any specific requirements, budget, or questions…"></textarea>
         </div>
-        <div class="form-group">
-          <label for="g-msg">Message *</label>
-          <textarea id="g-msg" placeholder="Tell us what you need…" style="height:140px;"></textarea>
-        </div>
-        <button class="submit-btn" id="btn-general">
-          <i class="ti ti-send"></i> Send Message
-        </button>
-      </div>
 
-      <!-- ── SUCCESS ── -->
-      <div class="form-success" id="form-success">
-        <div class="form-success-icon"><i class="ti ti-circle-check"></i></div>
-        <div class="form-success-title">Message Received</div>
-        <p class="form-success-sub">
-          Thank you! A Vision Homes agent will be in touch within the hour during business hours.<br><br>
-          You can also reach us immediately on WhatsApp.
-        </p>
-        <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
-          <a class="btn-gold" href="https://wa.me/254737665665" target="_blank"><i class="ti ti-brand-whatsapp"></i> Open WhatsApp</a>
-          <button class="btn-outline-w" id="new-msg-btn"><i class="ti ti-refresh"></i> New Message</button>
+        <div class="wizard-actions" style="margin-top:0;">
+          <button class="btn-back" id="btn-back-3"><i class="ti ti-arrow-left"></i> Back</button>
+          <button class="btn-submit" id="btn-submit">
+            <i class="ti ti-send"></i> Submit
+          </button>
         </div>
       </div>
+    </div>
 
-    </div><!-- /contact-form-panel -->
-  </div><!-- /contact-layout -->
+    <div class="wizard-success" id="wizard-success">
+      <div class="success-icon"><i class="ti ti-circle-check"></i></div>
+      <div class="success-title">You're all booked.</div>
+      <p class="success-sub">A Vision Homes agent will confirm your appointment and be in touch shortly. We look forward to meeting you.</p>
+
+      <div class="success-summary" id="success-summary"></div>
+
+      <div class="success-actions">
+        <a class="btn-gold" href="https://wa.me/254737665665" target="_blank"><i class="ti ti-brand-whatsapp"></i> Message Us on WhatsApp</a>
+        <button class="btn-outline-w" id="new-booking-btn"><i class="ti ti-refresh"></i> New Booking</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="contact-strip">
+    <div class="cs-item">
+      <div class="cs-icon"><i class="ti ti-map-pin"></i></div>
+      <div>
+        <div class="cs-label">Office</div>
+        <div class="cs-val">Delta Corner Annex<br>Westlands, Nairobi</div>
+      </div>
+    </div>
+    <div class="cs-item">
+      <div class="cs-icon"><i class="ti ti-phone"></i></div>
+      <div>
+        <div class="cs-label">Call Us</div>
+        <div class="cs-val"><a href="tel:+254737665665">+254 737 665 665</a></div>
+      </div>
+    </div>
+    <div class="cs-item">
+      <div class="cs-icon"><i class="ti ti-brand-whatsapp"></i></div>
+      <div>
+        <div class="cs-label">WhatsApp</div>
+        <div class="cs-val">
+          <a href="https://wa.me/254737665665" target="_blank">+254 737 665 665</a><br>
+          <span style="font-size:11px;color:var(--text-faint);">We reply within the hour</span>
+        </div>
+      </div>
+    </div>
+    <div class="cs-item">
+      <div class="cs-icon"><i class="ti ti-clock"></i></div>
+      <div>
+        <div class="cs-label">Office Hours</div>
+        <div class="cs-val">Mon–Fri 8am–6pm<br>Sat 9am–4pm</div>
+      </div>
+    </div>
+  </div>
 
   <div id="footer-placeholder"></div>
 
   <script src="js/supabase.js"></script>
+  <script src="js/booking.js"></script>
   <script src="js/newsletter.js"></script>
+  <script src="js/layout.js"></script>
   <script src="js/theme.js" defer></script>
 
   <script>
-    // ── Load nav/footer components ──
-    function loadComponent(id, file) {
-      fetch(file).then(r => r.text()).then(html => {
-        document.getElementById(id).innerHTML = html;
-      }).catch(() => {});
-    }
-    loadComponent('nav-placeholder',    'components/nav.html');
-    loadComponent('footer-placeholder', 'components/footer.html');
 
-    // ── Use shared Supabase client from supabase.js ──
-    const _sb = getDB();
+    const state = {
+      step:          1,
+      type:          null,
+      selectedDate:  null,
+      selectedSlot:  null,
+      bookingsCache: {},
+      blockedCache:  null,
+      calYear:       0,
+      calMonth:      0,
+      prefillSubject: '',
+      prefillProperty: '',
+    };
 
-    // ── Tab switching ──
-    document.querySelectorAll('.form-tab').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.form-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-        document.getElementById('form-success').style.display = 'none';
-        hideError();
-      });
-    });
+    const SLOTS = [
+      { id: '08:00-11:00', label: '8:00 AM – 11:00 AM' },
+      { id: '11:00-14:00', label: '11:00 AM – 2:00 PM'  },
+      { id: '14:00-17:00', label: '2:00 PM – 5:00 PM'   },
+    ];
 
-    // ── URL hash: jump to valuation tab ──
-    document.addEventListener('DOMContentLoaded', () => {
-      if (window.location.hash === '#valuation') {
-        document.querySelector('[data-tab="valuation"]').click();
+    const TYPE_META = {
+      appointment: { label: 'Property Viewing',  icon: 'ti-calendar'      },
+      valuation:   { label: 'Free Valuation',    icon: 'ti-home-check'    },
+      general:     { label: 'General Enquiry',   icon: 'ti-message-circle'},
+    };
+
+    function goStep(n) {
+      document.querySelectorAll('.wizard-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('wizard-success').classList.remove('show');
+
+      if (n <= 3) {
+        document.getElementById('step-' + n).classList.add('active');
       }
+
+      state.step = n;
+      updateProgress();
+
+      if (n === 2 && state.type !== 'general') {
+        initCalendar();
+      }
+      if (n === 3) {
+        buildSummary();
+        if (state.prefillSubject) {
+          document.getElementById('d-subject').value = state.prefillSubject;
+        }
+        if (state.prefillProperty) {
+          const notes = document.getElementById('d-notes');
+          if (notes && !notes.value.trim()) {
+            notes.value = `I'd like to schedule a viewing for ${state.prefillProperty}.`;
+          }
+        }
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateProgress() {
+      const skipCal = state.type === 'general';
+      [1, 2, 3].forEach(i => {
+        const el = document.getElementById('prog-' + i);
+        if (!el) return;
+        el.style.display = (skipCal && i === 2) ? 'none' : '';
+        el.classList.remove('active', 'done');
+        const bubble = el.querySelector('.wp-bubble');
+        if (skipCal && i === 2) return;
+        if (skipCal && i === 3 && state.step >= 3) {
+          el.classList.add('active');
+          bubble.textContent = '2';
+        } else if (i < state.step) {
+          el.classList.add('done');
+          bubble.innerHTML = '<i class="ti ti-check" style="font-size:11px;"></i>';
+        } else if (i === state.step) {
+          el.classList.add('active');
+          bubble.textContent = skipCal && i === 3 ? '2' : i;
+        } else {
+          bubble.textContent = skipCal && i === 3 ? '2' : i;
+        }
+      });
+      const line1 = document.getElementById('line-1');
+      const line2 = document.getElementById('line-2');
+      if (line1) {
+        line1.style.display = skipCal ? 'none' : '';
+        line1.classList.toggle('done', skipCal ? state.step > 1 : state.step > 1);
+      }
+      if (line2) line2.style.display = skipCal ? 'none' : '';
+    }
+
+    document.querySelectorAll('.type-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        state.type = card.dataset.type;
+        document.getElementById('btn-next-1').disabled = false;
+      });
+      card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') card.click(); });
     });
 
-    // ── Error helpers ──
+    document.getElementById('btn-next-1').addEventListener('click', () => {
+      if (!state.type) return;
+      if (state.type === 'general') goStep(3);
+      else goStep(2);
+    });
+
+    const MONTH_NAMES = ['January','February','March','April','May','June',
+                         'July','August','September','October','November','December'];
+
+    function initCalendar() {
+      const now = new Date();
+      if (state.calYear === 0) {
+        state.calYear  = now.getFullYear();
+        state.calMonth = now.getMonth();
+      }
+      renderCalendar();
+    }
+
+    document.getElementById('cal-prev').addEventListener('click', () => {
+      const now = new Date();
+      if (state.calYear === now.getFullYear() && state.calMonth <= now.getMonth()) return;
+      state.calMonth--;
+      if (state.calMonth < 0) { state.calMonth = 11; state.calYear--; }
+      state.selectedDate = null;
+      state.selectedSlot = null;
+      document.getElementById('btn-next-2').disabled = true;
+      renderCalendar();
+      showSlotPlaceholder();
+    });
+
+    document.getElementById('cal-next').addEventListener('click', () => {
+      state.calMonth++;
+      if (state.calMonth > 11) { state.calMonth = 0; state.calYear++; }
+      state.selectedDate = null;
+      state.selectedSlot = null;
+      document.getElementById('btn-next-2').disabled = true;
+      renderCalendar();
+      showSlotPlaceholder();
+    });
+
+    async function renderCalendar() {
+      document.getElementById('cal-month-label').textContent =
+        MONTH_NAMES[state.calMonth] + ' ' + state.calYear;
+
+      const grid  = document.getElementById('cal-grid');
+      grid.innerHTML = '';
+
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      const firstDay = new Date(state.calYear, state.calMonth, 1).getDay();
+      const daysInMonth = new Date(state.calYear, state.calMonth + 1, 0).getDate();
+
+      const monthKey = `${state.calYear}-${String(state.calMonth+1).padStart(2,'0')}`;
+      const bookings = await fetchMonthBookings(monthKey);
+
+      for (let i = 0; i < firstDay; i++) {
+        const blank = document.createElement('div');
+        blank.className = 'cal-cell empty';
+        grid.appendChild(blank);
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const cellDate = new Date(state.calYear, state.calMonth, d);
+        const dateStr  = toDateStr(cellDate);
+
+        const cell = document.createElement('div');
+        cell.textContent = d;
+        cell.className = 'cal-cell';
+
+        const isPast   = cellDate < today;
+        const isToday  = cellDate.getTime() === today.getTime();
+        const bookedSlots = bookings[dateStr] || [];
+        const isBlocked   = state.blockedCache && state.blockedCache.has(dateStr);
+        const isFull      = isBlocked || bookedSlots.length >= 3;
+
+        if (isPast)  cell.classList.add('past');
+        if (isToday) cell.classList.add('today');
+
+        if (!isPast) {
+          if (isBlocked) {
+            cell.classList.add('full');
+            cell.title = 'Unavailable — agent not free this day';
+          } else if (isFull) {
+            cell.classList.add('full');
+          } else {
+            cell.classList.add('has-slots');
+            cell.addEventListener('click', () => selectDate(dateStr, bookedSlots, cell));
+
+            const dots = document.createElement('div');
+            dots.className = 'slot-dots';
+            SLOTS.forEach(s => {
+              const dot = document.createElement('span');
+              dot.className = 'slot-dot ' + (bookedSlots.includes(s.id) ? 'taken' : 'open');
+              dots.appendChild(dot);
+            });
+            cell.appendChild(dots);
+          }
+        }
+
+        if (state.selectedDate === dateStr) {
+          cell.classList.add('selected');
+        }
+
+        grid.appendChild(cell);
+      }
+    }
+
+    async function fetchMonthBookings(monthKey) {
+      if (state.bookingsCache[monthKey]) return state.bookingsCache[monthKey];
+
+      try {
+        const db = getDB();
+        if (!db) return {};
+
+        const startDate = monthKey + '-01';
+        const [yr, mo] = monthKey.split('-').map(Number);
+        const lastDay = new Date(yr, mo, 0).getDate();
+        const endDate = monthKey + '-' + String(lastDay).padStart(2, '0');
+
+        if (!state.blockedCache) {
+          state.blockedCache = await vhkFetchBlockedSet(db);
+        }
+
+        const { data, error } = await db
+          .from('enquiries')
+          .select('id, appointment_date, appointment_slot, rescheduled_date, rescheduled_slot, status')
+          .not('appointment_slot', 'is', null)
+          .neq('status', 'rejected');
+
+        if (error || !data) return {};
+
+        const fullMap = vhkBuildSlotMap(data);
+        const map = vhkFilterMapToMonth(fullMap, startDate, endDate);
+
+        state.bookingsCache[monthKey] = map;
+        return map;
+      } catch (e) {
+        console.warn('Could not fetch bookings:', e);
+        return {};
+      }
+    }
+
+    function selectDate(dateStr, bookedSlots, clickedCell) {
+      state.selectedDate = dateStr;
+      state.selectedSlot = null;
+      document.getElementById('btn-next-2').disabled = true;
+
+      document.querySelectorAll('.cal-cell.selected').forEach(c => c.classList.remove('selected'));
+      clickedCell.classList.add('selected');
+
+      const dateObj = new Date(dateStr + 'T00:00:00');
+      const formatted = dateObj.toLocaleDateString('en-KE', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+      const label = document.getElementById('slot-date-label');
+      label.textContent = formatted;
+      label.style.display = 'block';
+
+      const content = document.getElementById('slot-content');
+      content.innerHTML = '';
+
+      SLOTS.forEach(slot => {
+        const taken = bookedSlots.includes(slot.id);
+        const el = document.createElement('div');
+        el.className = 'slot-item' + (taken ? ' taken' : '');
+
+        el.innerHTML = `
+          <div class="slot-time">${slot.label}</div>
+          <div class="slot-status">
+            <span class="slot-status-dot ${taken ? 'taken' : 'open'}"></span>
+            ${taken ? 'Fully booked' : 'Available'}
+          </div>`;
+
+        if (!taken) {
+          el.addEventListener('click', () => {
+            document.querySelectorAll('.slot-item').forEach(s => s.classList.remove('selected'));
+            el.classList.add('selected');
+            el.querySelector('.slot-status').innerHTML =
+              `<span class="slot-status-dot open"></span> Selected`;
+            state.selectedSlot = slot.id;
+            document.getElementById('btn-next-2').disabled = false;
+          });
+        }
+
+        content.appendChild(el);
+      });
+    }
+
+    function showSlotPlaceholder() {
+      document.getElementById('slot-date-label').style.display = 'none';
+      document.getElementById('slot-content').innerHTML = `
+        <div class="slot-placeholder">
+          <i class="ti ti-calendar-event"></i>
+          <span>Select a date from the calendar<br>to view available time slots</span>
+        </div>`;
+    }
+
+    document.getElementById('btn-back-2').addEventListener('click', () => goStep(1));
+    document.getElementById('btn-next-2').addEventListener('click', () => {
+      if (!state.selectedDate || !state.selectedSlot) return;
+      goStep(3);
+    });
+
+    function buildSummary() {
+      const meta   = TYPE_META[state.type] || TYPE_META.general;
+      const slotObj = SLOTS.find(s => s.id === state.selectedSlot) || {};
+
+      document.getElementById('bs-icon').innerHTML = `<i class="ti ${meta.icon}"></i>`;
+      document.getElementById('bs-type').textContent = meta.label;
+
+      if (state.type === 'general') {
+        document.getElementById('bs-detail').textContent = 'We\'ll respond within one business day';
+      } else {
+        const dateObj = new Date(state.selectedDate + 'T00:00:00');
+        const formatted = dateObj.toLocaleDateString('en-KE', { weekday:'long', day:'numeric', month:'long' });
+        document.getElementById('bs-detail').textContent =
+          `${formatted} · ${slotObj.label || ''}`;
+      }
+
+      const subjLabel = state.type === 'valuation'
+        ? 'Property Address'
+        : state.type === 'general'
+          ? 'Subject'
+          : 'Property / Neighborhood of Interest';
+      document.querySelector('#d-subject-group label').textContent = subjLabel;
+    }
+
+    document.getElementById('btn-back-3').addEventListener('click', () => goStep(state.type === 'general' ? 1 : 2));
+
     function showError(msg) {
       const el = document.getElementById('form-error');
       el.textContent = msg;
@@ -513,172 +1175,170 @@
       document.getElementById('form-error').classList.remove('show');
     }
 
-    // ── Loading state helpers ──
-    function setLoading(btn, loading) {
-      if (loading) {
+    function setLoading(btn, on) {
+      if (on) {
         btn.disabled = true;
-        btn._originalHTML = btn.innerHTML;
+        btn._orig = btn.innerHTML;
         btn.innerHTML = '<div class="btn-spinner"></div> Sending…';
       } else {
         btn.disabled = false;
-        btn.innerHTML = btn._originalHTML;
+        btn.innerHTML = btn._orig;
       }
     }
 
-    // ── Show success ──
-    function showSuccess() {
-      document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
-      const el = document.getElementById('form-success');
-      el.style.display = 'block';
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-
-    // ── Reset form ──
-    document.getElementById('new-msg-btn').addEventListener('click', () => {
-      document.getElementById('form-success').style.display = 'none';
-      document.querySelector('[data-tab="viewing"]').click();
-    });
-
-    // ── SUBMIT: VIEWING ──
-    document.getElementById('btn-viewing').addEventListener('click', async () => {
+    document.getElementById('btn-submit').addEventListener('click', async () => {
       hideError();
-      const name  = document.getElementById('v-name').value.trim();
-      const phone = document.getElementById('v-phone').value.trim();
+
+      const name  = document.getElementById('d-name').value.trim();
+      const phone = document.getElementById('d-phone').value.trim();
       if (!name)  { showError('Please enter your full name.'); return; }
       if (!phone) { showError('Please enter your phone number.'); return; }
 
-      const prop    = document.getElementById('v-prop').value;
-      const buyRent = document.getElementById('v-buy-rent').value;
-      const date    = document.getElementById('v-date').value;
-      const notes   = document.getElementById('v-notes').value.trim();
-      const wa      = document.getElementById('v-whatsapp').value.trim();
+      const wa      = document.getElementById('d-whatsapp').value.trim();
+      const subject = document.getElementById('d-subject').value.trim();
+      const notes   = document.getElementById('d-notes').value.trim();
 
-      // Build a readable message
+      const slotObj   = SLOTS.find(s => s.id === state.selectedSlot) || {};
+      const meta      = TYPE_META[state.type] || TYPE_META.general;
+
       const msgParts = [];
-      if (prop)    msgParts.push(`Interested in: ${prop}`);
-      if (buyRent) msgParts.push(`Looking to: ${buyRent}`);
-      if (date)    msgParts.push(`Preferred date: ${date}`);
+      if (subject) msgParts.push(`Interest: ${subject}`);
       if (notes)   msgParts.push(notes);
 
       const payload = {
-        type:           'property',
         name,
         phone,
-        whatsapp:       wa || phone,
-        property_title: prop || null,
-        subject:        `Viewing Request${prop ? ' — ' + prop : ''}`,
-        message:        msgParts.join('\n') || null,
+        whatsapp:         wa || phone,
+        type:             state.type,
+        appointment_date: state.type === 'general' ? null : (state.selectedDate || null),
+        appointment_slot: state.type === 'general' ? null : (state.selectedSlot || null),
+        subject:          subject || meta.label,
+        message:          msgParts.join('\n') || null,
+        property_title:   state.prefillProperty || subject || null,
+        status:           'pending',
       };
 
-      const btn = document.getElementById('btn-viewing');
+      const btn = document.getElementById('btn-submit');
       setLoading(btn, true);
-      await insertEnquiry(payload, btn);
-    });
 
-    // ── SUBMIT: VALUATION ──
-    document.getElementById('btn-valuation').addEventListener('click', async () => {
-      hideError();
-      const name  = document.getElementById('val-name').value.trim();
-      const phone = document.getElementById('val-phone').value.trim();
-      const addr  = document.getElementById('val-addr').value.trim();
-      if (!name)  { showError('Please enter your full name.'); return; }
-      if (!phone) { showError('Please enter your phone number.'); return; }
-      if (!addr)  { showError('Please enter the property address.'); return; }
-
-      const propType = document.getElementById('val-type').value;
-      const beds     = document.getElementById('val-beds').value;
-      const notes    = document.getElementById('val-notes').value.trim();
-      const wa       = document.getElementById('val-whatsapp').value.trim();
-
-      const msgParts = [
-        `Address: ${addr}`,
-        `Type: ${propType}`,
-        `Bedrooms: ${beds}`,
-      ];
-      if (notes) msgParts.push(notes);
-
-      const payload = {
-        type:           'valuation',
-        name,
-        phone,
-        whatsapp:       wa || phone,
-        property_title: addr,
-        subject:        `Valuation Request — ${addr}`,
-        message:        msgParts.join('\n'),
-      };
-
-      const btn = document.getElementById('btn-valuation');
-      setLoading(btn, true);
-      await insertEnquiry(payload, btn);
-    });
-
-    // ── SUBMIT: GENERAL ──
-    document.getElementById('btn-general').addEventListener('click', async () => {
-      hideError();
-      const name = document.getElementById('g-name').value.trim();
-      const msg  = document.getElementById('g-msg').value.trim();
-      if (!name) { showError('Please enter your full name.'); return; }
-      if (!msg)  { showError('Please enter a message.'); return; }
-
-      const payload = {
-        type:     'general',
-        name,
-        phone:    document.getElementById('g-phone').value.trim() || null,
-        whatsapp: document.getElementById('g-whatsapp').value.trim() || null,
-        subject:  document.getElementById('g-subject').value.trim() || null,
-        message:  msg,
-      };
-
-      const btn = document.getElementById('btn-general');
-      setLoading(btn, true);
-      await insertEnquiry(payload, btn);
-    });
-
-    // ── Core insert function ──
-    function openWhatsAppFallback(payload) {
-      const number = typeof WA_NUMBER !== 'undefined' ? WA_NUMBER : '254737665665';
-      const lines = [
-        `Name: ${payload.name || ''}`,
-        `Phone: ${payload.phone || ''}`,
-        payload.whatsapp ? `WhatsApp: ${payload.whatsapp}` : '',
-        `Type: ${payload.type || 'general'}`,
-        payload.property_title ? `Property: ${payload.property_title}` : '',
-        payload.subject ? `Subject: ${payload.subject}` : '',
-        payload.message ? `Message: ${payload.message}` : ''
-      ].filter(Boolean);
-      const text = encodeURIComponent(`Hello Vision Homes, please assist with this enquiry:\n\n${lines.join('\n')}`);
-      window.open(`https://wa.me/${number}?text=${text}`, '_blank');
-    }
-
-    async function insertEnquiry(payload, btn) {
       try {
         const db = getDB();
-        if (!db) throw new Error('Database not initialised — check config.js is loaded.');
+        if (!db) throw new Error('Database not initialised');
         const { error } = await db.from('enquiries').insert(payload);
         if (error) throw error;
-        showSuccess();
+
+        Object.keys(state.bookingsCache).forEach(k => delete state.bookingsCache[k]);
+        state.blockedCache = null;
+
+        showWizardSuccess(name, meta, slotObj);
       } catch (err) {
-        console.error('Enquiry insert failed:', err);
+        console.error(err);
         const raw = String((err && err.message) || '').toLowerCase();
-        const policyBlocked = raw.includes('policy') || raw.includes('rls') || raw.includes('permission denied');
+        const policyBlocked = raw.includes('policy') || raw.includes('rls') || raw.includes('permission');
         if (policyBlocked) {
+
           openWhatsAppFallback(payload);
-          showSuccess();
+          const meta2  = TYPE_META[state.type] || TYPE_META.general;
+          const slotO2 = SLOTS.find(s => s.id === state.selectedSlot) || {};
+          showWizardSuccess(name, meta2, slotO2);
           return;
         }
-        // Show a human-friendly error
         let msg = 'Something went wrong. Please try again or reach us on WhatsApp.';
-        if (err.message) {
-          if (err.message.toLowerCase().includes('network') || err.message.toLowerCase().includes('fetch')) {
-            msg = 'Network error — please check your connection and try again.';
-          } else {
-            msg = err.message;
-          }
+        if (raw.includes('network') || raw.includes('fetch')) {
+          msg = 'Network error — please check your connection and try again.';
+        } else if (err.message) {
+          msg = err.message;
         }
         showError(msg);
         setLoading(btn, false);
       }
+    });
+
+    function openWhatsAppFallback(payload) {
+      const number = typeof WA_NUMBER !== 'undefined' ? WA_NUMBER : '254737665665';
+      const slotObj = SLOTS.find(s => s.id === payload.appointment_slot) || {};
+      const lines = [
+        `Name: ${payload.name}`,
+        `Phone: ${payload.phone}`,
+        payload.whatsapp && payload.whatsapp !== payload.phone ? `WhatsApp: ${payload.whatsapp}` : '',
+        `Type: ${payload.type}`,
+        payload.appointment_date ? `Date: ${payload.appointment_date}` : '',
+        slotObj.label ? `Time: ${slotObj.label}` : '',
+        payload.subject ? `Subject: ${payload.subject}` : '',
+        payload.message ? `Notes: ${payload.message}` : '',
+      ].filter(Boolean);
+      const text = encodeURIComponent(`Hello Vision Homes, I'd like to make a booking:\n\n${lines.join('\n')}`);
+      window.open(`https://wa.me/${number}?text=${text}`, '_blank');
     }
+
+    function showWizardSuccess(name, meta, slotObj) {
+      document.querySelectorAll('.wizard-panel').forEach(p => p.classList.remove('active'));
+
+      const dateObj = state.selectedDate
+        ? new Date(state.selectedDate + 'T00:00:00').toLocaleDateString('en-KE', { weekday:'long', day:'numeric', month:'long', year:'numeric' })
+        : null;
+
+      const summaryEl = document.getElementById('success-summary');
+      summaryEl.innerHTML = [
+        `<span class="ss-chip"><strong>Type:</strong> ${meta.label}</span>`,
+        dateObj ? `<span class="ss-chip"><strong>Date:</strong> ${dateObj}</span>` : '',
+        slotObj.label ? `<span class="ss-chip"><strong>Time:</strong> ${slotObj.label}</span>` : '',
+        `<span class="ss-chip"><strong>Name:</strong> ${name}</span>`,
+      ].filter(Boolean).join('');
+
+      document.getElementById('wizard-success').classList.add('show');
+      document.getElementById('wizard-progress').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.getElementById('new-booking-btn').addEventListener('click', () => {
+
+      state.type = null; state.selectedDate = null; state.selectedSlot = null;
+      state.calYear = 0; state.calMonth = 0;
+      document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+      document.getElementById('btn-next-1').disabled = true;
+      document.getElementById('d-name').value = '';
+      document.getElementById('d-phone').value = '';
+      document.getElementById('d-whatsapp').value = '';
+      document.getElementById('d-subject').value = '';
+      document.getElementById('d-notes').value = '';
+      document.getElementById('wizard-progress').style.display = '';
+      document.getElementById('wizard-success').classList.remove('show');
+      goStep(1);
+    });
+
+    function toDateStr(date) {
+      return date.getFullYear() + '-'
+        + String(date.getMonth() + 1).padStart(2,'0') + '-'
+        + String(date.getDate()).padStart(2,'0');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+
+      if (params.get('type') === 'appointment' || params.get('property')) {
+        state.type = 'appointment';
+        document.querySelector('[data-type="appointment"]')?.classList.add('selected');
+        document.getElementById('btn-next-1').disabled = false;
+
+        const title = params.get('property') || '';
+        const hood  = params.get('hood') || '';
+        const price = params.get('price') || '';
+        state.prefillProperty = title;
+        const parts = [title, hood, price].filter(Boolean);
+        state.prefillSubject = parts.length ? parts.join(' — ') : '';
+
+        goStep(2);
+        return;
+      }
+
+      if (window.location.hash === '#valuation') {
+        state.type = 'valuation';
+        document.querySelector('[data-type="valuation"]')?.classList.add('selected');
+        document.getElementById('btn-next-1').disabled = false;
+        goStep(2);
+      }
+    });
   </script>
 </body>
 </html>

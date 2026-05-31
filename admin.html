@@ -4,510 +4,417 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin — Vision Homes Kenya</title>
-
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="apple-touch-icon" href="images/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/config.js"></script>
-
+  <script src="js/booking.js"></script>
   <script>
-    // ── Theme: apply before paint to avoid flash ──
     (function(){
       var root = document.documentElement;
       root.classList.add('no-transition');
       var t = localStorage.getItem('vhk-theme');
       if(t === 'light') root.setAttribute('data-theme','light');
-      window.addEventListener('load', function () {
-        root.classList.remove('no-transition');
-      });
+      window.addEventListener('load', function () { root.classList.remove('no-transition'); });
     })();
   </script>
-
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:        #0d0d0b;
-      --bg2:       #131310;
-      --bg3:       #1a1a16;
-      --border:    rgba(201,169,110,0.12);
-      --gold:      #c9a96e;
-      --gold-dim:  rgba(201,169,110,0.5);
-      --text:      #f0ede8;
-      --text-dim:  #a09a90;
-      --text-faint:#5a5650;
-      --red:       #e05c5c;
-      --green:     #5cb87a;
-      --radius:    4px;
-      --input-bg:  rgba(255,255,255,0.04);
-      --transition-theme: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+      --bg:#0d0d0b; --bg2:#131310; --bg3:#1a1a16; --border:rgba(201,169,110,0.12);
+      --gold:#c9a96e; --gold-dim:rgba(201,169,110,0.5); --text:#f0ede8; --text-dim:#a09a90;
+      --text-faint:#5a5650; --red:#e05c5c; --green:#5cb87a; --blue:#5b96e0; --orange:#e09a4a;
+      --radius:4px; --input-bg:rgba(255,255,255,0.04);
     }
-
     :root[data-theme="light"] {
-      --bg:        #f5f4f0;
-      --bg2:       #ffffff;
-      --bg3:       #eceae4;
-      --border:    rgba(0,0,0,0.1);
-      --gold:      #a07840;
-      --gold-dim:  rgba(160,120,64,0.5);
-      --text:      #1a1710;
-      --text-dim:  #5a5040;
-      --text-faint:#9a9080;
-      --red:       #c03030;
-      --green:     #2a8a4a;
-      --input-bg:  rgba(0,0,0,0.03);
+      --bg:#f5f4f0; --bg2:#ffffff; --bg3:#eceae4; --border:rgba(0,0,0,0.1);
+      --gold:#a07840; --gold-dim:rgba(160,120,64,0.5); --text:#1a1710; --text-dim:#5a5040;
+      --text-faint:#9a9080; --red:#c03030; --green:#2a8a4a; --blue:#2a60c0; --orange:#b06010;
+      --input-bg:rgba(0,0,0,0.03);
     }
-
-    /* Smooth theme transition on everything EXCEPT images */
-    *, *::before, *::after {
-      transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-    }
-    img { transition: none !important; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      min-height: 100vh;
-    }
-
+    *, *::before, *::after { transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease; }
+    img, .spinner { transition: none !important; }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; min-height: 100vh; }
     a { color: inherit; text-decoration: none; }
     button { cursor: pointer; font-family: inherit; }
 
-    /* ── LOGIN ── */
-    #login-screen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, rgba(201,169,110,0.04) 0%, transparent 60%), var(--bg);
-      position: relative;
+    /* LOGIN */
+    #login-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--bg); position:relative; }
+    .login-grid { position:absolute; inset:0; background-image: linear-gradient(rgba(201,169,110,0.04) 1px,transparent 1px), linear-gradient(90deg,rgba(201,169,110,0.04) 1px,transparent 1px); background-size:48px 48px; pointer-events:none; }
+    .login-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:var(--radius); padding:48px 40px; width:100%; max-width:400px; position:relative; z-index:1; }
+    .login-logo { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:500; color:var(--gold); letter-spacing:0.04em; margin-bottom:6px; }
+    .login-sub  { font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-faint); margin-bottom:36px; }
+    .login-label{ font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-faint); display:block; margin-bottom:7px; }
+    .login-input{ width:100%; background:var(--input-bg); border:0.5px solid var(--border); color:var(--text); padding:11px 14px; border-radius:3px; font-size:13px; outline:none; font-family:'DM Sans',sans-serif; margin-bottom:18px; }
+    .login-input:focus { border-color:var(--gold-dim); }
+    .login-btn  { width:100%; background:var(--gold); color:#0d0d0b; border:none; padding:12px; border-radius:3px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; font-weight:500; display:flex; align-items:center; justify-content:center; gap:8px; }
+    .login-btn:hover { opacity:0.85; }
+    .login-btn:disabled { opacity:0.5; pointer-events:none; }
+    .login-error { background:rgba(224,92,92,0.1); border:0.5px solid rgba(224,92,92,0.3); color:var(--red); border-radius:3px; padding:10px 14px; font-size:12px; margin-top:14px; display:none; }
+
+    /* SHELL */
+    #admin-shell { display:none; min-height:100vh; }
+    .admin-topbar { height:56px; background:var(--bg2); border-bottom:0.5px solid var(--border); display:flex; align-items:center; padding:0 24px; gap:16px; position:sticky; top:0; z-index:100; }
+    .topbar-logo  { font-family:'Cormorant Garamond',serif; font-size:18px; color:var(--gold); letter-spacing:0.03em; margin-right:4px; }
+    .topbar-badge { font-size:9px; letter-spacing:0.1em; text-transform:uppercase; background:rgba(201,169,110,0.12); color:var(--gold); border:0.5px solid var(--border); padding:3px 9px; border-radius:2px; }
+    .topbar-spacer{ flex:1; }
+    .topbar-user  { font-size:12px; color:var(--text-dim); display:flex; align-items:center; gap:8px; }
+    .topbar-btn   { background:none; border:0.5px solid var(--border); color:var(--text-faint); padding:6px 12px; border-radius:3px; font-size:11px; letter-spacing:0.04em; display:flex; align-items:center; gap:6px; }
+    .topbar-btn:hover { color:var(--text); border-color:var(--gold-dim); }
+    .theme-btn { width:34px; height:34px; padding:0; border-radius:50%; justify-content:center; }
+    .icon-light { display:none; }
+    :root[data-theme="light"] .icon-dark  { display:none; }
+    :root[data-theme="light"] .icon-light { display:inline; }
+
+    /* LAYOUT */
+    .admin-layout { display:grid; grid-template-columns:228px 1fr; min-height:calc(100vh - 56px); }
+    .admin-nav { background:var(--bg2); border-right:0.5px solid var(--border); padding:24px 0; }
+    .nav-section-label { font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-faint); padding:0 20px; margin-bottom:6px; margin-top:20px; }
+    .nav-section-label:first-child { margin-top:0; }
+    .nav-item { display:flex; align-items:center; gap:10px; padding:10px 20px; font-size:13px; color:var(--text-dim); cursor:pointer; border-left:2px solid transparent; }
+    .nav-item:hover { color:var(--text); background:rgba(255,255,255,0.02); }
+    .nav-item.active { color:var(--gold); border-left-color:var(--gold); background:rgba(201,169,110,0.06); }
+    .nav-item i { font-size:15px; width:18px; text-align:center; }
+    .nav-count { margin-left:auto; font-size:10px; background:rgba(201,169,110,0.15); color:var(--gold); padding:2px 7px; border-radius:10px; }
+    .nav-count.urgent { background:rgba(224,92,92,0.15); color:var(--red); }
+
+    /* CONTENT */
+    .admin-content { padding:32px 36px; overflow-y:auto; }
+    .page-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:28px; gap:16px; flex-wrap:wrap; }
+    .page-title-label { font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
+    .page-title { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:500; color:var(--text); }
+
+    /* BUTTONS */
+    .btn { display:inline-flex; align-items:center; gap:7px; padding:9px 18px; border-radius:3px; font-size:12px; letter-spacing:0.05em; border:none; white-space:nowrap; font-family:'DM Sans',sans-serif; }
+    .btn-primary { background:var(--gold); color:#0d0d0b; font-weight:500; }
+    .btn-primary:hover { opacity:0.85; }
+    .btn-outline { background:none; border:0.5px solid var(--border); color:var(--text-dim); }
+    .btn-outline:hover { border-color:var(--gold-dim); color:var(--text); }
+    .btn-danger  { background:rgba(224,92,92,0.1); border:0.5px solid rgba(224,92,92,0.3); color:var(--red); }
+    .btn-danger:hover  { background:rgba(224,92,92,0.18); }
+    .btn-success { background:rgba(92,184,122,0.1); border:0.5px solid rgba(92,184,122,0.3); color:var(--green); }
+    .btn-success:hover { background:rgba(92,184,122,0.18); }
+    .btn-warning { background:rgba(201,169,110,0.1); border:0.5px solid rgba(201,169,110,0.3); color:var(--gold); }
+    .btn-warning:hover { background:rgba(201,169,110,0.18); }
+    .btn-info    { background:rgba(91,150,224,0.1); border:0.5px solid rgba(91,150,224,0.3); color:var(--blue); }
+    .btn-info:hover    { background:rgba(91,150,224,0.18); }
+    .btn-sm { padding:5px 10px; font-size:11px; }
+    .btn:disabled { opacity:0.5; pointer-events:none; }
+
+    /* STATS */
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border); border-radius:var(--radius); overflow:hidden; margin-bottom:28px; }
+    .stat-card { background:var(--bg2); padding:22px 24px; }
+    .stat-label { font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-faint); margin-bottom:10px; }
+    .stat-value { font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:500; color:var(--text); line-height:1; margin-bottom:4px; }
+    .stat-sub   { font-size:11px; color:var(--text-faint); }
+    .stat-card.highlight .stat-value { color:var(--gold); }
+    .stat-card.danger    .stat-value { color:var(--red); }
+
+    /* TABLE */
+    .table-wrap { background:var(--bg2); border:0.5px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+    .table-toolbar { display:flex; align-items:center; gap:12px; padding:16px 20px; border-bottom:0.5px solid var(--border); flex-wrap:wrap; }
+    .search-input { background:var(--input-bg); border:0.5px solid var(--border); color:var(--text); padding:8px 14px; border-radius:3px; font-size:12px; outline:none; font-family:'DM Sans',sans-serif; width:220px; }
+    .search-input:focus { border-color:var(--gold-dim); }
+    .search-input::placeholder { color:var(--text-faint); }
+    .filter-pills { display:flex; gap:6px; flex-wrap:wrap; }
+    .pill { padding:5px 12px; border-radius:2px; font-size:11px; letter-spacing:0.04em; border:0.5px solid var(--border); color:var(--text-dim); background:none; font-family:'DM Sans',sans-serif; cursor:pointer; }
+    .pill.active,.pill:hover { border-color:var(--gold-dim); color:var(--gold); }
+    table { width:100%; border-collapse:collapse; }
+    th { padding:12px 16px; font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-faint); text-align:left; border-bottom:0.5px solid var(--border); background:var(--bg); font-weight:400; }
+    td { padding:13px 16px; font-size:13px; color:var(--text-dim); border-bottom:0.5px solid rgba(201,169,110,0.05); vertical-align:middle; }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:rgba(201,169,110,0.02); }
+    .td-name { color:var(--text); font-size:13px; font-weight:500; }
+    .td-mono { font-family:monospace; font-size:12px; }
+    .td-actions { display:flex; gap:5px; align-items:center; flex-wrap:wrap; }
+    .td-price { color:var(--gold); font-family:'Cormorant Garamond',serif; font-size:15px; }
+    .prop-thumb { width:56px; height:40px; border-radius:2px; object-fit:cover; background:var(--bg3); flex-shrink:0; }
+    .prop-thumb-placeholder { width:56px; height:40px; border-radius:2px; background:var(--bg3); display:flex; align-items:center; justify-content:center; color:var(--text-faint); font-size:16px; }
+    .empty-state { text-align:center; padding:60px 24px; color:var(--text-faint); }
+    .empty-state i { font-size:36px; color:var(--gold); opacity:0.3; display:block; margin-bottom:14px; }
+
+    /* BADGES */
+    .badge { display:inline-block; font-size:9px; letter-spacing:0.08em; text-transform:uppercase; padding:3px 8px; border-radius:2px; white-space:nowrap; }
+    .badge-rent       { background:rgba(91,150,224,0.15);  color:var(--blue);  border:0.5px solid rgba(91,150,224,0.3); }
+    .badge-sale       { background:rgba(201,169,110,0.12); color:var(--gold);  border:0.5px solid var(--border); }
+    .badge-active     { background:rgba(92,184,122,0.12);  color:var(--green); border:0.5px solid rgba(92,184,122,0.3); }
+    .badge-inactive   { background:rgba(224,92,92,0.1);    color:var(--red);   border:0.5px solid rgba(224,92,92,0.25); }
+    .badge-general    { background:rgba(160,120,64,0.12);  color:var(--gold);  border:0.5px solid var(--border); }
+    .badge-valuation  { background:rgba(92,184,122,0.12);  color:var(--green); border:0.5px solid rgba(92,184,122,0.3); }
+    .badge-appointment{ background:rgba(91,150,224,0.12);  color:var(--blue);  border:0.5px solid rgba(91,150,224,0.3); }
+    .badge-other      { background:rgba(90,86,80,0.3);     color:var(--text-faint); border:0.5px solid var(--border); }
+    .badge-pending    { background:rgba(224,154,74,0.12);  color:var(--orange); border:0.5px solid rgba(224,154,74,0.3); }
+    .badge-accepted   { background:rgba(92,184,122,0.12);  color:var(--green); border:0.5px solid rgba(92,184,122,0.3); }
+    .badge-rejected   { background:rgba(224,92,92,0.1);    color:var(--red);   border:0.5px solid rgba(224,92,92,0.3); }
+    .badge-rescheduled{ background:rgba(91,150,224,0.12);  color:var(--blue);  border:0.5px solid rgba(91,150,224,0.3); }
+
+    /* DRAWER */
+    .drawer-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; align-items:flex-start; justify-content:flex-end; }
+    .drawer-bg.open { display:flex; }
+    .drawer { background:var(--bg2); border-left:0.5px solid var(--border); width:600px; max-width:100vw; height:100vh; overflow-y:auto; animation:slideIn 0.25s ease; }
+    @keyframes slideIn { from { transform:translateX(40px); opacity:0; } to { transform:none; opacity:1; } }
+    .drawer-header { display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border-bottom:0.5px solid var(--border); position:sticky; top:0; background:var(--bg2); z-index:1; }
+    .drawer-title  { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:500; color:var(--text); }
+    .drawer-close  { background:none; border:0.5px solid var(--border); color:var(--text-faint); width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; }
+    .drawer-close:hover { color:var(--text); border-color:var(--gold-dim); }
+    .drawer-body   { padding:24px; }
+    .drawer-footer { padding:16px 24px; border-top:0.5px solid var(--border); display:flex; gap:10px; justify-content:flex-end; position:sticky; bottom:0; background:var(--bg2); }
+
+    .form-section-title { font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); margin-bottom:16px; margin-top:28px; padding-bottom:8px; border-bottom:0.5px solid var(--border); }
+    .form-section-title:first-child { margin-top:0; }
+    .form-group   { margin-bottom:16px; }
+    .form-label   { display:block; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-faint); margin-bottom:7px; }
+    .form-control { width:100%; background:var(--input-bg); border:0.5px solid var(--border); color:var(--text); padding:10px 14px; border-radius:3px; font-size:13px; outline:none; font-family:'DM Sans',sans-serif; appearance:none; }
+    .form-control:focus { border-color:var(--gold-dim); }
+    .form-control option { background:var(--bg2); }
+    textarea.form-control { height:90px; resize:vertical; }
+    .form-row   { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .form-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+
+    /* Map */
+    #map-picker { width:100%; height:180px; border-radius:3px; border:0.5px solid var(--border); background:var(--bg3); overflow:hidden; position:relative; margin-bottom:6px; }
+    #map-picker iframe { width:100%; height:100%; border:none; pointer-events:none; }
+    .map-hint   { font-size:11px; color:var(--text-faint); margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+    .coord-row  { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+    /* Upload */
+    .upload-zone { border:1.5px dashed rgba(201,169,110,0.25); border-radius:3px; padding:20px; text-align:center; cursor:pointer; position:relative; }
+    .upload-zone:hover,.upload-zone.drag-over { border-color:var(--gold-dim); background:rgba(201,169,110,0.04); }
+    .upload-zone input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+    .upload-zone-icon { font-size:26px; color:var(--gold); opacity:0.4; margin-bottom:8px; }
+    .upload-zone-text { font-size:13px; color:var(--text-dim); }
+    .upload-zone-sub  { font-size:11px; color:var(--text-faint); margin-top:4px; }
+    .image-previews   { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .img-preview { position:relative; width:76px; height:56px; border-radius:2px; overflow:hidden; border:0.5px solid var(--border); }
+    .img-preview img { width:100%; height:100%; object-fit:cover; }
+    .img-preview-remove { position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.75); color:#fff; width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; border:none; cursor:pointer; transition:none !important; }
+    .img-preview-main-badge { position:absolute; bottom:2px; left:2px; font-size:8px; background:var(--gold); color:#0d0d0b; padding:1px 4px; border-radius:1px; letter-spacing:0.04em; }
+    .upload-progress { display:none; align-items:center; gap:10px; padding:12px 14px; background:rgba(201,169,110,0.06); border:0.5px solid var(--border); border-radius:3px; font-size:12px; color:var(--text-dim); margin-top:10px; }
+    .upload-progress.visible { display:flex; }
+
+    /* AMENITIES */
+    .amenity-group { margin-bottom:18px; }
+    .amenity-group-label { font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-faint); margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+    .amenity-group-label i { font-size:13px; color:var(--gold); }
+    .amenity-chips { display:flex; flex-wrap:wrap; gap:6px; }
+    .amenity-chip { padding:5px 11px; border:0.5px solid var(--border); border-radius:2px; font-size:11px; color:var(--text-dim); background:none; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.15s ease; }
+    .amenity-chip:hover { border-color:var(--gold-dim); color:var(--text); }
+    .amenity-chip.selected { background:rgba(201,169,110,0.12); border-color:var(--gold); color:var(--gold); }
+
+    /* VIDEO LINKS */
+    .video-link-list { display:flex; flex-direction:column; gap:8px; margin-top:10px; }
+    .video-link-row  { display:flex; gap:8px; align-items:center; }
+    .video-link-row .form-control { flex:1; }
+    .video-link-remove { background:none; border:0.5px solid rgba(224,92,92,0.3); color:var(--red); width:32px; height:36px; border-radius:3px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .video-link-remove:hover { background:rgba(224,92,92,0.1); }
+    .add-video-btn { margin-top:10px; font-size:11px; }
+    .video-thumb-preview { width:100%; aspect-ratio:16/9; border-radius:3px; border:0.5px solid var(--border); background:var(--bg3); overflow:hidden; margin-top:8px; }
+    .video-thumb-preview img { width:100%; height:100%; object-fit:cover; }
+
+    /* MODAL */
+    .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:300; align-items:center; justify-content:center; padding:20px; }
+    .modal-bg.open { display:flex; }
+    .modal-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:var(--radius); width:100%; max-width:620px; max-height:90vh; overflow-y:auto; animation:modalIn 0.2s ease; }
+    @keyframes modalIn { from { opacity:0; transform:scale(0.97) translateY(8px); } to { opacity:1; transform:none; } }
+    .modal-header { display:flex; align-items:flex-start; justify-content:space-between; padding:24px 24px 20px; border-bottom:0.5px solid var(--border); gap:16px; }
+    .modal-title  { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:500; color:var(--text); }
+    .modal-subtitle { font-size:12px; color:var(--text-faint); margin-top:4px; }
+    .modal-close  { background:none; border:0.5px solid var(--border); color:var(--text-faint); width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+    .modal-close:hover { color:var(--text); border-color:var(--gold-dim); }
+    .modal-body   { padding:24px; }
+    .modal-footer { padding:16px 24px; border-top:0.5px solid var(--border); display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .modal-footer-spacer { flex:1; }
+    .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+    .detail-item-label { font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-faint); margin-bottom:5px; }
+    .detail-item-val   { font-size:13px; color:var(--text); line-height:1.5; }
+    .detail-item-val a { color:var(--gold); }
+    .detail-block { background:var(--bg3); border-radius:3px; padding:14px 16px; margin-bottom:14px; }
+    .detail-block-label { font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-faint); margin-bottom:8px; }
+    .detail-block-text  { font-size:13px; color:var(--text-dim); line-height:1.7; white-space:pre-wrap; }
+    .appt-strip  { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
+    .appt-chip   { background:rgba(91,150,224,0.08); border:0.5px solid rgba(91,150,224,0.25); border-radius:3px; padding:10px 16px; }
+    .appt-chip-label { font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--blue); margin-bottom:4px; }
+    .appt-chip-val   { font-size:14px; color:var(--text); font-weight:500; }
+    .notes-area { width:100%; background:var(--input-bg); border:0.5px solid var(--border); color:var(--text); padding:10px 14px; border-radius:3px; font-size:13px; outline:none; font-family:'DM Sans',sans-serif; height:90px; resize:vertical; margin-top:8px; }
+    .notes-area:focus { border-color:var(--gold-dim); }
+    .status-row { display:flex; align-items:center; gap:10px; padding:12px 16px; background:var(--bg3); border-radius:3px; margin-bottom:16px; }
+    .status-row-label { font-size:11px; color:var(--text-faint); flex-shrink:0; }
+
+    /* APPOINTMENTS CALENDAR */
+    .appt-layout { display:grid; grid-template-columns:360px 1fr; gap:16px; margin-bottom:24px; align-items:start; }
+    .appt-cal-wrap { background:var(--bg2); border:0.5px solid var(--border); border-radius:var(--radius); padding:16px 18px; width:360px; }
+    .cal-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    .cal-month-label { font-family:'Cormorant Garamond',serif; font-size:17px; font-weight:500; color:var(--text); }
+    .cal-nav-btn { width:26px; height:26px; border:0.5px solid var(--border); border-radius:50%; background:none; cursor:pointer; color:var(--text-dim); font-size:11px; display:flex; align-items:center; justify-content:center; }
+    .cal-nav-btn:hover { border-color:var(--gold); color:var(--gold); }
+    .cal-header-row { display:grid; grid-template-columns:repeat(7,1fr); margin-bottom:3px; }
+    .cal-day-label  { text-align:center; font-size:9px; letter-spacing:0.04em; text-transform:uppercase; color:var(--text-faint); padding:3px 0; }
+    .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+    .cal-cell { height:42px; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:3px; font-size:11px; color:var(--text-dim); cursor:default; position:relative; }
+    .cal-cell.empty { pointer-events:none; }
+    .cal-cell.past  { opacity:0.28; pointer-events:none; }
+    .cal-cell.today { color:var(--gold); font-weight:600; }
+    .cal-cell.today::after { content:''; position:absolute; bottom:3px; left:50%; transform:translateX(-50%); width:3px; height:3px; border-radius:50%; background:var(--gold); }
+    .cal-cell.has-bookings { cursor:pointer; }
+    .cal-cell.has-bookings:hover { background:rgba(201,169,110,0.08); color:var(--text); }
+    .cal-cell.selected-day { background:rgba(201,169,110,0.14) !important; color:var(--gold); border:0.5px solid rgba(201,169,110,0.35); }
+    .cal-slots-row { display:flex; gap:2px; margin-top:2px; }
+    .cal-slot-pip { width:4px; height:4px; border-radius:50%; }
+    .cal-slot-pip.booked { background:var(--gold); opacity:0.9; }
+    .cal-slot-pip.free   { background:rgba(201,169,110,0.15); }
+
+    /* Day panel */
+    .day-panel { background:var(--bg2); border:0.5px solid var(--border); border-radius:var(--radius); padding:14px 16px; overflow-y:auto; }
+    .day-panel-title { font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-faint); margin-bottom:4px; }
+    .day-panel-date  { font-family:'Cormorant Garamond',serif; font-size:15px; color:var(--text); margin-bottom:10px; line-height:1.3; }
+    .slot-block { border:0.5px solid var(--border); border-radius:3px; margin-bottom:6px; overflow:hidden; }
+    .slot-block-header { display:flex; align-items:center; justify-content:space-between; padding:6px 10px; background:var(--bg3); border-bottom:0.5px solid var(--border); }
+    .slot-block-time { font-size:10px; color:var(--text); font-weight:500; }
+    .slot-booking { padding:8px 10px; display:flex; flex-direction:column; gap:2px; border-bottom:0.5px solid var(--border); }
+    .slot-booking:last-child { border-bottom:none; }
+    .sb-name  { font-size:11px; color:var(--text); font-weight:500; }
+    .sb-phone { font-size:10px; color:var(--text-faint); font-family:monospace; }
+    .sb-view  { font-size:10px; color:var(--gold); cursor:pointer; display:inline-flex; align-items:center; gap:3px; margin-top:2px; }
+    .sb-view:hover { text-decoration:underline; }
+    .slot-free { padding:8px 10px; font-size:10px; color:var(--text-faint); display:flex; align-items:center; gap:5px; }
+    .day-placeholder { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100px; color:var(--text-faint); text-align:center; }
+    .day-placeholder i { font-size:20px; opacity:0.3; margin-bottom:6px; }
+
+    /* RESCHEDULE MODAL */
+    .reschedule-cal .cal-grid { gap:3px; }
+    .reschedule-cal .cal-cell { font-size:11px; }
+    .reschedule-cal .cal-cell.has-slots { cursor:pointer; }
+    .reschedule-cal .cal-cell.has-slots:hover { background:rgba(201,169,110,0.08); color:var(--gold); }
+    .reschedule-cal .cal-cell.selected-day { background:var(--gold) !important; color:#0d0d0b !important; }
+    .cal-cell.blocked { opacity:0.35; cursor:not-allowed !important; background:rgba(224,92,92,0.08) !important; }
+    .cal-cell.blocked::after { content:''; position:absolute; inset:0; pointer-events:none; }
+    .blocked-panel { background:var(--bg2); border:0.5px solid var(--border); border-radius:var(--radius); padding:18px 20px; margin-bottom:24px; }
+    .blocked-panel-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:16px; flex-wrap:wrap; }
+    .blocked-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; min-height:28px; }
+    .blocked-tag { display:inline-flex; align-items:center; gap:6px; font-size:11px; padding:4px 10px; border-radius:2px; background:rgba(224,92,92,0.1); border:0.5px solid rgba(224,92,92,0.25); color:var(--red); }
+    .blocked-tag button { background:none; border:none; color:inherit; cursor:pointer; padding:0; font-size:12px; line-height:1; }
+    .slot-picker-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+    .slot-chip { padding:8px 14px; border:0.5px solid var(--border); border-radius:3px; font-size:12px; color:var(--text-dim); cursor:pointer; }
+    .slot-chip:hover:not(.taken) { border-color:var(--gold-dim); color:var(--gold); }
+    .slot-chip.selected { border-color:var(--gold); background:rgba(201,169,110,0.1); color:var(--gold); }
+    .slot-chip.taken { opacity:0.35; cursor:not-allowed; text-decoration:line-through; }
+
+    /* CONFIRM */
+    .confirm-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:400; align-items:center; justify-content:center; }
+    .confirm-bg.open { display:flex; }
+    .confirm-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:var(--radius); padding:32px 28px; width:360px; text-align:center; }
+    .confirm-icon  { font-size:36px; margin-bottom:14px; }
+    .confirm-title { font-family:'Cormorant Garamond',serif; font-size:20px; color:var(--text); margin-bottom:10px; }
+    .confirm-sub   { font-size:13px; color:var(--text-dim); line-height:1.65; margin-bottom:24px; }
+    .confirm-actions { display:flex; gap:10px; justify-content:center; }
+
+    /* TOAST */
+    #toast { position:fixed; bottom:28px; right:28px; background:var(--bg3); border:0.5px solid var(--border); border-radius:3px; padding:12px 18px; font-size:13px; display:flex; align-items:center; gap:10px; z-index:999; transform:translateY(80px); opacity:0; max-width:320px; transition:transform 0.3s ease, opacity 0.3s ease !important; }
+    #toast.show { transform:translateY(0); opacity:1; }
+    #toast.toast-success { border-color:rgba(92,184,122,0.4); }
+    #toast.toast-error   { border-color:rgba(224,92,92,0.4); }
+    .toast-icon-success { color:var(--green); font-size:16px; }
+    .toast-icon-error   { color:var(--red); font-size:16px; }
+
+    /* SPINNER */
+    .spinner { width:16px; height:16px; border:2px solid rgba(201,169,110,0.3); border-top-color:var(--gold); border-radius:50%; animation:spin 0.8s linear infinite; flex-shrink:0; transition:none !important; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    @media (max-width:1024px) { .appt-layout { grid-template-columns:1fr; } }
+
+    /* Desktop: permanent sidebar */
+    @media (min-width: 901px) {
+      .admin-nav {
+        position: static;
+        transform: none !important;
+        width: 228px;
+        visibility: visible !important;
+      }
+      .admin-nav-overlay { display: none !important; }
+      #admin-menu-btn { display: none !important; }
+      .admin-layout { grid-template-columns: 228px 1fr; }
     }
 
-    .login-grid {
-      position: absolute; inset: 0;
-      background-image:
-        linear-gradient(rgba(201,169,110,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(201,169,110,0.04) 1px, transparent 1px);
-      background-size: 48px 48px;
-      pointer-events: none;
-    }
-
-    .login-card {
-      background: var(--bg2);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius);
-      padding: 48px 40px;
-      width: 100%; max-width: 400px;
-      position: relative; z-index: 1;
-    }
-
-    .login-logo { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 500; color: var(--gold); letter-spacing: 0.04em; margin-bottom: 6px; }
-    .login-sub  { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 36px; }
-    .login-label{ font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); display: block; margin-bottom: 7px; }
-
-    .login-input {
-      width: 100%; background: var(--input-bg);
-      border: 0.5px solid var(--border); color: var(--text);
-      padding: 11px 14px; border-radius: 3px; font-size: 13px;
-      outline: none; font-family: 'DM Sans', sans-serif; margin-bottom: 18px;
-    }
-    .login-input:focus { border-color: var(--gold-dim); }
-
-    .login-btn {
-      width: 100%; background: var(--gold); color: #0d0d0b;
-      border: none; padding: 12px; border-radius: 3px;
-      font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
-      font-weight: 500; margin-top: 4px;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-    }
-    .login-btn:hover { opacity: 0.85; }
-    .login-btn:disabled { opacity: 0.5; pointer-events: none; }
-
-    .login-error {
-      background: rgba(224,92,92,0.1); border: 0.5px solid rgba(224,92,92,0.3);
-      color: var(--red); border-radius: 3px; padding: 10px 14px;
-      font-size: 12px; margin-top: 14px; display: none;
-    }
-
-    /* ── ADMIN SHELL ── */
-    #admin-shell { display: none; min-height: 100vh; }
-
-    .admin-topbar {
-      height: 56px; background: var(--bg2);
-      border-bottom: 0.5px solid var(--border);
-      display: flex; align-items: center; padding: 0 24px; gap: 16px;
-      position: sticky; top: 0; z-index: 100;
-    }
-
-    .topbar-logo { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--gold); letter-spacing: 0.03em; margin-right: 8px; }
-    .topbar-badge { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; background: rgba(201,169,110,0.15); color: var(--gold); border: 0.5px solid var(--border); padding: 3px 9px; border-radius: 2px; }
-    .topbar-spacer { flex: 1; }
-    .topbar-user { font-size: 12px; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
-
-    .topbar-btn {
-      background: none; border: 0.5px solid var(--border); color: var(--text-faint);
-      padding: 6px 12px; border-radius: 3px; font-size: 11px; letter-spacing: 0.04em;
-      display: flex; align-items: center; gap: 6px;
-    }
-    .topbar-btn:hover { color: var(--text); border-color: var(--gold-dim); }
-
-    .theme-btn {
-      width: 34px; height: 34px; padding: 0; border-radius: 50%; justify-content: center;
-    }
-
-    /* Theme icon visibility */
-    .icon-light { display: none; }
-    :root[data-theme="light"] .icon-dark  { display: none; }
-    :root[data-theme="light"] .icon-light { display: inline; }
-
-    /* ── LAYOUT ── */
-    .admin-layout { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 56px); }
-
-    .admin-nav {
-      background: var(--bg2); border-right: 0.5px solid var(--border); padding: 24px 0;
-    }
-
-    .nav-section-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); padding: 0 20px; margin-bottom: 8px; margin-top: 20px; }
-    .nav-section-label:first-child { margin-top: 0; }
-
-    .nav-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 20px; font-size: 13px; color: var(--text-dim);
-      cursor: pointer; border-left: 2px solid transparent;
-    }
-    .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.02); }
-    .nav-item.active { color: var(--gold); border-left-color: var(--gold); background: rgba(201,169,110,0.06); }
-    .nav-item i { font-size: 15px; width: 18px; text-align: center; }
-
-    .nav-count { margin-left: auto; font-size: 10px; background: rgba(201,169,110,0.15); color: var(--gold); padding: 2px 7px; border-radius: 10px; }
-
-    /* ── CONTENT ── */
-    .admin-content { padding: 32px 36px; overflow-y: auto; }
-
-    .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; gap: 16px; flex-wrap: wrap; }
-    .page-title-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
-    .page-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 500; color: var(--text); }
-
-    /* ── BUTTONS ── */
-    .btn {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 9px 18px; border-radius: 3px; font-size: 12px;
-      letter-spacing: 0.05em; border: none; white-space: nowrap;
-    }
-    .btn-primary { background: var(--gold); color: #0d0d0b; font-weight: 500; }
-    .btn-primary:hover { opacity: 0.85; }
-    .btn-outline { background: none; border: 0.5px solid var(--border); color: var(--text-dim); }
-    .btn-outline:hover { border-color: var(--gold-dim); color: var(--text); }
-    .btn-danger { background: rgba(224,92,92,0.1); border: 0.5px solid rgba(224,92,92,0.3); color: var(--red); }
-    .btn-danger:hover { background: rgba(224,92,92,0.18); }
-    .btn-success { background: rgba(92,184,122,0.1); border: 0.5px solid rgba(92,184,122,0.3); color: var(--green); }
-    .btn-success:hover { background: rgba(92,184,122,0.18); }
-    .btn-warning { background: rgba(201,169,110,0.1); border: 0.5px solid rgba(201,169,110,0.3); color: var(--gold); }
-    .btn-warning:hover { background: rgba(201,169,110,0.18); }
-    .btn-sm { padding: 5px 10px; font-size: 11px; }
-
-    /* ── STATS ── */
-    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 32px; }
-    .stat-card { background: var(--bg2); padding: 22px 24px; }
-    .stat-label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 10px; }
-    .stat-value { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 500; color: var(--text); line-height: 1; margin-bottom: 4px; }
-    .stat-sub { font-size: 11px; color: var(--text-faint); }
-
-    /* ── TABLE ── */
-    .table-wrap { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-
-    .table-toolbar { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
-
-    .search-input {
-      background: var(--input-bg); border: 0.5px solid var(--border);
-      color: var(--text); padding: 8px 14px; border-radius: 3px;
-      font-size: 12px; outline: none; font-family: 'DM Sans', sans-serif;
-      width: 220px;
-    }
-    .search-input:focus { border-color: var(--gold-dim); }
-    .search-input::placeholder { color: var(--text-faint); }
-
-    .filter-pills { display: flex; gap: 6px; }
-    .pill { padding: 5px 12px; border-radius: 2px; font-size: 11px; letter-spacing: 0.04em; border: 0.5px solid var(--border); color: var(--text-dim); background: none; }
-    .pill.active, .pill:hover { border-color: var(--gold-dim); color: var(--gold); }
-
-    table { width: 100%; border-collapse: collapse; }
-    th { padding: 12px 16px; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); text-align: left; border-bottom: 0.5px solid var(--border); background: var(--bg); font-weight: 400; }
-    td { padding: 14px 16px; font-size: 13px; color: var(--text-dim); border-bottom: 0.5px solid rgba(201,169,110,0.06); vertical-align: middle; }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: rgba(201,169,110,0.02); }
-
-    .td-title { color: var(--text); font-size: 13px; max-width: 220px; }
-    .td-price { color: var(--gold); font-family: 'Cormorant Garamond', serif; font-size: 15px; }
-    .td-actions { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
-
-    .badge { display: inline-block; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; }
-    .badge-rent { background: rgba(91,150,224,0.15); color: #5b96e0; border: 0.5px solid rgba(91,150,224,0.3); }
-    .badge-sale { background: rgba(201,169,110,0.12); color: var(--gold); border: 0.5px solid var(--border); }
-    .badge-active { background: rgba(92,184,122,0.12); color: var(--green); border: 0.5px solid rgba(92,184,122,0.3); }
-    .badge-inactive { background: rgba(224,92,92,0.1); color: var(--red); border: 0.5px solid rgba(224,92,92,0.25); }
-    .badge-general  { background: rgba(160,120,64,0.12); color: var(--gold); border: 0.5px solid var(--border); }
-    .badge-property { background: rgba(91,150,224,0.12); color: #5b96e0; border: 0.5px solid rgba(91,150,224,0.3); }
-    .badge-valuation{ background: rgba(92,184,122,0.12); color: var(--green); border: 0.5px solid rgba(92,184,122,0.3); }
-    .badge-other    { background: rgba(90,86,80,0.3); color: var(--text-faint); border: 0.5px solid var(--border); }
-
-    .prop-thumb { width: 56px; height: 40px; border-radius: 2px; object-fit: cover; background: var(--bg3); flex-shrink: 0; }
-    .prop-thumb-placeholder { width: 56px; height: 40px; border-radius: 2px; background: var(--bg3); display: flex; align-items: center; justify-content: center; color: var(--text-faint); font-size: 16px; }
-
-    .empty-state { text-align: center; padding: 60px 24px; color: var(--text-faint); }
-    .empty-state i { font-size: 36px; color: var(--gold); opacity: 0.3; display: block; margin-bottom: 14px; }
-
-    .enq-msg { max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .enq-phone { font-family: monospace; font-size: 12px; }
-
-    /* ── DRAWER ── */
-    .drawer-bg {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7); z-index: 200;
-      align-items: flex-start; justify-content: flex-end;
-    }
-    .drawer-bg.open { display: flex; }
-
-    .drawer {
-      background: var(--bg2); border-left: 0.5px solid var(--border);
-      width: 560px; max-width: 100vw; height: 100vh;
-      overflow-y: auto; animation: slideIn 0.25s ease;
-    }
-
-    @keyframes slideIn { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
-
-    .drawer-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 24px; border-bottom: 0.5px solid var(--border);
-      position: sticky; top: 0; background: var(--bg2); z-index: 1;
-    }
-
-    .drawer-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; color: var(--text); }
-
-    .drawer-close {
-      background: none; border: 0.5px solid var(--border); color: var(--text-faint);
-      width: 32px; height: 32px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; font-size: 16px;
-    }
-    .drawer-close:hover { color: var(--text); border-color: var(--gold-dim); }
-
-    .drawer-body { padding: 24px; }
-
-    .form-section-title {
-      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 16px; margin-top: 28px;
-      padding-bottom: 8px; border-bottom: 0.5px solid var(--border);
-    }
-    .form-section-title:first-child { margin-top: 0; }
-
-    .form-group { margin-bottom: 16px; }
-    .form-label { display: block; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 7px; }
-
-    .form-control {
-      width: 100%; background: var(--input-bg);
-      border: 0.5px solid var(--border); color: var(--text);
-      padding: 10px 14px; border-radius: 3px; font-size: 13px;
-      outline: none; font-family: 'DM Sans', sans-serif; appearance: none;
-    }
-    .form-control:focus { border-color: var(--gold-dim); }
-    .form-control option { background: var(--bg2); }
-    textarea.form-control { height: 100px; resize: vertical; }
-
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-
-    /* Map picker */
-    .coord-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px; }
-
-    #map-picker {
-      width: 100%; height: 220px; border-radius: 3px;
-      border: 0.5px solid var(--border); background: var(--bg3);
-      overflow: hidden; position: relative; margin-bottom: 6px;
-    }
-
-    #map-picker iframe {
-      width: 100%; height: 100%; border: none; pointer-events: none;
-    }
-
-    .map-hint {
-      font-size: 11px; color: var(--text-faint); margin-bottom: 12px;
-      display: flex; align-items: center; gap: 6px;
-    }
-
-    /* ── UPLOAD ── */
-    .upload-zone {
-      border: 1.5px dashed rgba(201,169,110,0.25); border-radius: 3px;
-      padding: 28px; text-align: center; cursor: pointer; position: relative;
-    }
-    .upload-zone:hover, .upload-zone.drag-over { border-color: var(--gold-dim); background: rgba(201,169,110,0.04); }
-    .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-    .upload-zone-icon { font-size: 28px; color: var(--gold); opacity: 0.4; margin-bottom: 10px; }
-    .upload-zone-text { font-size: 13px; color: var(--text-dim); }
-    .upload-zone-sub { font-size: 11px; color: var(--text-faint); margin-top: 4px; }
-
-    .image-previews { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-
-    .img-preview { position: relative; width: 80px; height: 60px; border-radius: 2px; overflow: hidden; border: 0.5px solid var(--border); }
-    .img-preview img { width: 100%; height: 100%; object-fit: cover; }
-    .img-preview-remove { position: absolute; top: 3px; right: 3px; background: rgba(0,0,0,0.7); color: #fff; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; border: none; cursor: pointer; transition: none !important; }
-    .img-preview-main-badge { position: absolute; bottom: 2px; left: 2px; font-size: 8px; background: var(--gold); color: #0d0d0b; padding: 1px 4px; border-radius: 1px; letter-spacing: 0.04em; }
-
-    .upload-progress { display: none; align-items: center; gap: 10px; padding: 12px 14px; background: rgba(201,169,110,0.06); border: 0.5px solid var(--border); border-radius: 3px; font-size: 12px; color: var(--text-dim); margin-top: 10px; }
-    .upload-progress.visible { display: flex; }
-
-    .spinner { width: 16px; height: 16px; border: 2px solid rgba(201,169,110,0.3); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; transition: none !important; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .drawer-footer { padding: 16px 24px; border-top: 0.5px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; position: sticky; bottom: 0; background: var(--bg2); }
-
-    /* ── TOAST ── */
-    #toast {
-      position: fixed; bottom: 28px; right: 28px;
-      background: var(--bg3); border: 0.5px solid var(--border);
-      border-radius: 3px; padding: 12px 18px; font-size: 13px;
-      display: flex; align-items: center; gap: 10px;
-      z-index: 999; transform: translateY(80px); opacity: 0;
-      max-width: 320px; transition: transform 0.3s ease, opacity 0.3s ease !important;
-    }
-    #toast.show { transform: translateY(0); opacity: 1; }
-    #toast.toast-success { border-color: rgba(92,184,122,0.4); }
-    #toast.toast-error   { border-color: rgba(224,92,92,0.4); }
-    .toast-icon-success { color: var(--green); }
-    .toast-icon-error   { color: var(--red); }
-
-    /* ── CONFIRM ── */
-    .confirm-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 300; align-items: center; justify-content: center; }
-    .confirm-bg.open { display: flex; }
-    .confirm-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 32px 28px; width: 360px; text-align: center; }
-    .confirm-icon { font-size: 36px; color: var(--red); margin-bottom: 14px; }
-    .confirm-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--text); margin-bottom: 10px; }
-    .confirm-sub { font-size: 13px; color: var(--text-dim); line-height: 1.65; margin-bottom: 24px; }
-    .confirm-actions { display: flex; gap: 10px; justify-content: center; }
-
-    @media (max-width: 900px) {
-      .admin-layout { grid-template-columns: 1fr; }
-      .admin-nav { display: none; }
-      .stats-row { grid-template-columns: 1fr 1fr; }
-      .admin-content { padding: 20px 16px; }
-      .drawer { width: 100vw; }
+    @media (max-width:900px) {
+      .admin-layout { grid-template-columns:1fr; }
+      .admin-nav {
+        position:fixed;top:56px;left:0;bottom:0;width:min(260px,88vw);z-index:90;
+        transform:translateX(-100%);transition:transform 0.28s ease;
+        border-right:0.5px solid var(--border);overflow-y:auto;
+      }
+      .admin-nav.open { transform:translateX(0); }
+      .admin-nav-overlay { display:none;position:fixed;inset:0;top:56px;z-index:80;background:rgba(0,0,0,0.55); }
+      .admin-nav-overlay.open { display:block; }
+      .stats-row { grid-template-columns:1fr 1fr; }
+      .admin-content { padding:20px 16px; }
+      .drawer { width:100vw; }
+      .detail-grid { grid-template-columns:1fr; }
+      .modal-card { max-width:100%; }
     }
   </style>
 </head>
 <body>
 
-<!-- ══════ LOGIN ══════ -->
+<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-grid"></div>
   <div class="login-card">
     <div class="login-logo">Vision Homes Kenya</div>
     <div class="login-sub">Admin Dashboard</div>
-
     <label class="login-label" for="admin-email">Email Address</label>
     <input class="login-input" type="email" id="admin-email" placeholder="admin@visionhomeskenya.co.ke" autocomplete="email">
-
     <label class="login-label" for="admin-pass">Password</label>
     <input class="login-input" type="password" id="admin-pass" placeholder="••••••••" autocomplete="current-password">
-
-    <button class="login-btn" id="login-btn">
-      <i class="ti ti-lock"></i> Sign In to Dashboard
-    </button>
+    <button class="login-btn" id="login-btn"><i class="ti ti-lock"></i> Sign In to Dashboard</button>
     <div class="login-error" id="login-error"></div>
   </div>
 </div>
 
-<!-- ══════ ADMIN SHELL ══════ -->
+<!-- ADMIN SHELL -->
 <div id="admin-shell">
-
-  <!-- Topbar -->
   <div class="admin-topbar">
+    <button class="topbar-btn" id="admin-menu-btn" aria-label="Open menu" style="display:none;"><i class="ti ti-menu-2"></i></button>
     <div class="topbar-logo">Vision Homes Kenya</div>
     <div class="topbar-badge">Admin</div>
     <div class="topbar-spacer"></div>
-
-    <button id="theme-toggle-btn" class="topbar-btn theme-btn" aria-label="Toggle theme" title="Toggle light/dark mode">
-      <i class="ti ti-moon icon-dark"></i>
-      <i class="ti ti-sun icon-light"></i>
+    <button id="theme-toggle-btn" class="topbar-btn theme-btn" aria-label="Toggle theme">
+      <i class="ti ti-moon icon-dark"></i><i class="ti ti-sun icon-light"></i>
     </button>
-
-    <div class="topbar-user">
-      <i class="ti ti-user-circle" style="font-size:16px;"></i>
-      <span id="topbar-email">—</span>
-    </div>
-    <button class="topbar-btn" id="logout-btn">
-      <i class="ti ti-logout"></i> Sign Out
-    </button>
+    <div class="topbar-user"><i class="ti ti-user-circle" style="font-size:16px;"></i><span id="topbar-email">—</span></div>
+    <button class="topbar-btn" id="logout-btn"><i class="ti ti-logout"></i> Sign Out</button>
   </div>
 
-  <!-- Layout -->
   <div class="admin-layout">
-
-    <!-- Sidebar -->
-    <nav class="admin-nav">
+    <div class="admin-nav-overlay" id="admin-nav-overlay"></div>
+    <nav class="admin-nav" id="admin-nav">
       <div class="nav-section-label">Properties</div>
-      <div class="nav-item active" data-tab="properties">
-        <i class="ti ti-building-estate"></i> All Listings
-        <span class="nav-count" id="nav-count-props">—</span>
-      </div>
-      <div class="nav-item" data-tab="add">
-        <i class="ti ti-plus"></i> Add Property
-      </div>
+      <div class="nav-item active" data-tab="properties"><i class="ti ti-building-estate"></i> All Listings<span class="nav-count" id="nav-count-props">—</span></div>
+      <div class="nav-item" data-tab="add"><i class="ti ti-plus"></i> Add Property</div>
       <div class="nav-section-label">Communications</div>
-      <div class="nav-item" data-tab="enquiries">
-        <i class="ti ti-mail"></i> Enquiries
-        <span class="nav-count" id="nav-count-enq">—</span>
-      </div>
-      <div class="nav-item" data-tab="subscribers">
-        <i class="ti ti-users"></i> Subscribers
-      </div>
+      <div class="nav-item" data-tab="appointments"><i class="ti ti-calendar-event"></i> Appointments<span class="nav-count urgent" id="nav-count-appts">—</span></div>
+      <div class="nav-item" data-tab="enquiries"><i class="ti ti-mail"></i> Enquiries<span class="nav-count" id="nav-count-enq">—</span></div>
+      <div class="nav-item" data-tab="subscribers"><i class="ti ti-users"></i> Subscribers</div>
       <div class="nav-section-label">Site</div>
-      <div class="nav-item" id="view-site-link">
-        <i class="ti ti-external-link"></i> View Live Site
-      </div>
+      <div class="nav-item" id="view-site-link"><i class="ti ti-external-link"></i> View Live Site</div>
     </nav>
 
-    <!-- Main -->
     <main class="admin-content">
-
       <!-- TAB: PROPERTIES -->
       <div id="tab-properties">
         <div class="page-header">
-          <div>
-            <div class="page-title-label">Manage</div>
-            <div class="page-title">All Listings</div>
-          </div>
-          <button class="btn btn-primary" id="add-prop-btn">
-            <i class="ti ti-plus"></i> Add Property
-          </button>
+          <div><div class="page-title-label">Manage</div><div class="page-title">All Listings</div></div>
+          <button class="btn btn-primary" id="add-prop-btn"><i class="ti ti-plus"></i> Add Property</button>
         </div>
-
         <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-label">Total Listings</div>
-            <div class="stat-value" id="stat-total">—</div>
-            <div class="stat-sub">all types</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Active</div>
-            <div class="stat-value" id="stat-active">—</div>
-            <div class="stat-sub">live on site</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">For Sale</div>
-            <div class="stat-value" id="stat-sale">—</div>
-            <div class="stat-sub">sale listings</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">For Rent</div>
-            <div class="stat-value" id="stat-rent">—</div>
-            <div class="stat-sub">rental listings</div>
-          </div>
+          <div class="stat-card"><div class="stat-label">Total Listings</div><div class="stat-value" id="stat-total">—</div><div class="stat-sub">all types</div></div>
+          <div class="stat-card highlight"><div class="stat-label">Active</div><div class="stat-value" id="stat-active">—</div><div class="stat-sub">live on site</div></div>
+          <div class="stat-card"><div class="stat-label">For Sale</div><div class="stat-value" id="stat-sale">—</div><div class="stat-sub">sale listings</div></div>
+          <div class="stat-card"><div class="stat-label">For Rent</div><div class="stat-value" id="stat-rent">—</div><div class="stat-sub">rental listings</div></div>
         </div>
-
         <div class="table-wrap">
           <div class="table-toolbar">
             <input class="search-input" type="text" placeholder="Search properties…" id="prop-search">
@@ -520,62 +427,111 @@
           </div>
           <div style="overflow-x:auto;">
             <table id="props-table">
-              <thead>
-                <tr>
-                  <th>Photo</th>
-                  <th>Property</th>
-                  <th>Area</th>
-                  <th>Price</th>
-                  <th>Type</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="props-tbody">
-                <tr><td colspan="7"><div class="empty-state"><i class="ti ti-loader" style="animation:spin 1s linear infinite;"></i><div style="margin-top:10px;font-size:13px;">Loading…</div></div></td></tr>
-              </tbody>
+              <thead><tr><th>Photo</th><th>Property</th><th>Area</th><th>Price</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="props-tbody"><tr><td colspan="7"><div class="empty-state"><i class="ti ti-loader" style="animation:spin 1s linear infinite;"></i></div></td></tr></tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- TAB: ADD (redirect) -->
-      <div id="tab-add" style="display:none;">
+      <!-- TAB: APPOINTMENTS -->
+      <div id="tab-appointments" style="display:none;">
         <div class="page-header">
-          <div>
-            <div class="page-title-label">New Listing</div>
-            <div class="page-title">Add Property</div>
+          <div><div class="page-title-label">Schedule</div><div class="page-title">Appointments</div></div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <div class="filter-pills">
+              <button class="pill active" data-appt-filter="all">All</button>
+              <button class="pill" data-appt-filter="pending">Pending</button>
+              <button class="pill" data-appt-filter="accepted">Accepted</button>
+              <button class="pill" data-appt-filter="rescheduled">Rescheduled</button>
+              <button class="pill" data-appt-filter="rejected">Rejected</button>
+            </div>
+            <button class="btn btn-outline" id="refresh-appt-btn"><i class="ti ti-refresh"></i> Refresh</button>
           </div>
         </div>
-        <div style="color:var(--text-dim);font-size:13px;">Opening form…</div>
+        <div class="stats-row">
+          <div class="stat-card danger"><div class="stat-label">Pending</div><div class="stat-value" id="appt-stat-pending">—</div><div class="stat-sub">need action</div></div>
+          <div class="stat-card highlight"><div class="stat-label">Accepted</div><div class="stat-value" id="appt-stat-accepted">—</div><div class="stat-sub">confirmed</div></div>
+          <div class="stat-card"><div class="stat-label">Rescheduled</div><div class="stat-value" id="appt-stat-rescheduled">—</div><div class="stat-sub">new time set</div></div>
+          <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value" id="appt-stat-total">—</div><div class="stat-sub">all time</div></div>
+        </div>
+        <div class="appt-layout">
+          <div class="appt-cal-wrap">
+            <div class="cal-nav">
+              <button class="cal-nav-btn" id="appt-cal-prev"><i class="ti ti-chevron-left"></i></button>
+              <div class="cal-month-label" id="appt-cal-month">—</div>
+              <button class="cal-nav-btn" id="appt-cal-next"><i class="ti ti-chevron-right"></i></button>
+            </div>
+            <div class="cal-header-row">
+              <div class="cal-day-label">Sun</div><div class="cal-day-label">Mon</div><div class="cal-day-label">Tue</div>
+              <div class="cal-day-label">Wed</div><div class="cal-day-label">Thu</div><div class="cal-day-label">Fri</div><div class="cal-day-label">Sat</div>
+            </div>
+            <div class="cal-grid" id="appt-cal-grid"></div>
+          </div>
+          <div class="day-panel" id="day-panel">
+            <div class="day-panel-title">Selected Day</div>
+            <div id="day-panel-date" class="day-panel-date">—</div>
+            <div id="day-panel-content">
+              <div class="day-placeholder"><i class="ti ti-calendar"></i><span style="font-size:11px;">Click a day to<br>see its bookings</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Blocked / unavailable dates -->
+        <div class="blocked-panel">
+          <div class="blocked-panel-head">
+            <div>
+              <div class="form-section-title" style="margin:0;border:none;padding:0;">Unavailable Dates</div>
+              <p style="font-size:12px;color:var(--text-dim);margin-top:6px;line-height:1.6;">Click a day to block or unblock it. Blocked days cannot be booked on the contact page.</p>
+            </div>
+            <div class="cal-nav" style="margin:0;">
+              <button class="cal-nav-btn" id="blocked-cal-prev" type="button"><i class="ti ti-chevron-left"></i></button>
+              <div class="cal-month-label" id="blocked-cal-month">—</div>
+              <button class="cal-nav-btn" id="blocked-cal-next" type="button"><i class="ti ti-chevron-right"></i></button>
+            </div>
+          </div>
+          <div class="cal-header-row">
+            <div class="cal-day-label">Su</div><div class="cal-day-label">Mo</div><div class="cal-day-label">Tu</div>
+            <div class="cal-day-label">We</div><div class="cal-day-label">Th</div><div class="cal-day-label">Fr</div><div class="cal-day-label">Sa</div>
+          </div>
+          <div class="cal-grid" id="blocked-cal-grid"></div>
+          <div class="blocked-tags" id="blocked-tags-list"></div>
+        </div>
+
+        <div class="table-wrap">
+          <div class="table-toolbar" style="justify-content:space-between;">
+            <input class="search-input" type="text" placeholder="Search appointments…" id="appt-search">
+            <span style="font-size:11px;color:var(--text-faint);" id="appt-list-count"></span>
+          </div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>Name</th><th>Phone</th><th>Type</th><th>Date</th><th>Slot</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="appt-tbody"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       <!-- TAB: ENQUIRIES -->
       <div id="tab-enquiries" style="display:none;">
         <div class="page-header">
-          <div>
-            <div class="page-title-label">Inbox</div>
-            <div class="page-title">Enquiries</div>
-          </div>
+          <div><div class="page-title-label">Inbox</div><div class="page-title">Enquiries</div></div>
           <button class="btn btn-outline" id="refresh-enq-btn"><i class="ti ti-refresh"></i> Refresh</button>
         </div>
         <div class="table-wrap">
+          <div class="table-toolbar">
+            <input class="search-input" type="text" placeholder="Search enquiries…" id="enq-search">
+            <div class="filter-pills">
+              <button class="pill active" data-enq-filter="all">All</button>
+              <button class="pill" data-enq-filter="general">General</button>
+              <button class="pill" data-enq-filter="valuation">Valuation</button>
+              <button class="pill" data-enq-filter="property">Property</button>
+            </div>
+          </div>
           <div style="overflow-x:auto;">
             <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Phone</th>
-                  <th>WhatsApp</th>
-                  <th>Type</th>
-                  <th>Property / Subject</th>
-                  <th>Message</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody id="enq-tbody">
-                <tr><td colspan="7"><div class="empty-state"><i class="ti ti-loader" style="animation:spin 1s linear infinite;"></i></div></td></tr>
-              </tbody>
+              <thead><tr><th>Name</th><th>Phone</th><th>WhatsApp</th><th>Type</th><th>Subject</th><th>Date</th><th>Actions</th></tr></thead>
+              <tbody id="enq-tbody"></tbody>
             </table>
           </div>
         </div>
@@ -584,181 +540,137 @@
       <!-- TAB: SUBSCRIBERS -->
       <div id="tab-subscribers" style="display:none;">
         <div class="page-header">
-          <div>
-            <div class="page-title-label">Newsletter</div>
-            <div class="page-title">Subscribers</div>
-          </div>
+          <div><div class="page-title-label">Newsletter</div><div class="page-title">Subscribers</div></div>
           <button class="btn btn-outline" id="refresh-sub-btn"><i class="ti ti-refresh"></i> Refresh</button>
         </div>
         <div class="table-wrap">
           <div style="overflow-x:auto;">
             <table>
-              <thead>
-                <tr>
-                  <th>Email</th>
-                  <th>Subscribed</th>
-                </tr>
-              </thead>
-              <tbody id="sub-tbody">
-                <tr><td colspan="2"><div class="empty-state"><i class="ti ti-loader" style="animation:spin 1s linear infinite;"></i></div></td></tr>
-              </tbody>
+              <thead><tr><th>Email</th><th>Subscribed</th></tr></thead>
+              <tbody id="sub-tbody"></tbody>
             </table>
           </div>
         </div>
       </div>
-
     </main>
   </div>
 </div>
 
-<!-- ══════ PROPERTY DRAWER ══════ -->
+<!-- PROPERTY DRAWER -->
 <div class="drawer-bg" id="prop-drawer">
   <div class="drawer">
     <div class="drawer-header">
       <div class="drawer-title" id="drawer-title">Add Property</div>
       <button class="drawer-close" id="drawer-close-btn"><i class="ti ti-x"></i></button>
     </div>
-
     <div class="drawer-body">
       <input type="hidden" id="edit-id">
-
-      <!-- Basic Info -->
       <div class="form-section-title">Basic Information</div>
-
-      <div class="form-group">
-        <label class="form-label" for="f-title">Property Title *</label>
-        <input class="form-control" type="text" id="f-title" placeholder="e.g. 3-bedroom luxury apartment">
-      </div>
-
+      <div class="form-group"><label class="form-label">Property Title *</label><input class="form-control" type="text" id="f-title" placeholder="e.g. 3-bedroom luxury apartment"></div>
       <div class="form-row">
-        <div class="form-group">
-          <label class="form-label" for="f-type">Listing Type *</label>
-          <select class="form-control" id="f-type">
-            <option value="sale">For Sale</option>
-            <option value="rent">For Rent</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="f-neighborhood">Neighborhood *</label>
-          <select class="form-control" id="f-neighborhood">
-            <option>Karen</option>
-            <option>Runda</option>
-            <option>Westlands</option>
-            <option>Kilimani</option>
-            <option>Lavington</option>
-            <option>Kileleshwa</option>
-            <option>Muthaiga</option>
-            <option>Gigiri</option>
-            <option>Spring Valley</option>
-            <option>Riverside</option>
-            <option>Loresho</option>
-            <option>Other</option>
-          </select>
-        </div>
+        <div class="form-group"><label class="form-label">Listing Type *</label><select class="form-control" id="f-type"><option value="sale">For Sale</option><option value="rent">For Rent</option></select></div>
+        <div class="form-group"><label class="form-label">Neighborhood *</label><select class="form-control" id="f-neighborhood"><option>Karen</option><option>Runda</option><option>Westlands</option><option>Kilimani</option><option>Lavington</option><option>Kileleshwa</option><option>Muthaiga</option><option>Gigiri</option><option>Spring Valley</option><option>Riverside</option><option>Loresho</option><option>Other</option></select></div>
       </div>
-
-      <div class="form-group">
-        <label class="form-label" for="f-price">Price *</label>
-        <input class="form-control" type="text" id="f-price" placeholder="e.g. KES 65,000,000 or KES 85,000 / mo">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="f-description">Description</label>
-        <textarea class="form-control" id="f-description" placeholder="Describe the property…"></textarea>
-      </div>
-
-      <!-- Specs -->
+      <div class="form-group"><label class="form-label">Price *</label><input class="form-control" type="text" id="f-price" placeholder="e.g. KES 65,000,000 or KES 85,000 / mo"></div>
+      <div class="form-group"><label class="form-label">Description</label><textarea class="form-control" id="f-description" placeholder="Describe the property…"></textarea></div>
       <div class="form-section-title">Property Specs</div>
-
       <div class="form-row-3">
-        <div class="form-group">
-          <label class="form-label" for="f-beds">Bedrooms</label>
-          <input class="form-control" type="number" id="f-beds" min="0" max="20" placeholder="e.g. 3">
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="f-baths">Bathrooms</label>
-          <input class="form-control" type="number" id="f-baths" min="0" max="20" placeholder="e.g. 2">
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="f-size">Floor Size</label>
-          <input class="form-control" type="text" id="f-size" placeholder="e.g. 1,400 sqft">
-        </div>
+        <div class="form-group"><label class="form-label">Bedrooms</label><input class="form-control" type="number" id="f-beds" min="0" max="20" placeholder="3"></div>
+        <div class="form-group"><label class="form-label">Bathrooms</label><input class="form-control" type="number" id="f-baths" min="0" max="20" placeholder="2"></div>
+        <div class="form-group"><label class="form-label">Floor Size</label><input class="form-control" type="text" id="f-size" placeholder="1,400 sqft"></div>
       </div>
-
-      <!-- Coordinates -->
       <div class="form-section-title">Location Coordinates</div>
-
-      <div class="map-hint">
-        <i class="ti ti-info-circle" style="color:var(--gold);font-size:13px;"></i>
-        Enter coordinates manually or paste a Google Maps link — coordinates will be extracted automatically.
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="f-gmaps-url">Google Maps Link (optional — auto-extracts coords)</label>
-        <input class="form-control" type="text" id="f-gmaps-url" placeholder="Paste Google Maps URL here…">
-      </div>
-
+      <div class="map-hint"><i class="ti ti-info-circle" style="color:var(--gold);font-size:13px;"></i> Paste a Google Maps link to auto-extract coordinates.</div>
+      <div class="form-group"><label class="form-label">Google Maps Link</label><input class="form-control" type="text" id="f-gmaps-url" placeholder="Paste Google Maps URL here…"></div>
       <div class="coord-row">
-        <div class="form-group">
-          <label class="form-label" for="f-lat">Latitude</label>
-          <input class="form-control" type="number" id="f-lat" step="any" placeholder="e.g. -1.3219">
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="f-lng">Longitude</label>
-          <input class="form-control" type="number" id="f-lng" step="any" placeholder="e.g. 36.7453">
-        </div>
+        <div class="form-group"><label class="form-label">Latitude</label><input class="form-control" type="number" id="f-lat" step="any" placeholder="-1.3219"></div>
+        <div class="form-group"><label class="form-label">Longitude</label><input class="form-control" type="number" id="f-lng" step="any" placeholder="36.7453"></div>
       </div>
-
-      <div id="map-picker">
-        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-faint);font-size:12px;flex-direction:column;gap:8px;">
-          <i class="ti ti-map-pin" style="font-size:24px;color:var(--gold);opacity:0.3;"></i>
-          <span>Map preview will appear when coordinates are set</span>
-        </div>
-      </div>
-      <div style="font-size:11px;color:var(--text-faint);margin-bottom:16px;">Map is a static preview only. Edit coordinates in the fields above.</div>
-
-      <!-- Photos -->
+      <div id="map-picker"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-faint);font-size:12px;flex-direction:column;gap:8px;"><i class="ti ti-map-pin" style="font-size:24px;color:var(--gold);opacity:0.3;"></i><span>Map preview appears when coordinates are set</span></div></div>
+      <div style="font-size:11px;color:var(--text-faint);margin-bottom:16px;">Static preview only. Edit coordinates above.</div>
       <div class="form-section-title">Photos</div>
-
       <div class="upload-zone" id="upload-zone">
         <input type="file" id="f-images" accept="image/*" multiple>
         <div class="upload-zone-icon"><i class="ti ti-photo-up"></i></div>
         <div class="upload-zone-text">Click or drag images here</div>
-        <div class="upload-zone-sub">JPEG, PNG, WEBP — max 5 MB each. First image = cover photo.</div>
+        <div class="upload-zone-sub">JPEG, PNG, WEBP — max 5 MB each. First image = cover.</div>
       </div>
-
       <div class="image-previews" id="image-previews"></div>
-
-      <div class="upload-progress" id="upload-progress">
-        <div class="spinner"></div>
-        <span id="upload-progress-text">Uploading images…</span>
-      </div>
-
-      <!-- Status -->
+      <div class="upload-progress" id="upload-progress"><div class="spinner"></div><span id="upload-progress-text">Uploading images…</span></div>
+      <div class="form-section-title">Video Tours</div>
+      <div class="map-hint"><i class="ti ti-info-circle" style="color:var(--gold);font-size:13px;"></i> Add YouTube links (watch, youtu.be, or embed URL). The video must allow embedding — in YouTube Studio: Content → video → Show more → Allow embedding.</div>
+      <div class="video-link-list" id="video-link-list"></div>
+      <button class="btn btn-outline add-video-btn" id="add-video-btn"><i class="ti ti-plus"></i> Add Video Link</button>
+      <div class="form-section-title">Amenities</div>
+      <div class="amenity-group"><div class="amenity-group-label"><i class="ti ti-trees"></i> Outdoor Amenities</div><div class="amenity-chips" id="amenities-outdoor"></div></div>
+      <div class="amenity-group"><div class="amenity-group-label"><i class="ti ti-car-garage"></i> Parking &amp; Security</div><div class="amenity-chips" id="amenities-parking"></div></div>
+      <div class="amenity-group"><div class="amenity-group-label"><i class="ti ti-home"></i> Indoor Amenities</div><div class="amenity-chips" id="amenities-indoor"></div></div>
+      <div class="amenity-group"><div class="amenity-group-label"><i class="ti ti-barbell"></i> Fitness &amp; Recreation</div><div class="amenity-chips" id="amenities-fitness"></div></div>
+      <div class="amenity-group"><div class="amenity-group-label"><i class="ti ti-tool"></i> Utility &amp; Convenience</div><div class="amenity-chips" id="amenities-utility"></div></div>
+      <div class="amenity-group"><div class="amenity-group-label"><i class="ti ti-smart-home"></i> Smart Home Features</div><div class="amenity-chips" id="amenities-smart"></div></div>
       <div class="form-section-title">Visibility</div>
-
-      <div class="form-group">
-        <label class="form-label" for="f-active">Status</label>
-        <select class="form-control" id="f-active">
-          <option value="true">Active — visible on site</option>
-          <option value="false">Inactive — hidden from site</option>
-        </select>
-      </div>
+      <div class="form-group"><label class="form-label">Status</label><select class="form-control" id="f-active"><option value="true">Active — visible on site</option><option value="false">Inactive — hidden from site</option></select></div>
     </div>
-
     <div class="drawer-footer">
       <button class="btn btn-outline" id="drawer-cancel-btn">Cancel</button>
-      <button class="btn btn-primary" id="save-btn">
-        <i class="ti ti-device-floppy"></i> Save Property
-      </button>
+      <button class="btn btn-primary" id="save-btn"><i class="ti ti-device-floppy"></i> Save Property</button>
     </div>
   </div>
 </div>
 
-<!-- ══════ CONFIRM DIALOG ══════ -->
+<!-- DETAIL MODAL -->
+<div class="modal-bg" id="detail-modal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-title">Details</div>
+        <div class="modal-subtitle" id="modal-subtitle"></div>
+      </div>
+      <button class="modal-close" id="modal-close-btn"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<!-- RESCHEDULE MODAL -->
+<div class="modal-bg" id="reschedule-modal">
+  <div class="modal-card" style="max-width:500px;">
+    <div class="modal-header">
+      <div><div class="modal-title">Reschedule Appointment</div><div class="modal-subtitle" id="reschedule-subtitle"></div></div>
+      <button class="modal-close" id="reschedule-close-btn"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:20px;">Pick a new date and time slot for this appointment.</p>
+      <div class="reschedule-cal">
+        <div class="cal-nav" style="margin-bottom:14px;">
+          <button class="cal-nav-btn" id="rs-cal-prev"><i class="ti ti-chevron-left"></i></button>
+          <div class="cal-month-label" id="rs-cal-month" style="font-size:18px;">—</div>
+          <button class="cal-nav-btn" id="rs-cal-next"><i class="ti ti-chevron-right"></i></button>
+        </div>
+        <div class="cal-header-row">
+          <div class="cal-day-label">Su</div><div class="cal-day-label">Mo</div><div class="cal-day-label">Tu</div>
+          <div class="cal-day-label">We</div><div class="cal-day-label">Th</div><div class="cal-day-label">Fr</div><div class="cal-day-label">Sa</div>
+        </div>
+        <div class="cal-grid reschedule-cal" id="rs-cal-grid"></div>
+      </div>
+      <div id="rs-slot-section" style="margin-top:16px;display:none;">
+        <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-faint);margin-bottom:10px;">Select Time Slot</div>
+        <div class="slot-picker-row" id="rs-slot-picker"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" id="reschedule-cancel-btn">Cancel</button>
+      <div class="modal-footer-spacer"></div>
+      <button class="btn btn-primary" id="reschedule-save-btn" disabled><i class="ti ti-calendar-check"></i> Confirm Reschedule</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DIALOG -->
 <div class="confirm-bg" id="confirm-dialog">
   <div class="confirm-card">
-    <div class="confirm-icon"><i class="ti ti-alert-triangle"></i></div>
+    <div class="confirm-icon"><i class="ti ti-alert-triangle" style="color:var(--red);font-size:36px;"></i></div>
     <div class="confirm-title" id="confirm-title">Are you sure?</div>
     <div class="confirm-sub" id="confirm-sub">This action cannot be undone.</div>
     <div class="confirm-actions">
@@ -768,680 +680,726 @@
   </div>
 </div>
 
-<!-- Toast -->
 <div id="toast"><i id="toast-icon"></i><span id="toast-msg"></span></div>
 
-<!-- ══════════════════════════════════════ -->
-<!--  JAVASCRIPT                           -->
-<!-- ══════════════════════════════════════ -->
 <script>
-// ─────────────────────────────────────────────────
-//  CONFIG — loaded from js/config.js
-//  SUPABASE CLIENT
-// ─────────────────────────────────────────────────
+/* ═══ INIT ═══ */
 const { createClient } = supabase;
-const _sbAnon = window.SUPABASE_ANON_KEY || SUPABASE_ANON_KEY;
-const _sbUrl = window.SUPABASE_URL || SUPABASE_URL;
-const _bucket = window.STORAGE_BUCKET || STORAGE_BUCKET || "property-images";
-if (!_sbUrl || !_sbAnon) { console.error("Config error: check variable names in js/config.js"); }
+const _sbUrl  = window.SUPABASE_URL    || (typeof SUPABASE_URL    !== 'undefined' ? SUPABASE_URL    : '');
+const _sbAnon = window.SUPABASE_ANON_KEY || (typeof SUPABASE_ANON_KEY !== 'undefined' ? SUPABASE_ANON_KEY : '');
+const _bucket = window.STORAGE_BUCKET  || (typeof STORAGE_BUCKET  !== 'undefined' ? STORAGE_BUCKET  : 'property-images');
 const sb = createClient(_sbUrl, _sbAnon);
 
-// ─────────────────────────────────────────────────
-//  STATE
-// ─────────────────────────────────────────────────
-let allProperties  = [];
-let currentFilter  = 'all';
-let pendingFiles   = [];   // new files chosen, not yet uploaded
-let existingImages = [];   // already-saved images {id, url, sort_order}
-let confirmCb      = null;
+/* ═══ AMENITIES ═══ */
+const AMENITY_GROUPS = {
+  outdoor: { id:'amenities-outdoor', items:['Swimming pool','Garden/Landscaped yard','Playground','BBQ/Grill area','Patio or deck','Balcony','Rooftop terrace','Outdoor seating area','Gazebo','Tennis court','Basketball court','Jogging track'] },
+  parking: { id:'amenities-parking', items:['Garage','Covered parking','Visitor parking','Gated community','CCTV surveillance','Security guards','Electric fence','Smart locks'] },
+  indoor:  { id:'amenities-indoor',  items:['Air conditioning','Heating system','Fireplace','Walk-in closets','Laundry room','Home office','Furnished rooms','Modern kitchen','Pantry','High-speed internet/Wi-Fi'] },
+  fitness: { id:'amenities-fitness', items:['Gym/Fitness center','Sauna','Steam room','Spa/Jacuzzi','Game room','Home theater','Clubhouse','Sports court'] },
+  utility: { id:'amenities-utility', items:['Backup generator','Solar power system','Borehole water supply','Water storage tanks','Elevator/Lift','Waste disposal services','Housekeeping services'] },
+  smart:   { id:'amenities-smart',   items:['Smart lighting','Smart security system','Smart thermostat','Video doorbell','Automated curtains'] }
+};
+function buildAmenityChips() {
+  Object.values(AMENITY_GROUPS).forEach(group => {
+    const c = document.getElementById(group.id); if(!c) return; c.innerHTML='';
+    group.items.forEach(item => { const chip=document.createElement('button'); chip.type='button'; chip.className='amenity-chip'; chip.textContent=item; chip.dataset.amenity=item; chip.addEventListener('click',()=>chip.classList.toggle('selected')); c.appendChild(chip); });
+  });
+}
+function getSelectedAmenities() { return [...document.querySelectorAll('.amenity-chip.selected')].map(c=>c.dataset.amenity); }
+function setSelectedAmenities(a) { if(!Array.isArray(a)) return; document.querySelectorAll('.amenity-chip').forEach(c=>c.classList.toggle('selected',a.includes(c.dataset.amenity))); }
+function clearAmenities() { document.querySelectorAll('.amenity-chip').forEach(c=>c.classList.remove('selected')); }
 
-// ─────────────────────────────────────────────────
-//  THEME TOGGLE (smooth — no flash)
-// ─────────────────────────────────────────────────
-document.getElementById('theme-toggle-btn').addEventListener('click', () => {
-  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-  if (isLight) {
-    document.documentElement.removeAttribute('data-theme');
-    localStorage.setItem('vhk-theme', 'dark');
-  } else {
-    document.documentElement.setAttribute('data-theme', 'light');
-    localStorage.setItem('vhk-theme', 'light');
-  }
+/* ═══ VIDEO LINKS ═══ */
+let videoLinks = [];
+function renderVideoLinks() {
+  const list=document.getElementById('video-link-list'); list.innerHTML='';
+  videoLinks.forEach((url,i)=>{
+    const row=document.createElement('div'); row.className='video-link-row';
+    row.innerHTML=`<input class="form-control" type="text" placeholder="https://www.youtube.com/watch?v=..." value="${esc(url)}"><button type="button" class="video-link-remove" title="Remove"><i class="ti ti-x"></i></button>`;
+    row.querySelector('input').addEventListener('input',e=>{videoLinks[i]=e.target.value.trim();});
+    row.querySelector('button').addEventListener('click',()=>{videoLinks.splice(i,1);renderVideoLinks();});
+    list.appendChild(row);
+    const ytId=getYouTubeId(url);
+    if(ytId){const thumb=document.createElement('div');thumb.className='video-thumb-preview';thumb.style.marginBottom='8px';thumb.innerHTML=`<img src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg" alt="Video thumbnail">`;list.appendChild(thumb);}
+  });
+}
+document.getElementById('add-video-btn').addEventListener('click',()=>{videoLinks.push('');renderVideoLinks();const inputs=document.getElementById('video-link-list').querySelectorAll('input');if(inputs.length)inputs[inputs.length-1].focus();});
+function getYouTubeId(url){if(!url)return null;const m=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([A-Za-z0-9_-]{11})/);return m?m[1]:null;}
+
+/* ═══ CONSTANTS ═══ */
+const SLOTS=[{id:'08:00-11:00',label:'8:00 AM – 11:00 AM'},{id:'11:00-14:00',label:'11:00 AM – 2:00 PM'},{id:'14:00-17:00',label:'2:00 PM – 5:00 PM'}];
+const MONTH_NAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const TYPE_LABELS={appointment:'Property Viewing',valuation:'Free Valuation',general:'General Enquiry',property:'Property Enquiry',other:'Other'};
+
+/* ═══ STATE ═══ */
+let allProperties=[],allAppointments=[],allEnquiries=[];
+let propFilter='all',apptFilter='all',enqFilter='all';
+let pendingFiles=[],existingImages=[],confirmCb=null;
+let openModalId = null;
+const apptCal={year:0,month:0,selectedDate:null,bookings:{}};
+const rsCal={year:0,month:0,selectedDate:null,selectedSlot:null,bookings:{},enquiryId:null};
+const blockedCal={year:0,month:0};
+let blockedDatesSet=new Set();
+
+/* ═══ THEME ═══ */
+document.getElementById('theme-toggle-btn').addEventListener('click',()=>{
+  const isLight=document.documentElement.getAttribute('data-theme')==='light';
+  document.documentElement[isLight?'removeAttribute':'setAttribute']('data-theme','light');
+  localStorage.setItem('vhk-theme',isLight?'dark':'light');
 });
 
-// ─────────────────────────────────────────────────
-//  AUTH
-// ─────────────────────────────────────────────────
-document.getElementById('login-btn').addEventListener('click', doLogin);
-document.getElementById('admin-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-document.getElementById('logout-btn').addEventListener('click', doLogout);
+/* ═══ AUTH ═══ */
+document.getElementById('login-btn').addEventListener('click',doLogin);
+document.getElementById('admin-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('logout-btn').addEventListener('click',doLogout);
 
-async function doLogin() {
-  const email = document.getElementById('admin-email').value.trim();
-  const pass  = document.getElementById('admin-pass').value;
-  const btn   = document.getElementById('login-btn');
-  const err   = document.getElementById('login-error');
-
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> Signing in…';
-  err.style.display = 'none';
-
-  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-
-  if (error) {
-    err.textContent = error.message;
-    err.style.display = 'block';
-    btn.disabled = false;
-    btn.innerHTML = '<i class="ti ti-lock"></i> Sign In to Dashboard';
-    return;
-  }
-
+async function doLogin(){
+  const email=document.getElementById('admin-email').value.trim();
+  const pass=document.getElementById('admin-pass').value;
+  const btn=document.getElementById('login-btn'); const err=document.getElementById('login-error');
+  btn.disabled=true; btn.innerHTML='<div class="spinner"></div> Signing in…'; err.style.display='none';
+  const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
+  if(error){err.textContent=error.message;err.style.display='block';btn.disabled=false;btn.innerHTML='<i class="ti ti-lock"></i> Sign In to Dashboard';return;}
   showShell(data.user.email);
 }
+async function doLogout(){await sb.auth.signOut();document.getElementById('admin-shell').style.display='none';document.getElementById('login-screen').style.display='flex';}
+function showShell(email){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('admin-shell').style.display='block';
+  document.getElementById('topbar-email').textContent=email;
+  buildAmenityChips(); loadProperties(); loadAppointmentsCount();
+}
+(async()=>{const{data:{session}}=await sb.auth.getSession();if(session)showShell(session.user.email);})();
 
-async function doLogout() {
-  await sb.auth.signOut();
-  document.getElementById('admin-shell').style.display  = 'none';
-  document.getElementById('login-screen').style.display = 'flex';
+/* ═══ NAV ═══ */
+document.querySelectorAll('.nav-item[data-tab]').forEach(el=>{
+  el.addEventListener('click',()=>{
+    const tab=el.dataset.tab;
+    if(tab==='add'){openAddDrawer();return;}
+    showTab(tab,el);
+    if (window.innerWidth <= 900) toggleAdminNav(false);
+  });
+});
+document.getElementById('view-site-link').addEventListener('click',()=>window.open('index.html','_blank'));
+
+function toggleAdminNav(open) {
+  const nav = document.getElementById('admin-nav');
+  const overlay = document.getElementById('admin-nav-overlay');
+  const isOpen = open !== undefined ? open : !nav.classList.contains('open');
+  nav.classList.toggle('open', isOpen);
+  overlay.classList.toggle('open', isOpen);
+}
+document.getElementById('admin-menu-btn').addEventListener('click', () => toggleAdminNav());
+document.getElementById('admin-nav-overlay').addEventListener('click', () => toggleAdminNav(false));
+if (window.matchMedia('(max-width:900px)').matches) {
+  document.getElementById('admin-menu-btn').style.display = 'flex';
+}
+window.addEventListener('resize', () => {
+  const btn = document.getElementById('admin-menu-btn');
+  btn.style.display = window.innerWidth <= 900 ? 'flex' : 'none';
+  if (window.innerWidth > 900) toggleAdminNav(false);
+});
+
+function showTab(name,activeEl){
+  ['properties','appointments','enquiries','subscribers'].forEach(t=>{document.getElementById('tab-'+t).style.display=t===name?'':'none';});
+  document.querySelectorAll('.nav-item[data-tab]').forEach(n=>n.classList.remove('active'));
+  if(activeEl)activeEl.classList.add('active');
+  if(name==='appointments')loadAppointments();
+  if(name==='enquiries')loadEnquiries();
+  if(name==='subscribers')loadSubscribers();
+}
+document.getElementById('add-prop-btn').addEventListener('click',openAddDrawer);
+document.getElementById('refresh-enq-btn').addEventListener('click',loadEnquiries);
+document.getElementById('refresh-sub-btn').addEventListener('click',loadSubscribers);
+document.getElementById('refresh-appt-btn').addEventListener('click',loadAppointments);
+
+/* ═══ PROPERTIES ═══ */
+async function loadProperties(){
+  const{data,error}=await sb.from('properties').select('*, property_images(id, url, sort_order)').order('created_at',{ascending:false});
+  if(error){toast('Failed to load properties: '+error.message,'error');return;}
+  allProperties=data||[];
+  document.getElementById('stat-total').textContent=allProperties.length;
+  document.getElementById('stat-active').textContent=allProperties.filter(p=>p.active).length;
+  document.getElementById('stat-sale').textContent=allProperties.filter(p=>p.type==='sale').length;
+  document.getElementById('stat-rent').textContent=allProperties.filter(p=>p.type==='rent').length;
+  document.getElementById('nav-count-props').textContent=allProperties.length;
+  renderPropsTable();
+}
+document.getElementById('prop-search').addEventListener('input',renderPropsTable);
+document.querySelectorAll('.filter-pills .pill[data-filter]').forEach(btn=>{
+  btn.addEventListener('click',()=>{document.querySelectorAll('.filter-pills .pill[data-filter]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');propFilter=btn.dataset.filter;renderPropsTable();});
+});
+function renderPropsTable(){
+  const q=document.getElementById('prop-search').value.toLowerCase();
+  let rows=allProperties;
+  if(propFilter==='sale')rows=rows.filter(p=>p.type==='sale');
+  if(propFilter==='rent')rows=rows.filter(p=>p.type==='rent');
+  if(propFilter==='inactive')rows=rows.filter(p=>!p.active);
+  if(q)rows=rows.filter(p=>(p.title||'').toLowerCase().includes(q)||(p.neighborhood||'').toLowerCase().includes(q));
+  const tbody=document.getElementById('props-tbody');
+  if(!rows.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><i class="ti ti-building-off"></i><div style="margin-top:10px;font-size:13px;">No properties found</div></div></td></tr>`;return;}
+  tbody.innerHTML=rows.map(p=>{
+    const imgs=(p.property_images||[]).sort((a,b)=>a.sort_order-b.sort_order);
+    const cover=imgs[0]?.url;
+    const thumb=cover?`<img class="prop-thumb" src="${esc(cover)}" alt="" loading="lazy">`:`<div class="prop-thumb-placeholder"><i class="ti ti-photo-off"></i></div>`;
+    const typeBadge=p.type==='rent'?`<span class="badge badge-rent">Rent</span>`:`<span class="badge badge-sale">Sale</span>`;
+    const statusBadge=p.active?`<span class="badge badge-active">Active</span>`:`<span class="badge badge-inactive">Inactive</span>`;
+    const toggleLabel=p.active?'Deactivate':'Activate'; const toggleClass=p.active?'btn-warning':'btn-success'; const toggleIcon=p.active?'ti-eye-off':'ti-eye';
+    return`<tr><td>${thumb}</td><td><div class="td-name" style="max-width:200px;">${esc(p.title||'—')}</div></td><td>${esc(p.neighborhood||'—')}</td><td class="td-price">${esc(p.price||'—')}</td><td>${typeBadge}</td><td>${statusBadge}</td><td><div class="td-actions"><button class="btn btn-sm btn-outline" data-action="edit" data-id="${p.id}"><i class="ti ti-pencil"></i> Edit</button><button class="btn btn-sm ${toggleClass}" data-action="toggle" data-id="${p.id}" data-active="${p.active}"><i class="ti ${toggleIcon}"></i> ${toggleLabel}</button><button class="btn btn-sm btn-danger" data-action="delete" data-id="${p.id}" data-title="${esc(p.title||'')}"><i class="ti ti-trash"></i></button></div></td></tr>`;
+  }).join('');
+}
+document.getElementById('props-tbody').addEventListener('click',e=>{
+  const btn=e.target.closest('[data-action]'); if(!btn)return;
+  const action=btn.dataset.action; const id=btn.dataset.id;
+  if(action==='edit')openEditDrawer(id);
+  if(action==='toggle')toggleActive(id,btn.dataset.active==='true');
+  if(action==='delete')confirmDeleteProp(id,btn.dataset.title);
+});
+async function toggleActive(id,current){
+  const {data,error}=await sb.from('properties').update({active:!current}).eq('id',parseInt(id)).select();
+  if(error||!data?.length){toast('Update failed — check RLS policies','error');return;}
+  toast(!current?'Listing activated':'Listing deactivated','success');
+  await loadProperties();
+}
+function confirmDeleteProp(id,title){showConfirm('Delete Property?',`"${title}" will be permanently removed.`,'Delete','btn-danger',()=>deleteProp(id));}
+async function deleteProp(id){
+  const{data:imgs}=await sb.from('property_images').select('url').eq('property_id',parseInt(id));
+  if(imgs?.length){const paths=imgs.map(i=>storagePathFromUrl(i.url)).filter(Boolean);if(paths.length)await sb.storage.from(_bucket).remove(paths);}
+  const{error}=await sb.from('properties').delete().eq('id',parseInt(id));
+  if(error){toast('Delete failed: '+error.message,'error');return;}
+  toast('Property deleted','success'); await loadProperties();
 }
 
-function showShell(email) {
-  document.getElementById('login-screen').style.display  = 'none';
-  document.getElementById('admin-shell').style.display   = 'block';
-  document.getElementById('topbar-email').textContent    = email;
-  loadProperties();
+/* ═══ APPOINTMENTS ═══ */
+async function loadAppointmentsCount(){
+  const{data}=await sb.from('enquiries').select('id, status').eq('type','appointment');
+  const pending=(data||[]).filter(e=>!e.status||e.status==='pending').length;
+  document.getElementById('nav-count-appts').textContent=pending||(data||[]).length;
 }
 
-// Auto-restore session
-(async () => {
+async function loadAppointments(){
+  const{data,error}=await sb.from('enquiries').select('*').eq('type','appointment').order('appointment_date',{ascending:true}).order('created_at',{ascending:false});
+  if(error){toast('Failed: '+error.message,'error');return;}
+  /* ── CHANGED: IDs are now int8 — store as plain numbers, no String() wrap ── */
+  allAppointments = data || [];
+  document.getElementById('appt-stat-pending').textContent=allAppointments.filter(e=>!e.status||e.status==='pending').length;
+  document.getElementById('appt-stat-accepted').textContent=allAppointments.filter(e=>e.status==='accepted').length;
+  document.getElementById('appt-stat-rescheduled').textContent=allAppointments.filter(e=>e.status==='rescheduled').length;
+  document.getElementById('appt-stat-total').textContent=allAppointments.length;
+  document.getElementById('nav-count-appts').textContent=allAppointments.filter(e=>!e.status||e.status==='pending').length;
+  apptCal.bookings={};
+  allAppointments.forEach(e=>{
+    const eff=vhkGetEffectiveBooking(e);
+    if(!eff)return;
+    if(!apptCal.bookings[eff.date])apptCal.bookings[eff.date]=[];
+    apptCal.bookings[eff.date].push(e);
+  });
+  if(!apptCal.year){const now=new Date();apptCal.year=now.getFullYear();apptCal.month=now.getMonth();}
+  await loadBlockedDates();
+  renderApptCal(); renderApptTable();
+}
+
+async function loadBlockedDates(){
+  blockedDatesSet=await vhkFetchBlockedSet(sb);
+  if(!blockedCal.year){const now=new Date();blockedCal.year=now.getFullYear();blockedCal.month=now.getMonth();}
+  renderBlockedCal();
+}
+
+function renderBlockedTags(){
+  const el=document.getElementById('blocked-tags-list');
+  if(!el)return;
+  const sorted=[...blockedDatesSet].sort();
+  if(!sorted.length){el.innerHTML='<span style="font-size:11px;color:var(--text-faint);">No blocked dates set.</span>';return;}
+  el.innerHTML=sorted.map(d=>`<span class="blocked-tag">${fmtDate(d)} <button type="button" data-unblock="${d}" title="Unblock">×</button></span>`).join('');
+  el.querySelectorAll('[data-unblock]').forEach(btn=>{
+    btn.addEventListener('click',async()=>{
+      if(!await ensureAuth())return;
+      await vhkSetBlockedDate(sb,btn.dataset.unblock,false);
+      blockedDatesSet.delete(btn.dataset.unblock);
+      renderBlockedCal();renderBlockedTags();
+      toast('Date unblocked','success');
+    });
+  });
+}
+
+function renderBlockedCal(){
+  document.getElementById('blocked-cal-month').textContent=MONTH_NAMES[blockedCal.month]+' '+blockedCal.year;
+  const grid=document.getElementById('blocked-cal-grid');grid.innerHTML='';
+  const today=new Date();today.setHours(0,0,0,0);
+  const firstDay=new Date(blockedCal.year,blockedCal.month,1).getDay();
+  const daysInMo=new Date(blockedCal.year,blockedCal.month+1,0).getDate();
+  for(let i=0;i<firstDay;i++){const b=document.createElement('div');b.className='cal-cell empty';grid.appendChild(b);}
+  for(let d=1;d<=daysInMo;d++){
+    const cellDate=new Date(blockedCal.year,blockedCal.month,d);
+    const dateStr=toDateStr(cellDate);
+    const isBlocked=blockedDatesSet.has(dateStr);
+    const cell=document.createElement('div');
+    cell.className='cal-cell'+(isBlocked?' blocked':'');
+    cell.innerHTML=`<span>${d}</span>`;
+    if(cellDate<today)cell.classList.add('past');
+    cell.addEventListener('click',async()=>{
+      if(!await ensureAuth())return;
+      const willBlock=!blockedDatesSet.has(dateStr);
+      const res=await vhkSetBlockedDate(sb,dateStr,willBlock,willBlock?'Admin unavailable':null);
+      if(!res.ok){toast('Could not update blocked date','error');return;}
+      if(willBlock)blockedDatesSet.add(dateStr);else blockedDatesSet.delete(dateStr);
+      renderBlockedCal();renderBlockedTags();
+      toast(willBlock?'Date blocked':'Date unblocked','success');
+    });
+    grid.appendChild(cell);
+  }
+  renderBlockedTags();
+}
+
+document.getElementById('blocked-cal-prev').addEventListener('click',()=>{blockedCal.month--;if(blockedCal.month<0){blockedCal.month=11;blockedCal.year--;}renderBlockedCal();});
+document.getElementById('blocked-cal-next').addEventListener('click',()=>{blockedCal.month++;if(blockedCal.month>11){blockedCal.month=0;blockedCal.year++;}renderBlockedCal();});
+
+function renderApptCal(){
+  document.getElementById('appt-cal-month').textContent=MONTH_NAMES[apptCal.month]+' '+apptCal.year;
+  const grid=document.getElementById('appt-cal-grid'); grid.innerHTML='';
+  const today=new Date();today.setHours(0,0,0,0);
+  const firstDay=new Date(apptCal.year,apptCal.month,1).getDay();
+  const daysInMo=new Date(apptCal.year,apptCal.month+1,0).getDate();
+  for(let i=0;i<firstDay;i++){const b=document.createElement('div');b.className='cal-cell empty';grid.appendChild(b);}
+  for(let d=1;d<=daysInMo;d++){
+    const cellDate=new Date(apptCal.year,apptCal.month,d);const dateStr=toDateStr(cellDate);
+    const dayBookings=apptCal.bookings[dateStr]||[];const isPast=cellDate<today;const isToday=cellDate.getTime()===today.getTime();
+    const cell=document.createElement('div');cell.className='cal-cell';cell.innerHTML=`<span>${d}</span>`;
+    if(isPast)cell.classList.add('past');
+    if(isToday)cell.classList.add('today');
+    if(dateStr===apptCal.selectedDate)cell.classList.add('selected-day');
+    if(dayBookings.length>0){
+      cell.classList.add('has-bookings');
+      const pipsRow=document.createElement('div');pipsRow.className='cal-slots-row';
+      SLOTS.forEach(s=>{const pip=document.createElement('span');const booked=dayBookings.some(e=>{const eff=vhkGetEffectiveBooking(e);return eff&&eff.slot===s.id;});pip.className='cal-slot-pip '+(booked?'booked':'free');pipsRow.appendChild(pip);});
+      cell.appendChild(pipsRow);
+      cell.addEventListener('click',()=>{apptCal.selectedDate=dateStr;renderApptCal();showDayPanel(dateStr,dayBookings);});
+    }
+    grid.appendChild(cell);
+  }
+}
+document.getElementById('appt-cal-prev').addEventListener('click',()=>{apptCal.month--;if(apptCal.month<0){apptCal.month=11;apptCal.year--;}renderApptCal();});
+document.getElementById('appt-cal-next').addEventListener('click',()=>{apptCal.month++;if(apptCal.month>11){apptCal.month=0;apptCal.year++;}renderApptCal();});
+
+function showDayPanel(dateStr,dayBookings){
+  const dateObj=new Date(dateStr+'T00:00:00');
+  document.getElementById('day-panel-date').textContent=dateObj.toLocaleDateString('en-KE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const content=document.getElementById('day-panel-content');content.innerHTML='';
+  SLOTS.forEach(slot=>{
+    const slotBookings=dayBookings.filter(e=>{const eff=vhkGetEffectiveBooking(e);return eff&&eff.slot===slot.id;});
+    const block=document.createElement('div');block.className='slot-block';
+    const statusLabel=slotBookings.length===0?`<span class="badge badge-active" style="font-size:8px;">Free</span>`:`<span class="badge badge-appointment" style="font-size:8px;">${slotBookings.length} Booking${slotBookings.length>1?'s':''}</span>`;
+    block.innerHTML=`<div class="slot-block-header"><span class="slot-block-time">${slot.label}</span>${statusLabel}</div>`;
+    if(slotBookings.length===0){const free=document.createElement('div');free.className='slot-free';free.innerHTML=`<i class="ti ti-circle-check" style="color:var(--green);opacity:0.5;"></i> No bookings`;block.appendChild(free);}
+    else{slotBookings.forEach(e=>{const bk=document.createElement('div');bk.className='slot-booking';bk.innerHTML=`<div class="sb-name">${esc(e.name||'—')}</div><div class="sb-phone">${esc(e.phone||'—')}</div><div style="display:flex;gap:8px;align-items:center;margin-top:4px;"><span class="badge badge-${e.status||'pending'}">${e.status||'pending'}</span><span class="sb-view" data-id="${e.id}"><i class="ti ti-eye"></i> View</span></div>`;bk.querySelector('.sb-view').addEventListener('click',()=>openDetailModal(e.id));block.appendChild(bk);});}
+    content.appendChild(block);
+  });
+}
+
+document.querySelectorAll('.pill[data-appt-filter]').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.pill[data-appt-filter]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');apptFilter=btn.dataset.apptFilter;renderApptTable();});});
+document.getElementById('appt-search').addEventListener('input',renderApptTable);
+
+function renderApptTable(){
+  const q=document.getElementById('appt-search').value.toLowerCase();
+  let rows=allAppointments;
+  if(apptFilter!=='all')rows=rows.filter(e=>(e.status||'pending')===apptFilter);
+  if(q)rows=rows.filter(e=>(e.name||'').toLowerCase().includes(q)||(e.phone||'').toLowerCase().includes(q));
+  document.getElementById('appt-list-count').textContent=`${rows.length} appointment${rows.length!==1?'s':''}`;
+  const tbody=document.getElementById('appt-tbody');
+  if(!rows.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><i class="ti ti-calendar-off"></i><div style="margin-top:10px;font-size:13px;">No appointments found</div></div></td></tr>`;return;}
+  tbody.innerHTML=rows.map(e=>{
+    const status=e.status||'pending';
+    const effectiveDate=e.rescheduled_date||e.appointment_date;
+    const effectiveSlot=e.rescheduled_slot||e.appointment_slot;
+    const slotLabel=SLOTS.find(s=>s.id===effectiveSlot)?.label||effectiveSlot||'—';
+    const dateStr=effectiveDate?fmtDate(effectiveDate):'—';
+    const acceptBtn=(status==='pending'||status==='rescheduled')?`<button class="btn btn-sm btn-success" data-action="accept" data-id="${e.id}"><i class="ti ti-check"></i></button>`:'';
+    const rejectBtn=status!=='rejected'?`<button class="btn btn-sm btn-danger" data-action="reject" data-id="${e.id}"><i class="ti ti-x"></i></button>`:'';
+    return`<tr><td class="td-name">${esc(e.name||'—')}</td><td class="td-mono">${esc(e.phone||'—')}</td><td><span class="badge badge-appointment">${esc(TYPE_LABELS[e.type]||e.type||'—')}</span></td><td style="white-space:nowrap;">${dateStr}</td><td style="white-space:nowrap;font-size:12px;">${esc(slotLabel)}</td><td><span class="badge badge-${status}">${status}</span></td><td><div class="td-actions"><button class="btn btn-sm btn-outline" data-action="view" data-id="${e.id}"><i class="ti ti-eye"></i> View</button>${acceptBtn}${rejectBtn}<button class="btn btn-sm btn-info" data-action="reschedule" data-id="${e.id}"><i class="ti ti-calendar-event"></i></button></div></td></tr>`;
+  }).join('');
+}
+
+document.getElementById('appt-tbody').addEventListener('click',async e=>{
+  const btn=e.target.closest('[data-action]');if(!btn)return;
+  const{action,id}=btn.dataset;
+  if(action==='view')openDetailModal(id);
+  if(action==='accept')await updateApptStatus(id,'accepted');
+  if(action==='reject')await updateApptStatus(id,'rejected');
+  if(action==='reschedule')openRescheduleModal(id);
+});
+
+/* ─── Auth helper ─── */
+async function ensureAuth() {
   const { data: { session } } = await sb.auth.getSession();
-  if (session) showShell(session.user.email);
-})();
-
-// ─────────────────────────────────────────────────
-//  NAV TABS
-// ─────────────────────────────────────────────────
-document.querySelectorAll('.nav-item[data-tab]').forEach(el => {
-  el.addEventListener('click', () => {
-    const tab = el.dataset.tab;
-    if (tab === 'add') { openAddDrawer(); return; }
-    showTab(tab, el);
-  });
-});
-
-document.getElementById('view-site-link').addEventListener('click', () => {
-  window.open('index.html', '_blank');
-});
-
-function showTab(name, activeEl) {
-  ['properties','add','enquiries','subscribers'].forEach(t => {
-    document.getElementById('tab-'+t).style.display = t === name ? '' : 'none';
-  });
-  document.querySelectorAll('.nav-item[data-tab]').forEach(n => n.classList.remove('active'));
-  if (activeEl) activeEl.classList.add('active');
-
-  if (name === 'enquiries')   loadEnquiries();
-  if (name === 'subscribers') loadSubscribers();
+  if (!session) { toast('Session expired — please sign in again', 'error'); return false; }
+  return true;
 }
 
-document.getElementById('add-prop-btn').addEventListener('click', openAddDrawer);
-document.getElementById('refresh-enq-btn').addEventListener('click', loadEnquiries);
-document.getElementById('refresh-sub-btn').addEventListener('click', loadSubscribers);
-
-// ─────────────────────────────────────────────────
-//  LOAD PROPERTIES
-// ─────────────────────────────────────────────────
-async function loadProperties() {
-  const { data, error } = await sb
-    .from('properties')
-    .select('*, property_images(id, url, sort_order)')
-    .order('created_at', { ascending: false });
-
-  if (error) { toast('Failed to load properties: ' + error.message, 'error'); return; }
-
-  allProperties = data || [];
-  updateStats();
-  renderTable();
-
-  document.getElementById('nav-count-props').textContent = allProperties.length;
-}
-
-function updateStats() {
-  document.getElementById('stat-total').textContent  = allProperties.length;
-  document.getElementById('stat-active').textContent = allProperties.filter(p => p.active).length;
-  document.getElementById('stat-sale').textContent   = allProperties.filter(p => p.type === 'sale').length;
-  document.getElementById('stat-rent').textContent   = allProperties.filter(p => p.type === 'rent').length;
-}
-
-// ─────────────────────────────────────────────────
-//  FILTER + SEARCH
-// ─────────────────────────────────────────────────
-document.getElementById('prop-search').addEventListener('input', renderTable);
-
-document.querySelectorAll('.filter-pills .pill').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-pills .pill').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentFilter = btn.dataset.filter;
-    renderTable();
-  });
-});
-
-function renderTable() {
-  const q = document.getElementById('prop-search').value.toLowerCase();
-  let rows = allProperties;
-
-  if (currentFilter === 'sale')     rows = rows.filter(p => p.type === 'sale');
-  if (currentFilter === 'rent')     rows = rows.filter(p => p.type === 'rent');
-  if (currentFilter === 'inactive') rows = rows.filter(p => !p.active);
-
-  if (q) rows = rows.filter(p =>
-    (p.title||'').toLowerCase().includes(q) ||
-    (p.neighborhood||'').toLowerCase().includes(q) ||
-    (p.price||'').toLowerCase().includes(q)
-  );
-
-  const tbody = document.getElementById('props-tbody');
-  if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="ti ti-building-off"></i><div style="margin-top:10px;font-size:13px;">No properties found</div></div></td></tr>`;
-    return;
-  }
-
-  tbody.innerHTML = rows.map(p => {
-    const imgs = (p.property_images || []).sort((a,b) => a.sort_order - b.sort_order);
-    const cover = imgs[0]?.url;
-    const thumbHtml = cover
-      ? `<img class="prop-thumb" src="${escHtml(cover)}" alt="" loading="lazy">`
-      : `<div class="prop-thumb-placeholder"><i class="ti ti-photo-off"></i></div>`;
-
-    const typeBadge   = p.type === 'rent'
-      ? `<span class="badge badge-rent">Rent</span>`
-      : `<span class="badge badge-sale">Sale</span>`;
-    const statusBadge = p.active
-      ? `<span class="badge badge-active">Active</span>`
-      : `<span class="badge badge-inactive">Inactive</span>`;
-
-    const toggleBtn = p.active
-      ? `<button class="btn btn-sm btn-warning" onclick="toggleActive(${p.id}, false)"><i class="ti ti-eye-off"></i> Deactivate</button>`
-      : `<button class="btn btn-sm btn-success" onclick="toggleActive(${p.id}, true)"><i class="ti ti-eye"></i> Activate</button>`;
-
-    return `<tr>
-      <td>${thumbHtml}</td>
-      <td><div class="td-title">${escHtml(p.title||'—')}</div></td>
-      <td>${escHtml(p.neighborhood||'—')}</td>
-      <td class="td-price">${escHtml(p.price||'—')}</td>
-      <td>${typeBadge}</td>
-      <td>${statusBadge}</td>
-      <td>
-        <div class="td-actions">
-          <button class="btn btn-sm btn-outline" onclick="openEditDrawer(${p.id})"><i class="ti ti-pencil"></i> Edit</button>
-          ${toggleBtn}
-          <button class="btn btn-sm btn-danger" onclick="confirmDelete(${p.id}, '${escHtml((p.title||'').replace(/'/g,"\\\'"))}')"><i class="ti ti-trash"></i></button>
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-// ─────────────────────────────────────────────────
-//  TOGGLE ACTIVE / DEACTIVATE
-// ─────────────────────────────────────────────────
-async function toggleActive(id, value) {
-  const { data, error, count } = await sb
-    .from('properties')
-    .update({ active: value }, { count: 'exact' })
-    .eq('id', id)
-    .select();
-  console.log('toggleActive result:', { data, error, count, id, value });
+/* ─── updateApptStatus: int8-safe ─── */
+async function updateApptStatus(id, status) {
+  if (!await ensureAuth()) return;
+  const sid = parseInt(id, 10);
+  if (!sid) { toast('Invalid enquiry ID', 'error'); return; }
+  const { data, error } = await sb.from('enquiries').update({ status }).eq('id', sid).select('id');
   if (error) { toast('Update failed: ' + error.message, 'error'); return; }
-  if (!data || data.length === 0) {
-    toast('No rows updated — check Supabase RLS policies allow UPDATE', 'error');
-    console.error('RLS likely blocking update. id=', id, 'value=', value);
-    return;
+  if (!data?.length) { toast('Update failed — check Supabase RLS UPDATE policy for authenticated users', 'error'); return; }
+  /* ── CHANGED: compare integers directly, no String() wrapping ── */
+  const idx = allAppointments.findIndex(e => e.id === sid);
+  if (idx > -1) allAppointments[idx].status = status;
+  toast(`Appointment ${status}`, 'success');
+  renderApptTable();
+  document.getElementById('appt-stat-pending').textContent     = allAppointments.filter(e=>!e.status||e.status==='pending').length;
+  document.getElementById('appt-stat-accepted').textContent    = allAppointments.filter(e=>e.status==='accepted').length;
+  document.getElementById('appt-stat-rescheduled').textContent = allAppointments.filter(e=>e.status==='rescheduled').length;
+  document.getElementById('nav-count-appts').textContent       = allAppointments.filter(e=>!e.status||e.status==='pending').length;
+  /* ── CHANGED: openModalId is now an integer too ── */
+  if (openModalId === sid && document.getElementById('detail-modal').classList.contains('open')) {
+    openDetailModal(sid);
   }
-  toast(value ? 'Listing activated' : 'Listing deactivated', 'success');
-  await loadProperties();
 }
 
-// ─────────────────────────────────────────────────
-//  DELETE
-// ─────────────────────────────────────────────────
-function confirmDelete(id, title) {
-  document.getElementById('confirm-title').textContent = 'Delete Property?';
-  document.getElementById('confirm-sub').textContent   = `"${title}" will be permanently removed. This cannot be undone.`;
-  document.getElementById('confirm-ok-btn').textContent = 'Delete';
-  document.getElementById('confirm-ok-btn').className  = 'btn btn-danger';
-  confirmCb = () => deleteProperty(id);
-  document.getElementById('confirm-dialog').classList.add('open');
+/* ═══ ENQUIRIES ═══ */
+async function loadEnquiries(){
+  const{data,error}=await sb.from('enquiries').select('*').neq('type','appointment').order('created_at',{ascending:false});
+  if(error){toast('Failed: '+error.message,'error');return;}
+  /* ── CHANGED: IDs are now int8 — store as plain numbers, no String() wrap ── */
+  allEnquiries = data || [];
+  document.getElementById('nav-count-enq').textContent=allEnquiries.length;
+  renderEnqTable();
 }
+document.querySelectorAll('.pill[data-enq-filter]').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.pill[data-enq-filter]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');enqFilter=btn.dataset.enqFilter;renderEnqTable();});});
+document.getElementById('enq-search').addEventListener('input',renderEnqTable);
 
-async function deleteProperty(id) {
-  // Delete images from storage first
-  const { data: imgs } = await sb.from('property_images').select('url').eq('property_id', id);
-  if (imgs && imgs.length) {
-    const paths = imgs.map(i => storagePathFromUrl(i.url)).filter(Boolean);
-    if (paths.length) await sb.storage.from(_bucket).remove(paths);
+function renderEnqTable(){
+  const q=document.getElementById('enq-search').value.toLowerCase();
+  let rows=allEnquiries;
+  if(enqFilter!=='all')rows=rows.filter(e=>e.type===enqFilter);
+  if(q)rows=rows.filter(e=>(e.name||'').toLowerCase().includes(q)||(e.phone||'').toLowerCase().includes(q)||(e.subject||'').toLowerCase().includes(q));
+  const tbody=document.getElementById('enq-tbody');
+  if(!rows.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><i class="ti ti-mail-off"></i><div style="margin-top:10px;font-size:13px;">No enquiries found</div></div></td></tr>`;return;}
+  tbody.innerHTML=rows.map(e=>{
+    const waLink=e.whatsapp?`<a href="https://wa.me/${e.whatsapp.replace(/\D/g,'')}" target="_blank" style="color:var(--green);"><i class="ti ti-brand-whatsapp"></i> ${esc(e.whatsapp)}</a>`:'—';
+    return`<tr><td class="td-name">${esc(e.name||'—')}</td><td class="td-mono">${esc(e.phone||'—')}</td><td>${waLink}</td><td><span class="badge badge-${e.type||'other'}">${esc(e.type||'other')}</span></td><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(e.property_title||e.subject||'—')}</td><td style="white-space:nowrap;font-size:12px;">${e.created_at?fmtDate(e.created_at.split('T')[0]):'—'}</td><td><button class="btn btn-sm btn-outline" data-action="view" data-id="${e.id}"><i class="ti ti-eye"></i> View</button></td></tr>`;
+  }).join('');
+}
+document.getElementById('enq-tbody').addEventListener('click',e=>{const btn=e.target.closest('[data-action]');if(!btn)return;if(btn.dataset.action==='view')openDetailModal(btn.dataset.id);});
+
+/* ═══ DETAIL MODAL — int8-safe ═══ */
+async function openDetailModal(id) {
+  /* ── CHANGED: enquiries PK is now int8 — use parseInt ── */
+  const sid = parseInt(id);
+  openModalId = sid;
+
+  const { data: fresh, error } = await sb.from('enquiries').select('*').eq('id', sid).single();
+  if (error || !fresh) { toast('Could not load details', 'error'); return; }
+  const e = { ...fresh };
+
+  /* ── CHANGED: compare integers directly ── */
+  const apptIdx = allAppointments.findIndex(x => x.id === sid);
+  if (apptIdx > -1) allAppointments[apptIdx] = e;
+  const enqIdx = allEnquiries.findIndex(x => x.id === sid);
+  if (enqIdx > -1) allEnquiries[enqIdx] = e;
+
+  const isAppt = e.type === 'appointment';
+  const status = e.status || 'pending';
+  const effectiveDate = e.rescheduled_date || e.appointment_date;
+  const effectiveSlot = e.rescheduled_slot || e.appointment_slot;
+  const slotLabel = SLOTS.find(s => s.id === effectiveSlot)?.label || effectiveSlot || '—';
+
+  document.getElementById('modal-title').textContent    = isAppt ? 'Appointment Details' : 'Enquiry Details';
+  document.getElementById('modal-subtitle').textContent = `Submitted ${e.created_at ? new Date(e.created_at).toLocaleString('en-KE') : '—'}`;
+
+  let bodyHtml = '';
+  if (isAppt) {
+    bodyHtml += `<div class="status-row"><span class="status-row-label">Status:</span><span class="badge badge-${status}">${status}</span>${e.rescheduled_date ? `<span style="font-size:12px;color:var(--text-faint);margin-left:8px;">Rescheduled from ${fmtDate(e.appointment_date)} to ${fmtDate(e.rescheduled_date)}</span>` : ''}</div>`;
+    bodyHtml += `<div class="appt-strip">
+      <div class="appt-chip"><div class="appt-chip-label">Date</div><div class="appt-chip-val">${effectiveDate ? fmtDate(effectiveDate) : '—'}</div></div>
+      <div class="appt-chip"><div class="appt-chip-label">Time Slot</div><div class="appt-chip-val">${esc(slotLabel)}</div></div>
+      <div class="appt-chip" style="background:rgba(201,169,110,0.06);border-color:rgba(201,169,110,0.2);">
+        <div class="appt-chip-label" style="color:var(--gold);">Type</div><div class="appt-chip-val">${esc(TYPE_LABELS[e.type] || e.type)}</div>
+      </div></div>`;
   }
+  bodyHtml += `<div class="detail-grid">
+    <div><div class="detail-item-label">Full Name</div><div class="detail-item-val">${esc(e.name || '—')}</div></div>
+    <div><div class="detail-item-label">Phone</div><div class="detail-item-val"><a href="tel:${esc(e.phone || '')}">${esc(e.phone || '—')}</a></div></div>
+    <div><div class="detail-item-label">WhatsApp</div><div class="detail-item-val">${e.whatsapp ? `<a href="https://wa.me/${e.whatsapp.replace(/\D/g,'')}" target="_blank" style="color:var(--green)"><i class="ti ti-brand-whatsapp"></i> ${esc(e.whatsapp)}</a>` : '—'}</div></div>
+    <div><div class="detail-item-label">Enquiry Type</div><div class="detail-item-val"><span class="badge badge-${e.type || 'other'}">${esc(e.type || 'other')}</span></div></div>
+    ${(e.subject || e.property_title) ? `<div style="grid-column:1/-1;"><div class="detail-item-label">Subject / Property</div><div class="detail-item-val">${esc(e.property_title || e.subject || '—')}</div></div>` : ''}
+  </div>`;
+  if (e.message) bodyHtml += `<div class="detail-block"><div class="detail-block-label">Message</div><div class="detail-block-text">${esc(e.message)}</div></div>`;
+  bodyHtml += `<div style="margin-top:16px;">
+    <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-faint);margin-bottom:4px;">Admin Notes</div>
+    <textarea class="notes-area" id="admin-notes-area" placeholder="Add internal notes…"></textarea>
+    <button type="button" class="btn btn-sm btn-outline" style="margin-top:8px;" id="save-notes-btn"><i class="ti ti-device-floppy"></i> Save Notes</button>
+  </div>`;
 
-  const { error } = await sb.from('properties').delete().eq('id', id);
-  if (error) { toast('Delete failed: ' + error.message, 'error'); return; }
-  toast('Property deleted', 'success');
-  await loadProperties();
-}
+  document.getElementById('modal-body').innerHTML = bodyHtml;
+  const notesArea = document.getElementById('admin-notes-area');
+  if (notesArea) notesArea.value = e.admin_notes || '';
 
-function storagePathFromUrl(url) {
-  try {
-    const parts = url.split('/storage/v1/object/public/' + _bucket + '/');
-    return parts[1] ? decodeURIComponent(parts[1]) : null;
-  } catch { return null; }
-}
-
-// ─────────────────────────────────────────────────
-//  CONFIRM DIALOG
-// ─────────────────────────────────────────────────
-document.getElementById('confirm-ok-btn').addEventListener('click', () => {
-  closeConfirm();
-  if (confirmCb) { confirmCb(); confirmCb = null; }
-});
-document.getElementById('confirm-cancel-btn').addEventListener('click', closeConfirm);
-function closeConfirm() { document.getElementById('confirm-dialog').classList.remove('open'); }
-
-// ─────────────────────────────────────────────────
-//  DRAWER — OPEN / CLOSE
-// ─────────────────────────────────────────────────
-function openAddDrawer() {
-  resetDrawer();
-  document.getElementById('drawer-title').textContent = 'Add Property';
-  document.getElementById('edit-id').value = '';
-  document.getElementById('prop-drawer').classList.add('open');
-  // Switch back to properties tab so drawer is visible over it
-  showTab('properties', document.querySelector('.nav-item[data-tab="properties"]'));
-}
-
-async function openEditDrawer(id) {
-  resetDrawer();
-  document.getElementById('drawer-title').textContent = 'Edit Property';
-  document.getElementById('prop-drawer').classList.add('open');
-
-  const { data: p, error } = await sb
-    .from('properties')
-    .select('*, property_images(id, url, sort_order)')
-    .eq('id', id)
-    .single();
-
-  if (error || !p) { toast('Could not load property', 'error'); closeDrawer(); return; }
-
-  document.getElementById('edit-id').value         = p.id;
-  document.getElementById('f-title').value         = p.title || '';
-  document.getElementById('f-type').value          = p.type  || 'sale';
-  document.getElementById('f-neighborhood').value  = p.neighborhood || 'Karen';
-  document.getElementById('f-price').value         = p.price || '';
-  document.getElementById('f-description').value   = p.description || '';
-  document.getElementById('f-beds').value          = p.beds  ?? '';
-  document.getElementById('f-baths').value         = p.baths ?? '';
-  document.getElementById('f-size').value          = p.size  || '';
-  document.getElementById('f-lat').value           = p.lat   ?? '';
-  document.getElementById('f-lng').value           = p.lng   ?? '';
-  document.getElementById('f-active').value        = String(p.active ?? true);
-
-  // Populate existing images
-  existingImages = (p.property_images || []).sort((a,b) => a.sort_order - b.sort_order);
-  renderPreviews();
-
-  if (p.lat && p.lng) updateMapPreview(p.lat, p.lng);
-}
-
-function closeDrawer() {
-  document.getElementById('prop-drawer').classList.remove('open');
-  resetDrawer();
-}
-
-function resetDrawer() {
-  ['f-title','f-price','f-description','f-size','f-gmaps-url','f-lat','f-lng'].forEach(id => {
-    document.getElementById(id).value = '';
-  });
-  document.getElementById('f-beds').value   = '';
-  document.getElementById('f-baths').value  = '';
-  document.getElementById('f-type').value   = 'sale';
-  document.getElementById('f-neighborhood').value = 'Karen';
-  document.getElementById('f-active').value = 'true';
-  document.getElementById('edit-id').value  = '';
-  pendingFiles   = [];
-  existingImages = [];
-  document.getElementById('image-previews').innerHTML = '';
-  document.getElementById('upload-progress').classList.remove('visible');
-  resetMapPreview();
-}
-
-document.getElementById('drawer-close-btn').addEventListener('click', closeDrawer);
-document.getElementById('drawer-cancel-btn').addEventListener('click', closeDrawer);
-document.getElementById('prop-drawer').addEventListener('click', e => { if (e.target === e.currentTarget) closeDrawer(); });
-
-// ─────────────────────────────────────────────────
-//  COORDINATES — Google Maps URL extraction
-// ─────────────────────────────────────────────────
-document.getElementById('f-gmaps-url').addEventListener('input', extractCoordsFromUrl);
-document.getElementById('f-lat').addEventListener('input', onCoordsChange);
-document.getElementById('f-lng').addEventListener('input', onCoordsChange);
-
-function extractCoordsFromUrl() {
-  const url = document.getElementById('f-gmaps-url').value.trim();
-  if (!url) return;
-
-  // Various Google Maps URL formats
-  const patterns = [
-    /@(-?\d+\.?\d*),(-?\d+\.?\d*)/,                      // @lat,lng
-    /[?&]q=(-?\d+\.?\d*),(-?\d+\.?\d*)/,                 // ?q=lat,lng
-    /\/place\/[^/]+\/@(-?\d+\.?\d*),(-?\d+\.?\d*)/,      // /place/.../@lat,lng
-    /ll=(-?\d+\.?\d*),(-?\d+\.?\d*)/,                     // ll=lat,lng
-    /!3d(-?\d+\.?\d*)!4d(-?\d+\.?\d*)/,                   // !3d...!4d
-  ];
-
-  for (const pat of patterns) {
-    const m = url.match(pat);
-    if (m) {
-      document.getElementById('f-lat').value = m[1];
-      document.getElementById('f-lng').value = m[2];
-      updateMapPreview(parseFloat(m[1]), parseFloat(m[2]));
-      return;
-    }
+  let footerHtml = '';
+  if (e.phone) footerHtml += `<a href="tel:${esc(e.phone)}" class="btn btn-outline"><i class="ti ti-phone"></i> Call</a>`;
+  if (e.whatsapp || e.phone) {
+    const waNum = (e.whatsapp || e.phone).replace(/\D/g,'');
+    footerHtml += `<a href="https://wa.me/${waNum}" target="_blank" class="btn btn-success"><i class="ti ti-brand-whatsapp"></i> WhatsApp</a>`;
   }
-  toast('Could not extract coordinates from that URL', 'error');
+  footerHtml += `<div class="modal-footer-spacer"></div>`;
+  if (isAppt) {
+    if (status === 'pending' || status === 'rescheduled') footerHtml += `<button type="button" class="btn btn-success" data-modal-action="accept"><i class="ti ti-check"></i> Accept</button>`;
+    footerHtml += `<button type="button" class="btn btn-info" data-modal-action="reschedule"><i class="ti ti-calendar-event"></i> Reschedule</button>`;
+    if (status !== 'rejected') footerHtml += `<button type="button" class="btn btn-danger" data-modal-action="reject"><i class="ti ti-x"></i> Reject</button>`;
+  }
+  document.getElementById('modal-footer').innerHTML = footerHtml;
+  document.getElementById('detail-modal').dataset.enquiryId = sid;
+
+  document.getElementById('detail-modal').classList.add('open');
 }
 
-function onCoordsChange() {
-  const lat = parseFloat(document.getElementById('f-lat').value);
-  const lng = parseFloat(document.getElementById('f-lng').value);
-  if (!isNaN(lat) && !isNaN(lng)) updateMapPreview(lat, lng);
-}
+/* Delegated handlers for detail modal actions */
+document.getElementById('detail-modal').addEventListener('click', async e => {
+  if (e.target === e.currentTarget) { closeDetailModal(); return; }
 
-function updateMapPreview(lat, lng) {
-  const picker = document.getElementById('map-picker');
-  picker.innerHTML = `<iframe
-    src="https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed"
-    style="width:100%;height:100%;border:none;"
-    loading="lazy"
-    referrerpolicy="no-referrer-when-downgrade"
-    allowfullscreen>
-  </iframe>`;
-}
-
-function resetMapPreview() {
-  document.getElementById('map-picker').innerHTML = `
-    <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-faint);font-size:12px;flex-direction:column;gap:8px;">
-      <i class="ti ti-map-pin" style="font-size:24px;color:var(--gold);opacity:0.3;"></i>
-      <span>Map preview will appear when coordinates are set</span>
-    </div>`;
-}
-
-// ─────────────────────────────────────────────────
-//  IMAGE UPLOAD
-// ─────────────────────────────────────────────────
-const uploadZone  = document.getElementById('upload-zone');
-const fileInput   = document.getElementById('f-images');
-
-fileInput.addEventListener('change', () => handleFileSelect(fileInput.files));
-
-uploadZone.addEventListener('dragover',  e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
-uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
-uploadZone.addEventListener('drop', e => {
-  e.preventDefault();
-  uploadZone.classList.remove('drag-over');
-  handleFileSelect(e.dataTransfer.files);
-});
-
-function handleFileSelect(files) {
-  [...files].forEach(f => {
-    if (f.size > 5 * 1024 * 1024) { toast(`${f.name} exceeds 5 MB`, 'error'); return; }
-    pendingFiles.push(f);
-  });
-  renderPreviews();
-  fileInput.value = '';
-}
-
-function renderPreviews() {
-  const container = document.getElementById('image-previews');
-  container.innerHTML = '';
-
-  // Existing (already saved) images
-  existingImages.forEach((img, i) => {
-    const div = document.createElement('div');
-    div.className = 'img-preview';
-    div.innerHTML = `
-      <img src="${escHtml(img.url)}" alt="">
-      ${i === 0 && pendingFiles.length === 0 ? '<span class="img-preview-main-badge">Cover</span>' : ''}
-      <button class="img-preview-remove" data-existing="${img.id}" title="Remove">✕</button>`;
-    container.appendChild(div);
-    div.querySelector('.img-preview-remove').addEventListener('click', () => {
-      existingImages = existingImages.filter(x => x.id !== img.id);
-      renderPreviews();
-    });
-  });
-
-  // New pending files
-  pendingFiles.forEach((f, i) => {
-    const url = URL.createObjectURL(f);
-    const div = document.createElement('div');
-    div.className = 'img-preview';
-    const isFirstOverall = existingImages.length === 0 && i === 0;
-    div.innerHTML = `
-      <img src="${url}" alt="">
-      ${isFirstOverall ? '<span class="img-preview-main-badge">Cover</span>' : ''}
-      <button class="img-preview-remove" data-pending="${i}" title="Remove">✕</button>`;
-    container.appendChild(div);
-    div.querySelector('.img-preview-remove').addEventListener('click', () => {
-      pendingFiles.splice(i, 1);
-      renderPreviews();
-    });
-  });
-}
-
-// ─────────────────────────────────────────────────
-//  SAVE PROPERTY
-// ─────────────────────────────────────────────────
-document.getElementById('save-btn').addEventListener('click', saveProperty);
-
-async function saveProperty() {
-  const title = document.getElementById('f-title').value.trim();
-  if (!title) { toast('Property title is required', 'error'); return; }
-
-  const editId = document.getElementById('edit-id').value;
-  const isEdit = !!editId;
-
-  const payload = {
-    title,
-    type:         document.getElementById('f-type').value,
-    neighborhood: document.getElementById('f-neighborhood').value,
-    price:        document.getElementById('f-price').value.trim(),
-    description:  document.getElementById('f-description').value.trim(),
-    beds:         parseInt(document.getElementById('f-beds').value)  || null,
-    baths:        parseInt(document.getElementById('f-baths').value) || null,
-    size:         document.getElementById('f-size').value.trim() || null,
-    lat:          parseFloat(document.getElementById('f-lat').value)  || null,
-    lng:          parseFloat(document.getElementById('f-lng').value)  || null,
-    active:       document.getElementById('f-active').value === 'true',
-  };
-
-  const saveBtn = document.getElementById('save-btn');
-  saveBtn.disabled = true;
-  saveBtn.innerHTML = '<div class="spinner"></div> Saving…';
-
-  let propertyId = editId ? parseInt(editId) : null;
-
-  try {
-    if (isEdit) {
-      const { data: updData, error, count } = await sb
-        .from('properties')
-        .update(payload, { count: 'exact' })
-        .eq('id', propertyId)
-        .select();
-      console.log('saveProperty update result:', { updData, error, count, propertyId });
-      if (error) throw error;
-      if (!updData || updData.length === 0) throw new Error('No rows updated — RLS may be blocking this. Ensure UPDATE policy exists for authenticated users.');
-
-      // Delete removed existing images from DB (cascade handles storage is manual)
-      const { data: currentImgs } = await sb.from('property_images').select('id, url').eq('property_id', propertyId);
-      const keptIds = existingImages.map(i => i.id);
-      const toDelete = (currentImgs || []).filter(i => !keptIds.includes(i.id));
-      if (toDelete.length) {
-        const paths = toDelete.map(i => storagePathFromUrl(i.url)).filter(Boolean);
-        if (paths.length) await sb.storage.from(_bucket).remove(paths);
-        await sb.from('property_images').delete().in('id', toDelete.map(i => i.id));
-      }
-    } else {
-      const { data, error } = await sb.from('properties').insert(payload).select('id').single();
-      if (error) throw error;
-      propertyId = data.id;
-    }
-
-    // Upload new images
-    if (pendingFiles.length) {
-      const prog = document.getElementById('upload-progress');
-      const txt  = document.getElementById('upload-progress-text');
-      prog.classList.add('visible');
-
-      const sortBase = existingImages.length;
-
-      for (let i = 0; i < pendingFiles.length; i++) {
-        const f   = pendingFiles[i];
-        const ext = f.name.split('.').pop();
-        const path = `${propertyId}/${Date.now()}_${i}.${ext}`;
-        txt.textContent = `Uploading image ${i+1} of ${pendingFiles.length}…`;
-
-        const { error: upErr } = await sb.storage.from(_bucket).upload(path, f, { upsert: true });
-        if (upErr) throw new Error('Image upload failed: ' + upErr.message);
-
-        const { data: urlData } = sb.storage.from(_bucket).getPublicUrl(path);
-        await sb.from('property_images').insert({
-          property_id: propertyId,
-          url:         urlData.publicUrl,
-          sort_order:  sortBase + i,
-        });
-      }
-      prog.classList.remove('visible');
-    }
-
-    toast(isEdit ? 'Property updated' : 'Property added', 'success');
-    closeDrawer();
-    await loadProperties();
-
-  } catch(err) {
-    toast(err.message || 'Save failed', 'error');
-  } finally {
+  const saveBtn = e.target.closest('#save-notes-btn');
+  if (saveBtn) {
+    e.preventDefault();
+    if (!await ensureAuth()) return;
+    const sid = parseInt(document.getElementById('detail-modal').dataset.enquiryId, 10);
+    const notesEl = document.getElementById('admin-notes-area');
+    if (!sid || !notesEl) return;
+    saveBtn.disabled = true;
+    const { data, error } = await sb.from('enquiries').update({ admin_notes: notesEl.value }).eq('id', sid).select('id');
     saveBtn.disabled = false;
-    saveBtn.innerHTML = '<i class="ti ti-device-floppy"></i> Save Property';
+    if (error) { toast('Failed to save notes: ' + error.message, 'error'); return; }
+    if (!data?.length) { toast('Failed to save notes — check RLS UPDATE policy', 'error'); return; }
+    const apptIdx = allAppointments.findIndex(x => x.id === sid);
+    const enqIdx  = allEnquiries.findIndex(x => x.id === sid);
+    if (apptIdx > -1) allAppointments[apptIdx].admin_notes = notesEl.value;
+    if (enqIdx > -1)  allEnquiries[enqIdx].admin_notes = notesEl.value;
+    toast('Notes saved', 'success');
+    return;
+  }
+
+  const actionBtn = e.target.closest('[data-modal-action]');
+  if (!actionBtn) return;
+  e.preventDefault();
+  const sid = parseInt(document.getElementById('detail-modal').dataset.enquiryId, 10);
+  if (!sid) return;
+  const action = actionBtn.dataset.modalAction;
+  if (action === 'accept') await updateApptStatus(sid, 'accepted');
+  if (action === 'reject') await updateApptStatus(sid, 'rejected');
+  if (action === 'reschedule') { closeDetailModal(); openRescheduleModal(sid); }
+});
+
+function closeDetailModal() { document.getElementById('detail-modal').classList.remove('open'); openModalId = null; }
+document.getElementById('modal-close-btn').addEventListener('click', closeDetailModal);
+
+/* ═══ RESCHEDULE MODAL ═══ */
+async function openRescheduleModal(id){
+  /* ── CHANGED: store enquiryId as integer ── */
+  const sid = parseInt(id);
+  rsCal.enquiryId = sid;
+  rsCal.selectedDate=null;rsCal.selectedSlot=null;rsCal.bookings={};
+  /* ── CHANGED: compare integers directly ── */
+  const e = allAppointments.find(x => x.id === sid);
+  document.getElementById('reschedule-subtitle').textContent=e?`For: ${e.name}`:'';
+  document.getElementById('reschedule-save-btn').disabled=true;
+  document.getElementById('rs-slot-section').style.display='none';
+  const now=new Date();rsCal.year=now.getFullYear();rsCal.month=now.getMonth();
+  await rsLoadMonthBookings();renderRsCal();
+  document.getElementById('reschedule-modal').classList.add('open');
+}
+
+async function rsLoadMonthBookings(){
+  const monthKey=`${rsCal.year}-${String(rsCal.month+1).padStart(2,'0')}`;
+  const startDate=monthKey+'-01';
+  const lastDay=new Date(rsCal.year,rsCal.month+1,0).getDate();
+  const endDate=monthKey+'-'+String(lastDay).padStart(2,'0');
+  const{data}=await sb.from('enquiries').select('id, appointment_date, appointment_slot, rescheduled_date, rescheduled_slot, status').not('appointment_slot','is',null).neq('status','rejected');
+  const fullMap=vhkBuildSlotMap(data||[],rsCal.enquiryId);
+  rsCal.bookings=vhkFilterMapToMonth(fullMap,startDate,endDate);
+}
+
+function renderRsCal(){
+  document.getElementById('rs-cal-month').textContent=MONTH_NAMES[rsCal.month]+' '+rsCal.year;
+  const grid=document.getElementById('rs-cal-grid');grid.innerHTML='';
+  const today=new Date();today.setHours(0,0,0,0);
+  const firstDay=new Date(rsCal.year,rsCal.month,1).getDay();const daysInMo=new Date(rsCal.year,rsCal.month+1,0).getDate();
+  for(let i=0;i<firstDay;i++){const b=document.createElement('div');b.className='cal-cell empty';grid.appendChild(b);}
+  for(let d=1;d<=daysInMo;d++){
+    const cellDate=new Date(rsCal.year,rsCal.month,d);const dateStr=toDateStr(cellDate);
+    const bookedSlots=rsCal.bookings[dateStr]||[];const isBlocked=blockedDatesSet.has(dateStr);
+    const isFull=isBlocked||bookedSlots.length>=3;
+    const isPast=cellDate<today;const isToday=cellDate.getTime()===today.getTime();
+    const cell=document.createElement('div');cell.className='cal-cell';cell.textContent=d;
+    if(isPast)cell.classList.add('past');if(isToday)cell.classList.add('today');
+    if(isBlocked)cell.classList.add('blocked');
+    if(dateStr===rsCal.selectedDate)cell.classList.add('selected-day');
+    if(!isPast&&!isFull){cell.classList.add('has-slots');cell.addEventListener('click',()=>{rsCal.selectedDate=dateStr;rsCal.selectedSlot=null;document.getElementById('reschedule-save-btn').disabled=true;renderRsCal();renderRsSlots(bookedSlots);});}
+    else if(!isPast&&isFull&&!isBlocked){cell.style.opacity='0.3';}
+    grid.appendChild(cell);
   }
 }
 
-// ─────────────────────────────────────────────────
-//  ENQUIRIES
-// ─────────────────────────────────────────────────
-async function loadEnquiries() {
-  document.getElementById('enq-tbody').innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="ti ti-loader" style="animation:spin 1s linear infinite;"></i></div></td></tr>`;
-
-  const { data, error } = await sb
-    .from('enquiries')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    toast('Failed to load enquiries: ' + error.message, 'error');
-    document.getElementById('enq-tbody').innerHTML = `<tr><td colspan="7"><div class="empty-state">Error loading enquiries.</div></td></tr>`;
-    return;
-  }
-
-  document.getElementById('nav-count-enq').textContent = (data||[]).length;
-
-  if (!data || !data.length) {
-    document.getElementById('enq-tbody').innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="ti ti-mail-off"></i><div style="margin-top:10px;font-size:13px;">No enquiries yet</div></div></td></tr>`;
-    return;
-  }
-
-  document.getElementById('enq-tbody').innerHTML = data.map(e => {
-    const type = e.type || 'general';
-    const typeBadge = `<span class="badge badge-${type}">${escHtml(type)}</span>`;
-    const dateStr = e.created_at ? new Date(e.created_at).toLocaleDateString('en-KE', { day:'2-digit', month:'short', year:'numeric' }) : '—';
-    const waLink  = e.whatsapp ? `<a href="https://wa.me/${e.whatsapp.replace(/\D/g,'')}" target="_blank" style="color:var(--green);"><i class="ti ti-brand-whatsapp"></i> ${escHtml(e.whatsapp)}</a>` : '—';
-
-    return `<tr>
-      <td style="color:var(--text);">${escHtml(e.name||'—')}</td>
-      <td class="enq-phone">${escHtml(e.phone||'—')}</td>
-      <td>${waLink}</td>
-      <td>${typeBadge}</td>
-      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(e.property_title || e.subject || '—')}</td>
-      <td><div class="enq-msg" title="${escHtml(e.message||'')}">${escHtml(e.message||'—')}</div></td>
-      <td style="white-space:nowrap;">${dateStr}</td>
-    </tr>`;
-  }).join('');
+function renderRsSlots(bookedSlots){
+  const section=document.getElementById('rs-slot-section');section.style.display='block';
+  const picker=document.getElementById('rs-slot-picker');picker.innerHTML='';
+  SLOTS.forEach(slot=>{const taken=bookedSlots.includes(slot.id);const chip=document.createElement('div');chip.className='slot-chip'+(taken?' taken':'');chip.textContent=slot.label;if(!taken)chip.addEventListener('click',()=>{document.querySelectorAll('.slot-chip').forEach(c=>c.classList.remove('selected'));chip.classList.add('selected');rsCal.selectedSlot=slot.id;document.getElementById('reschedule-save-btn').disabled=false;});picker.appendChild(chip);});
 }
 
-// ─────────────────────────────────────────────────
-//  SUBSCRIBERS
-// ─────────────────────────────────────────────────
-async function loadSubscribers() {
-  document.getElementById('sub-tbody').innerHTML = `<tr><td colspan="2"><div class="empty-state"><i class="ti ti-loader" style="animation:spin 1s linear infinite;"></i></div></td></tr>`;
+document.getElementById('rs-cal-prev').addEventListener('click',async()=>{const now=new Date();if(rsCal.year===now.getFullYear()&&rsCal.month<=now.getMonth())return;rsCal.month--;if(rsCal.month<0){rsCal.month=11;rsCal.year--;}await rsLoadMonthBookings();renderRsCal();});
+document.getElementById('rs-cal-next').addEventListener('click',async()=>{rsCal.month++;if(rsCal.month>11){rsCal.month=0;rsCal.year++;}await rsLoadMonthBookings();renderRsCal();});
 
-  const { data, error } = await sb
-    .from('subscribers')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    toast('Failed to load subscribers: ' + error.message, 'error');
-    return;
+/* ─── Reschedule save — int8-safe ─── */
+document.getElementById('reschedule-save-btn').addEventListener('click', async () => {
+  if (!rsCal.selectedDate || !rsCal.selectedSlot || !rsCal.enquiryId) return;
+  if (!await ensureAuth()) return;
+  const btn = document.getElementById('reschedule-save-btn');
+  btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Saving…';
+  const { data, error } = await sb.from('enquiries').update({
+    rescheduled_date: rsCal.selectedDate,
+    rescheduled_slot: rsCal.selectedSlot,
+    status: 'rescheduled'
+  }).eq('id', rsCal.enquiryId).select('id');
+  btn.innerHTML = '<i class="ti ti-calendar-check"></i> Confirm Reschedule';
+  if (error) { btn.disabled = false; toast('Reschedule failed: ' + error.message, 'error'); return; }
+  if (!data?.length) { btn.disabled = false; toast('Reschedule failed — check RLS UPDATE policy', 'error'); return; }
+  /* ── CHANGED: compare integers directly ── */
+  const idx = allAppointments.findIndex(e => e.id === rsCal.enquiryId);
+  if (idx > -1) {
+    allAppointments[idx].rescheduled_date = rsCal.selectedDate;
+    allAppointments[idx].rescheduled_slot = rsCal.selectedSlot;
+    allAppointments[idx].status = 'rescheduled';
   }
+  apptCal.bookings = {};
+  allAppointments.forEach(e => {
+    const eff = vhkGetEffectiveBooking(e);
+    if (!eff) return;
+    if (!apptCal.bookings[eff.date]) apptCal.bookings[eff.date] = [];
+    apptCal.bookings[eff.date].push(e);
+  });
+  renderApptCal(); renderApptTable();
+  document.getElementById('appt-stat-pending').textContent     = allAppointments.filter(e=>!e.status||e.status==='pending').length;
+  document.getElementById('appt-stat-accepted').textContent    = allAppointments.filter(e=>e.status==='accepted').length;
+  document.getElementById('appt-stat-rescheduled').textContent = allAppointments.filter(e=>e.status==='rescheduled').length;
+  document.getElementById('nav-count-appts').textContent       = allAppointments.filter(e=>!e.status||e.status==='pending').length;
+  toast('Appointment rescheduled', 'success');
+  closeRescheduleModal();
+});
 
-  if (!data || !data.length) {
-    document.getElementById('sub-tbody').innerHTML = `<tr><td colspan="2"><div class="empty-state"><i class="ti ti-users-off"></i><div style="margin-top:10px;font-size:13px;">No subscribers yet</div></div></td></tr>`;
-    return;
-  }
+function closeRescheduleModal(){document.getElementById('reschedule-modal').classList.remove('open');}
+document.getElementById('reschedule-close-btn').addEventListener('click',closeRescheduleModal);
+document.getElementById('reschedule-cancel-btn').addEventListener('click',closeRescheduleModal);
+document.getElementById('reschedule-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeRescheduleModal();});
 
-  document.getElementById('sub-tbody').innerHTML = data.map(s => {
-    const dateStr = s.created_at ? new Date(s.created_at).toLocaleDateString('en-KE', { day:'2-digit', month:'short', year:'numeric' }) : '—';
-    return `<tr>
-      <td style="color:var(--text);">${escHtml(s.email||'—')}</td>
-      <td>${dateStr}</td>
-    </tr>`;
-  }).join('');
+/* ═══ SUBSCRIBERS ═══ */
+async function loadSubscribers(){
+  const{data,error}=await sb.from('subscribers').select('*').order('created_at',{ascending:false});
+  if(error){toast('Failed: '+error.message,'error');return;}
+  if(!data?.length){document.getElementById('sub-tbody').innerHTML=`<tr><td colspan="2"><div class="empty-state"><i class="ti ti-users-off"></i><div style="margin-top:10px;font-size:13px;">No subscribers yet</div></div></td></tr>`;return;}
+  document.getElementById('sub-tbody').innerHTML=data.map(s=>`<tr><td style="color:var(--text);">${esc(s.email||'—')}</td><td>${s.created_at?fmtDate(s.created_at.split('T')[0]):'—'}</td></tr>`).join('');
 }
 
-// ─────────────────────────────────────────────────
-//  TOAST
-// ─────────────────────────────────────────────────
+/* ═══ PROPERTY DRAWER ═══ */
+function openAddDrawer(){resetDrawer();document.getElementById('drawer-title').textContent='Add Property';document.getElementById('edit-id').value='';document.getElementById('prop-drawer').classList.add('open');showTab('properties',document.querySelector('.nav-item[data-tab="properties"]'));}
+async function openEditDrawer(id){
+  const pid = parseInt(id);
+  resetDrawer();document.getElementById('drawer-title').textContent='Edit Property';document.getElementById('prop-drawer').classList.add('open');
+  const{data:p,error}=await sb.from('properties').select('*, property_images(id, url, sort_order)').eq('id',pid).single();
+  if(error||!p){toast('Could not load property','error');closeDrawer();return;}
+  document.getElementById('edit-id').value=p.id;
+  document.getElementById('f-title').value=p.title||'';document.getElementById('f-type').value=p.type||'sale';
+  document.getElementById('f-neighborhood').value=p.neighborhood||'Karen';document.getElementById('f-price').value=p.price||'';
+  document.getElementById('f-description').value=p.description||'';document.getElementById('f-beds').value=p.beds??'';
+  document.getElementById('f-baths').value=p.baths??'';document.getElementById('f-size').value=p.size||'';
+  document.getElementById('f-lat').value=p.lat??'';document.getElementById('f-lng').value=p.lng??'';
+  document.getElementById('f-active').value=String(p.active??true);
+  setSelectedAmenities(p.amenities||[]);
+  videoLinks=Array.isArray(p.video_links)?[...p.video_links]:[];renderVideoLinks();
+  existingImages=(p.property_images||[]).sort((a,b)=>a.sort_order-b.sort_order);renderPreviews();
+  if(p.lat&&p.lng)updateMapPreview(p.lat,p.lng);
+}
+function closeDrawer(){document.getElementById('prop-drawer').classList.remove('open');resetDrawer();}
+function resetDrawer(){
+  ['f-title','f-price','f-description','f-size','f-gmaps-url','f-lat','f-lng'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('f-beds').value='';document.getElementById('f-baths').value='';
+  document.getElementById('f-type').value='sale';document.getElementById('f-neighborhood').value='Karen';
+  document.getElementById('f-active').value='true';document.getElementById('edit-id').value='';
+  pendingFiles=[];existingImages=[];
+  document.getElementById('image-previews').innerHTML='';
+  document.getElementById('upload-progress').classList.remove('visible');
+  resetMapPreview();clearAmenities();videoLinks=[];renderVideoLinks();
+}
+document.getElementById('drawer-close-btn').addEventListener('click',closeDrawer);
+document.getElementById('drawer-cancel-btn').addEventListener('click',closeDrawer);
+document.getElementById('prop-drawer').addEventListener('click',e=>{if(e.target===e.currentTarget)closeDrawer();});
+document.getElementById('f-gmaps-url').addEventListener('input',extractCoords);
+document.getElementById('f-lat').addEventListener('input',onCoordsChange);
+document.getElementById('f-lng').addEventListener('input',onCoordsChange);
+function extractCoords(){
+  const url=document.getElementById('f-gmaps-url').value.trim();
+  const patterns=[/@(-?\d+\.?\d*),(-?\d+\.?\d*)/,/[?&]q=(-?\d+\.?\d*),(-?\d+\.?\d*)/,/\/place\/[^/]+\/@(-?\d+\.?\d*),(-?\d+\.?\d*)/,/ll=(-?\d+\.?\d*),(-?\d+\.?\d*)/,/!3d(-?\d+\.?\d*)!4d(-?\d+\.?\d*)/];
+  for(const pat of patterns){const m=url.match(pat);if(m){document.getElementById('f-lat').value=m[1];document.getElementById('f-lng').value=m[2];updateMapPreview(parseFloat(m[1]),parseFloat(m[2]));return;}}
+}
+function onCoordsChange(){const lat=parseFloat(document.getElementById('f-lat').value),lng=parseFloat(document.getElementById('f-lng').value);if(!isNaN(lat)&&!isNaN(lng))updateMapPreview(lat,lng);}
+function updateMapPreview(lat,lng){document.getElementById('map-picker').innerHTML=`<iframe src="https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed" style="width:100%;height:100%;border:none;" loading="lazy" allowfullscreen></iframe>`;}
+function resetMapPreview(){document.getElementById('map-picker').innerHTML=`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-faint);font-size:12px;flex-direction:column;gap:8px;"><i class="ti ti-map-pin" style="font-size:24px;color:var(--gold);opacity:0.3;"></i><span>Map preview appears when coordinates are set</span></div>`;}
+const uploadZone=document.getElementById('upload-zone');const fileInput=document.getElementById('f-images');
+fileInput.addEventListener('change',()=>handleFileSelect(fileInput.files));
+uploadZone.addEventListener('dragover',e=>{e.preventDefault();uploadZone.classList.add('drag-over');});
+uploadZone.addEventListener('dragleave',()=>uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop',e=>{e.preventDefault();uploadZone.classList.remove('drag-over');handleFileSelect(e.dataTransfer.files);});
+function handleFileSelect(files){[...files].forEach(f=>{if(f.size>5*1024*1024){toast(`${f.name} exceeds 5 MB`,'error');return;}pendingFiles.push(f);});renderPreviews();fileInput.value='';}
+function renderPreviews(){
+  const container=document.getElementById('image-previews');container.innerHTML='';
+  existingImages.forEach((img,i)=>{const div=document.createElement('div');div.className='img-preview';div.innerHTML=`<img src="${esc(img.url)}" alt="">${i===0&&!pendingFiles.length?'<span class="img-preview-main-badge">Cover</span>':''}<button class="img-preview-remove" title="Remove">✕</button>`;container.appendChild(div);div.querySelector('.img-preview-remove').addEventListener('click',()=>{existingImages=existingImages.filter(x=>x.id!==img.id);renderPreviews();});});
+  pendingFiles.forEach((f,i)=>{const url=URL.createObjectURL(f);const div=document.createElement('div');div.className='img-preview';const isCover=existingImages.length===0&&i===0;div.innerHTML=`<img src="${url}" alt="">${isCover?'<span class="img-preview-main-badge">Cover</span>':''}<button class="img-preview-remove" title="Remove">✕</button>`;container.appendChild(div);div.querySelector('.img-preview-remove').addEventListener('click',()=>{pendingFiles.splice(i,1);renderPreviews();});});
+}
+document.getElementById('save-btn').addEventListener('click',async()=>{
+  const title=document.getElementById('f-title').value.trim();
+  if(!title){toast('Property title is required','error');return;}
+  const editIdRaw=document.getElementById('edit-id').value;
+  const isEdit=!!editIdRaw;
+  const propertyIdForEdit = isEdit ? parseInt(editIdRaw) : null;
+  const cleanVideoLinks=videoLinks.filter(v=>v.trim());
+  const payload={title,type:document.getElementById('f-type').value,neighborhood:document.getElementById('f-neighborhood').value,price:document.getElementById('f-price').value.trim(),description:document.getElementById('f-description').value.trim(),beds:parseInt(document.getElementById('f-beds').value)||null,baths:parseInt(document.getElementById('f-baths').value)||null,size:document.getElementById('f-size').value.trim()||null,lat:parseFloat(document.getElementById('f-lat').value)||null,lng:parseFloat(document.getElementById('f-lng').value)||null,active:document.getElementById('f-active').value==='true',amenities:getSelectedAmenities(),video_links:cleanVideoLinks};
+  const saveBtn=document.getElementById('save-btn');saveBtn.disabled=true;saveBtn.innerHTML='<div class="spinner"></div> Saving…';
+  let propertyId = propertyIdForEdit;
+  try{
+    if(isEdit){
+      const{data:upd,error}=await sb.from('properties').update(payload).eq('id',propertyId).select();
+      if(error)throw error;
+      if(!upd?.length)throw new Error('No rows updated — check RLS UPDATE policy');
+      const{data:ci}=await sb.from('property_images').select('id,url').eq('property_id',propertyId);
+      const keptIds=existingImages.map(i=>i.id);
+      const toDel=(ci||[]).filter(i=>!keptIds.includes(i.id));
+      if(toDel.length){const paths=toDel.map(i=>storagePathFromUrl(i.url)).filter(Boolean);if(paths.length)await sb.storage.from(_bucket).remove(paths);await sb.from('property_images').delete().in('id',toDel.map(i=>i.id));}
+    } else {
+      const{data,error}=await sb.from('properties').insert(payload).select('id').single();
+      if(error)throw error;
+      propertyId=data.id;
+    }
+    if(pendingFiles.length){const prog=document.getElementById('upload-progress');const txt=document.getElementById('upload-progress-text');prog.classList.add('visible');const sortBase=existingImages.length;for(let i=0;i<pendingFiles.length;i++){const f=pendingFiles[i];const ext=f.name.split('.').pop();const path=`${propertyId}/${Date.now()}_${i}.${ext}`;txt.textContent=`Uploading ${i+1} of ${pendingFiles.length}…`;const{error:upErr}=await sb.storage.from(_bucket).upload(path,f,{upsert:true});if(upErr)throw new Error('Upload failed: '+upErr.message);const{data:urlData}=sb.storage.from(_bucket).getPublicUrl(path);await sb.from('property_images').insert({property_id:propertyId,url:urlData.publicUrl,sort_order:sortBase+i});}prog.classList.remove('visible');}
+    toast(isEdit?'Property updated':'Property added','success');closeDrawer();await loadProperties();
+  }catch(err){toast(err.message||'Save failed','error');}
+  finally{saveBtn.disabled=false;saveBtn.innerHTML='<i class="ti ti-device-floppy"></i> Save Property';}
+});
+
+/* ═══ CONFIRM DIALOG ═══ */
+function showConfirm(title,sub,okLabel,okClass,cb){document.getElementById('confirm-title').textContent=title;document.getElementById('confirm-sub').textContent=sub;const okBtn=document.getElementById('confirm-ok-btn');okBtn.textContent=okLabel;okBtn.className='btn '+okClass;confirmCb=cb;document.getElementById('confirm-dialog').classList.add('open');}
+document.getElementById('confirm-ok-btn').addEventListener('click',()=>{closeConfirm();if(confirmCb){confirmCb();confirmCb=null;}});
+document.getElementById('confirm-cancel-btn').addEventListener('click',closeConfirm);
+function closeConfirm(){document.getElementById('confirm-dialog').classList.remove('open');}
+
+/* ═══ TOAST ═══ */
 let toastTimer;
-function toast(msg, type = 'success') {
-  const el   = document.getElementById('toast');
-  const icon = document.getElementById('toast-icon');
-  const txt  = document.getElementById('toast-msg');
+function toast(msg,type='success'){const el=document.getElementById('toast');const icon=document.getElementById('toast-icon');const txt=document.getElementById('toast-msg');el.className='';icon.className='';if(type==='success'){el.classList.add('toast-success');icon.className='ti ti-check toast-icon-success';}else{el.classList.add('toast-error');icon.className='ti ti-alert-circle toast-icon-error';}txt.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3500);}
 
-  el.className = '';
-  icon.className = '';
-
-  if (type === 'success') {
-    el.classList.add('toast-success');
-    icon.className = 'ti ti-check toast-icon-success';
-  } else {
-    el.classList.add('toast-error');
-    icon.className = 'ti ti-alert-circle toast-icon-error';
-  }
-
-  txt.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
-}
-
-// ─────────────────────────────────────────────────
-//  HELPERS
-// ─────────────────────────────────────────────────
-function escHtml(s) {
-  return String(s)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;')
-    .replace(/'/g,'&#39;');
-}
+/* ═══ HELPERS ═══ */
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function toDateStr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function fmtDate(dateStr){if(!dateStr)return'—';try{return new Date(dateStr+'T00:00:00').toLocaleDateString('en-KE',{day:'2-digit',month:'short',year:'numeric'});}catch{return dateStr;}}
+function storagePathFromUrl(url){try{const parts=url.split('/storage/v1/object/public/'+_bucket+'/');return parts[1]?decodeURIComponent(parts[1]):null;}catch{return null;}}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();closeConfirm();closeDetailModal();closeRescheduleModal();}});
 </script>
 </body>
 </html>
