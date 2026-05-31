@@ -1355,6 +1355,7 @@ function renderPreviews(){
   pendingFiles.forEach((f,i)=>{const url=URL.createObjectURL(f);const div=document.createElement('div');div.className='img-preview';const isCover=existingImages.length===0&&i===0;div.innerHTML=`<img src="${url}" alt="">${isCover?'<span class="img-preview-main-badge">Cover</span>':''}<button class="img-preview-remove" title="Remove">✕</button>`;container.appendChild(div);div.querySelector('.img-preview-remove').addEventListener('click',()=>{pendingFiles.splice(i,1);renderPreviews();});});
 }
 document.getElementById('save-btn').addEventListener('click',async()=>{
+  if(!await ensureAuth())return;
   const title=document.getElementById('f-title').value.trim();
   if(!title){toast('Property title is required','error');return;}
   const editIdRaw=document.getElementById('edit-id').value;
@@ -1378,7 +1379,7 @@ document.getElementById('save-btn').addEventListener('click',async()=>{
       if(error)throw error;
       propertyId=data.id;
     }
-    if(pendingFiles.length){const prog=document.getElementById('upload-progress');const txt=document.getElementById('upload-progress-text');prog.classList.add('visible');const sortBase=existingImages.length;for(let i=0;i<pendingFiles.length;i++){const f=pendingFiles[i];const ext=f.name.split('.').pop();const path=`${propertyId}/${Date.now()}_${i}.${ext}`;txt.textContent=`Uploading ${i+1} of ${pendingFiles.length}…`;const{error:upErr}=await sb.storage.from(_bucket).upload(path,f,{upsert:true});if(upErr)throw new Error('Upload failed: '+upErr.message);const{data:urlData}=sb.storage.from(_bucket).getPublicUrl(path);await sb.from('property_images').insert({property_id:propertyId,url:urlData.publicUrl,sort_order:sortBase+i});}prog.classList.remove('visible');}
+    if(pendingFiles.length){const prog=document.getElementById('upload-progress');const txt=document.getElementById('upload-progress-text');prog.classList.add('visible');const sortBase=existingImages.length;for(let i=0;i<pendingFiles.length;i++){const f=pendingFiles[i];const ext=f.name.split('.').pop();const path=`${propertyId}/${Date.now()}_${i}.${ext}`;txt.textContent=`Uploading ${i+1} of ${pendingFiles.length}…`;const{error:upErr}=await sb.storage.from(_bucket).upload(path,f,{upsert:true});if(upErr){const msg=upErr.message||'';if(/bucket not found/i.test(msg))throw new Error('Upload failed: create the "property-images" bucket in Supabase (run supabase/storage.sql)');throw new Error('Upload failed: '+msg);}const{data:urlData}=sb.storage.from(_bucket).getPublicUrl(path);await sb.from('property_images').insert({property_id:propertyId,url:urlData.publicUrl,sort_order:sortBase+i});}prog.classList.remove('visible');}
     toast(isEdit?'Property updated':'Property added','success');closeDrawer();await loadProperties();
   }catch(err){toast(err.message||'Save failed','error');}
   finally{saveBtn.disabled=false;saveBtn.innerHTML='<i class="ti ti-device-floppy"></i> Save Property';}
