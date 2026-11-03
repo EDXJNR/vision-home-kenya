@@ -569,7 +569,7 @@
       <div class="form-group"><label class="form-label">Property Title *</label><input class="form-control" type="text" id="f-title" placeholder="e.g. 3-bedroom luxury apartment"></div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Listing Type *</label><select class="form-control" id="f-type"><option value="sale">For Sale</option><option value="rent">For Rent</option></select></div>
-        <div class="form-group"><label class="form-label">Neighborhood *</label><select class="form-control" id="f-neighborhood"><option>Karen</option><option>Runda</option><option>Westlands</option><option>Kilimani</option><option>Lavington</option><option>Kileleshwa</option><option>Muthaiga</option><option>Gigiri</option><option>Spring Valley</option><option>Riverside</option><option>Loresho</option><option>Other</option></select></div>
+        <div class="form-group"><label class="form-label">Neighborhood *</label><select class="form-control" id="f-neighborhood"><option>Ngong</option><option>Kikuyu</option><option>Muhuri Road</option><option>Syokimau</option><option>Westlands</option></select></div>
       </div>
       <div class="form-group"><label class="form-label">Price *</label><input class="form-control" type="text" id="f-price" placeholder="e.g. KES 65,000,000 or KES 85,000 / mo"></div>
       <div class="form-group"><label class="form-label">Description</label><textarea class="form-control" id="f-description" placeholder="Describe the property…"></textarea></div>
@@ -1308,7 +1308,7 @@ async function openEditDrawer(id){
   if(error||!p){toast('Could not load property','error');closeDrawer();return;}
   document.getElementById('edit-id').value=p.id;
   document.getElementById('f-title').value=p.title||'';document.getElementById('f-type').value=p.type||'sale';
-  document.getElementById('f-neighborhood').value=p.neighborhood||'Karen';document.getElementById('f-price').value=p.price||'';
+  document.getElementById('f-neighborhood').value=p.neighborhood||'Ngong';document.getElementById('f-price').value=p.price||'';
   document.getElementById('f-description').value=p.description||'';document.getElementById('f-beds').value=p.beds??'';
   document.getElementById('f-baths').value=p.baths??'';document.getElementById('f-size').value=p.size||'';
   document.getElementById('f-lat').value=p.lat??'';document.getElementById('f-lng').value=p.lng??'';
@@ -1322,7 +1322,7 @@ function closeDrawer(){document.getElementById('prop-drawer').classList.remove('
 function resetDrawer(){
   ['f-title','f-price','f-description','f-size','f-gmaps-url','f-lat','f-lng'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('f-beds').value='';document.getElementById('f-baths').value='';
-  document.getElementById('f-type').value='sale';document.getElementById('f-neighborhood').value='Karen';
+  document.getElementById('f-type').value='sale';document.getElementById('f-neighborhood').value='Ngong';
   document.getElementById('f-active').value='true';document.getElementById('edit-id').value='';
   pendingFiles=[];existingImages=[];
   document.getElementById('image-previews').innerHTML='';

@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vision Homes Kenya — Luxury Real Estate in Nairobi</title>
-  <meta name="description" content="Nairobi's premier luxury real estate agency. Find your perfect home in Karen, Runda, Westlands, Kilimani and beyond.">
+  <meta name="description" content="Nairobi real estate advisor Marilyn of Vision Homes Kenya, specializing in Ngong, Kikuyu, Muhuri Road, Syokimau and Westlands. Verified listings for buyers, renters and diaspora investors.">
   <link rel="icon" type="image/png" href="images/logo.png">
   <link rel="apple-touch-icon" href="images/logo.png">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Vision Homes Kenya">
   <meta property="og:title" content="Vision Homes Kenya — Luxury Real Estate in Nairobi">
-  <meta property="og:description" content="Nairobi's premier luxury real estate agency. Find your perfect home in Karen, Runda, Westlands, Kilimani and beyond.">
+  <meta property="og:description" content="Nairobi real estate advisor Marilyn of Vision Homes Kenya, specializing in Ngong, Kikuyu, Muhuri Road, Syokimau and Westlands. Verified listings for buyers, renters and diaspora investors.">
   <meta property="og:image" content="images/logo.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="images/logo.png">
@@ -51,8 +51,8 @@
       <div class="hero-badge">
         <span class="hero-badge-dot"></span> Nairobi Verified Listings
       </div>
-      <h1>Find your <em>perfect home</em> in Nairobi's exclusive market</h1>
-      <p class="hero-sub">Connecting buyers, renters &amp; diaspora investors to inspected, high-quality real estate across Nairobi's most sought-after neighborhoods.</p>
+      <h1>Find your <em>perfect home</em> in Nairobi, from Westlands to Ngong</h1>
+      <p class="hero-sub">Connecting buyers, renters and diaspora investors to inspected, high-quality real estate across Nairobi and its fast-growing surrounding areas.</p>
       <div class="hero-actions">
         <a class="btn-gold" href="listings.html"><i class="ti ti-building-estate"></i> Browse listings</a>
         <a class="btn-outline-w" href="https://wa.me/254737665665" target="_blank"><i class="ti ti-brand-whatsapp"></i> WhatsApp us</a>
@@ -99,12 +99,11 @@
         <label for="s-hood">Neighborhood</label>
         <select id="s-hood">
           <option value="">Any Area</option>
-          <option value="Karen">Karen</option>
-          <option value="Runda">Runda</option>
+          <option value="Ngong">Ngong</option>
+          <option value="Kikuyu">Kikuyu</option>
+          <option value="Muhuri Road">Muhuri Road</option>
+          <option value="Syokimau">Syokimau</option>
           <option value="Westlands">Westlands</option>
-          <option value="Kilimani">Kilimani</option>
-          <option value="Lavington">Lavington</option>
-          <option value="Kileleshwa">Kileleshwa</option>
         </select>
       </div>
       <div class="search-field">
@@ -167,48 +166,56 @@
       <div>
         <div class="sec-label">Explore by Area</div>
         <h2 class="sec-title" id="hoods-title">Prime Neighborhoods</h2>
+        <p class="sec-intro">We specialize in these areas, so you're working with someone who genuinely knows them, not just a listing site.</p>
       </div>
       <a class="sec-link" href="neighborhoods.html">All areas <i class="ti ti-arrow-right"></i></a>
     </div>
 
     <div class="hood-grid">
-      <div class="hood-tile" onclick="goNeighborhood('karen')" role="button" tabindex="0" aria-label="Karen neighborhood">
+      <div class="hood-tile" onclick="goNeighborhood('Ngong')" role="button" tabindex="0" aria-label="Ngong neighborhood">
         <div class="hood-num">01</div>
-        <div class="hood-name">Karen</div>
-        <div class="hood-sub">Expansive estates, lush gardens, and serene surroundings near the Ngong Hills.</div>
-        <div class="hood-count" id="cnt-karen">— <i class="ti ti-arrow-right"></i></div>
+        <div class="hood-name">Ngong</div>
+        <div class="hood-sub">A fast-growing suburb minutes from Karen, offering more space and better value without sacrificing access to town.</div>
+        <div class="hood-count" id="cnt-ngong">— <i class="ti ti-arrow-right"></i></div>
       </div>
-      <div class="hood-tile" onclick="goNeighborhood('runda')" role="button" tabindex="0" aria-label="Runda neighborhood">
+      <div class="hood-tile" onclick="goNeighborhood('Kikuyu')" role="button" tabindex="0" aria-label="Kikuyu neighborhood">
         <div class="hood-num">02</div>
-        <div class="hood-name">Runda</div>
-        <div class="hood-sub">Elite gated enclave favoured by diplomats and executives. Ultra-private.</div>
-        <div class="hood-count" id="cnt-runda">— <i class="ti ti-arrow-right"></i></div>
+        <div class="hood-name">Kikuyu</div>
+        <div class="hood-sub">An affordable, well-connected area popular with first-time buyers and young families, with easy access to the Nairobi Expressway.</div>
+        <div class="hood-count" id="cnt-kikuyu">— <i class="ti ti-arrow-right"></i></div>
       </div>
-      <div class="hood-tile" onclick="goNeighborhood('westlands')" role="button" tabindex="0" aria-label="Westlands neighborhood">
+      <div class="hood-tile" onclick="goNeighborhood('Muhuri Road')" role="button" tabindex="0" aria-label="Muhuri Road neighborhood">
         <div class="hood-num">03</div>
+        <div class="hood-name">Muhuri Road</div>
+        <div class="hood-sub">A quiet, well-connected road with virtually no traffic, centrally placed with easy access to both Waiyaki Way and Dagoretti Road. About 10 minutes from Westlands, making it convenient whether you're headed into town or across the city.</div>
+        <div class="hood-count" id="cnt-muhuri-road">— <i class="ti ti-arrow-right"></i></div>
+      </div>
+      <div class="hood-tile" onclick="goNeighborhood('Syokimau')" role="button" tabindex="0" aria-label="Syokimau neighborhood">
+        <div class="hood-num">04</div>
+        <div class="hood-name">Syokimau</div>
+        <div class="hood-sub">A convenient satellite town near JKIA and the SGR station, ideal for buyers who want quick access to the airport and Mombasa Road.</div>
+        <div class="hood-count" id="cnt-syokimau">— <i class="ti ti-arrow-right"></i></div>
+      </div>
+      <div class="hood-tile" onclick="goNeighborhood('Westlands')" role="button" tabindex="0" aria-label="Westlands neighborhood">
+        <div class="hood-num">05</div>
         <div class="hood-name">Westlands</div>
-        <div class="hood-sub">Nairobi's commercial and entertainment hub — vibrant, connected, modern.</div>
+        <div class="hood-sub">Nairobi's commercial and entertainment hub, vibrant, connected, modern.</div>
         <div class="hood-count" id="cnt-westlands">— <i class="ti ti-arrow-right"></i></div>
       </div>
-      <div class="hood-tile" onclick="goNeighborhood('kilimani')" role="button" tabindex="0" aria-label="Kilimani neighborhood">
-        <div class="hood-num">04</div>
-        <div class="hood-name">Kilimani</div>
-        <div class="hood-sub">Central location with a premium mix of apartments and townhouses.</div>
-        <div class="hood-count" id="cnt-kilimani">— <i class="ti ti-arrow-right"></i></div>
-      </div>
-      <div class="hood-tile" onclick="goNeighborhood('lavington')" role="button" tabindex="0" aria-label="Lavington neighborhood">
-        <div class="hood-num">05</div>
-        <div class="hood-name">Lavington</div>
-        <div class="hood-sub">Tree-lined streets, top schools, and elegant family homes.</div>
-        <div class="hood-count" id="cnt-lavington">— <i class="ti ti-arrow-right"></i></div>
-      </div>
-      <div class="hood-tile" onclick="goNeighborhood('kileleshwa')" role="button" tabindex="0" aria-label="Kileleshwa neighborhood">
-        <div class="hood-num">06</div>
-        <div class="hood-name">Kileleshwa</div>
-        <div class="hood-sub">Quiet, leafy suburb with great value and a strong community feel.</div>
-        <div class="hood-count" id="cnt-kileleshwa">— <i class="ti ti-arrow-right"></i></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="section airbnb-teaser" aria-labelledby="airbnb-title">
+    <div class="sec-head">
+      <div>
+        <div class="sec-label">Stay With Us (Airbnb)</div>
+        <h2 class="sec-title" id="airbnb-title">A home in Westlands</h2>
       </div>
     </div>
+    <p class="airbnb-teaser-copy">Also hosting a beautifully furnished one bedroom Airbnb in Westlands, perfect for travellers, diaspora visiting Nairobi, and young professionals who want to feel at home, not just accommodated.</p>
+    <a class="sec-link" href="airbnb.html">See the Airbnb <i class="ti ti-arrow-right"></i></a>
   </section>
 
   <div class="divider"></div>
@@ -223,9 +230,9 @@
   </section>
   <div class="trust-row">
     <div class="trust-item">
-      <div class="trust-icon"><i class="ti ti-award"></i></div>
-      <div class="trust-title">3 Years of Excellence</div>
-      <p class="trust-desc">Over three years placing Nairobi's most discerning buyers, sellers and tenants with unmatched market expertise.</p>
+      <div class="trust-icon"><i class="ti ti-map-pin"></i></div>
+      <div class="trust-title">Hands-On Local Expertise</div>
+      <p class="trust-desc">Every listing is sourced, vetted, and shown personally, so you're working with someone who actually knows the ground, not just a catalog.</p>
     </div>
     <div class="trust-item">
       <div class="trust-icon"><i class="ti ti-shield-check"></i></div>
@@ -233,14 +240,15 @@
       <p class="trust-desc">Every property is personally inspected and legally verified before it reaches our clients.</p>
     </div>
     <div class="trust-item">
-      <div class="trust-icon"><i class="ti ti-users"></i></div>
-      <div class="trust-title">Dedicated Agents</div>
-      <p class="trust-desc">Your personal agent handles the full journey — viewings, negotiations, paperwork and beyond.</p>
+      <div class="trust-icon"><i class="ti ti-user"></i></div>
+      <div class="trust-title">Your Real Estate Advisor</div>
+      <p class="trust-desc">One advisor, start to finish, viewings, negotiations, paperwork and beyond. No handoffs, no call centre.</p>
     </div>
     <div class="trust-item">
       <div class="trust-icon"><i class="ti ti-brand-whatsapp"></i></div>
       <div class="trust-title">Instant WhatsApp Support</div>
-      <p class="trust-desc">Reach your agent in seconds via WhatsApp. We respond within the hour, every day of the week.</p>
+      <p class="trust-desc">Reach your advisor in seconds via WhatsApp. We respond within the hour, every day of the week.</p>
+      <p class="trust-phone"><a href="tel:+254737665665">Call/WhatsApp: +254 737 665 665</a></p>
     </div>
   </div>
 
@@ -321,10 +329,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const items = allProperties.length
           ? allProperties.slice(0, 8).map(p => `<span class="ticker-item"><span class="ticker-dot"></span>${p.neighborhood} — ${p.price}</span>`)
           : [
-              '<span class="ticker-item"><span class="ticker-dot"></span>Karen — KES 65,000,000</span>',
-              '<span class="ticker-item"><span class="ticker-dot"></span>Runda — KES 95,000,000</span>',
+              '<span class="ticker-item"><span class="ticker-dot"></span>Ngong — KES 12,500,000</span>',
+              '<span class="ticker-item"><span class="ticker-dot"></span>Kikuyu — KES 8,500,000</span>',
               '<span class="ticker-item"><span class="ticker-dot"></span>Westlands — KES 85,000 / mo</span>',
-              '<span class="ticker-item"><span class="ticker-dot"></span>Kilimani — KES 120,000 / mo</span>',
+              '<span class="ticker-item"><span class="ticker-dot"></span>Syokimau — KES 9,800,000</span>',
             ];
         const doubled = [...items, ...items].join('');
         const el = document.getElementById('ticker-inner');
