@@ -187,7 +187,7 @@ function openEditDrawer(id) {
   document.getElementById('edit-id').value             = id;
   document.getElementById('f-title').value             = p.title        || '';
   document.getElementById('f-type').value              = p.type         || 'sale';
-  document.getElementById('f-neighborhood').value      = p.neighborhood || 'Karen';
+  document.getElementById('f-neighborhood').value      = p.neighborhood || 'Ngong';
   document.getElementById('f-price').value             = p.price        || '';
   document.getElementById('f-description').value       = p.description  || '';
   document.getElementById('f-beds').value              = p.beds         ?? '';
@@ -223,7 +223,7 @@ function resetForm() {
   });
   document.getElementById('f-type').value         = 'sale';
   document.getElementById('f-active').value        = 'true';
-  document.getElementById('f-neighborhood').value  = 'Karen';
+  document.getElementById('f-neighborhood').value  = 'Ngong';
   document.getElementById('edit-id').value         = '';
   pendingImages = [];
   renderPreviews();

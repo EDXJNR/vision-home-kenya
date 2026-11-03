@@ -139,9 +139,9 @@ function setFilter(type, btn, neighborhood = null) {
 }
 
 function updateNeighborhoodCounts() {
-  ['westlands','kilimani','kileleshwa','lavington','karen','runda'].forEach(h => {
-    const count = allProperties.filter(p => p.neighborhood.toLowerCase() === h).length;
-    const el = document.getElementById(`cnt-${h}`);
+  ['Ngong','Kikuyu','Muhuri Road','Syokimau','Westlands'].forEach(h => {
+    const count = allProperties.filter(p => (p.neighborhood || '').toLowerCase() === h.toLowerCase()).length;
+    const el = document.getElementById('cnt-' + h.toLowerCase().replace(/\s+/g, '-'));
     if (el) el.innerHTML = `${count} listing${count!==1?'s':''} <i class="ti ti-arrow-right"></i>`;
   });
 }
@@ -160,12 +160,11 @@ function getGradient(hood) {
     return 'linear-gradient(135deg, var(--bg2), var(--card-bg))';
   }
   const g = {
-    Kilimani:   'linear-gradient(135deg,#1a2a20,#0d1a12)',
-    Lavington:  'linear-gradient(135deg,#1a1a2a,#0d0d1a)',
-    Karen:      'linear-gradient(135deg,#2a1a0d,#1a0d00)',
-    Westlands:  'linear-gradient(135deg,#1a2028,#0d1420)',
-    Runda:      'linear-gradient(135deg,#1e1a28,#100d1a)',
-    Kileleshwa: 'linear-gradient(135deg,#1a2818,#0d180d)'
+    Ngong:        'linear-gradient(135deg,#2a1a0d,#1a0d00)',
+    Kikuyu:       'linear-gradient(135deg,#1a2a20,#0d1a12)',
+    'Muhuri Road':'linear-gradient(135deg,#1a2818,#0d180d)',
+    Syokimau:     'linear-gradient(135deg,#1e1a28,#100d1a)',
+    Westlands:    'linear-gradient(135deg,#1a2028,#0d1420)'
   };
   return g[hood] || 'linear-gradient(135deg, var(--bg2), var(--bg))';
 }

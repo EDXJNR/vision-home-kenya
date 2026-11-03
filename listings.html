@@ -344,23 +344,20 @@
           <div class="sidebar-opt active" onclick="sidebarHood('', this)">
             <span class="sopt-dot"></span> All Areas
           </div>
-          <div class="sidebar-opt" onclick="sidebarHood('Karen', this)">
-            <span class="sopt-dot"></span> Karen <span class="sopt-count" id="cnt-karen"></span>
+          <div class="sidebar-opt" onclick="sidebarHood('Ngong', this)">
+            <span class="sopt-dot"></span> Ngong <span class="sopt-count" id="cnt-ngong"></span>
           </div>
-          <div class="sidebar-opt" onclick="sidebarHood('Runda', this)">
-            <span class="sopt-dot"></span> Runda <span class="sopt-count" id="cnt-runda"></span>
+          <div class="sidebar-opt" onclick="sidebarHood('Kikuyu', this)">
+            <span class="sopt-dot"></span> Kikuyu <span class="sopt-count" id="cnt-kikuyu"></span>
+          </div>
+          <div class="sidebar-opt" onclick="sidebarHood('Muhuri Road', this)">
+            <span class="sopt-dot"></span> Muhuri Road <span class="sopt-count" id="cnt-muhuri-road"></span>
+          </div>
+          <div class="sidebar-opt" onclick="sidebarHood('Syokimau', this)">
+            <span class="sopt-dot"></span> Syokimau <span class="sopt-count" id="cnt-syokimau"></span>
           </div>
           <div class="sidebar-opt" onclick="sidebarHood('Westlands', this)">
             <span class="sopt-dot"></span> Westlands <span class="sopt-count" id="cnt-westlands"></span>
-          </div>
-          <div class="sidebar-opt" onclick="sidebarHood('Kilimani', this)">
-            <span class="sopt-dot"></span> Kilimani <span class="sopt-count" id="cnt-kilimani"></span>
-          </div>
-          <div class="sidebar-opt" onclick="sidebarHood('Lavington', this)">
-            <span class="sopt-dot"></span> Lavington <span class="sopt-count" id="cnt-lavington"></span>
-          </div>
-          <div class="sidebar-opt" onclick="sidebarHood('Kileleshwa', this)">
-            <span class="sopt-dot"></span> Kileleshwa <span class="sopt-count" id="cnt-kileleshwa"></span>
           </div>
         </div>
       </div>
@@ -598,7 +595,13 @@ function updateSavedCount() {
 function showSaved() {
   const saved = JSON.parse(localStorage.getItem('vhk-saved') || '[]');
   if (!saved.length) {
-    alert('No saved properties yet. Click the ♡ on any listing to save it.');
+    const container = document.getElementById('props-container');
+    const count = document.getElementById('result-count');
+    if (count) count.textContent = '0';
+    if (container) {
+      container.className = 'props-grid';
+      container.innerHTML = '<div class="no-listings"><i class="ti ti-heart" style="font-size:32px;display:block;margin-bottom:12px;color:var(--gold)"></i>No saved properties yet.<br>Click the heart on any listing to save it.</div>';
+    }
     return;
   }
 
@@ -657,7 +660,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateSavedCount();
   const params = new URLSearchParams(window.location.search);
   if (params.get('type')) { sidebarTypeFilter = params.get('type'); activeFilter = params.get('type'); }
-  if (params.get('hood')) { sidebarHoodFilter = params.get('hood'); activeNeighborhood = params.get('hood'); }
+  if (params.get('hood')) {
+    sidebarHoodFilter = params.get('hood');
+    activeNeighborhood = params.get('hood');
+    const hoodMatch = [...document.querySelectorAll('#hood-filters .sidebar-opt')].find(el =>
+      el.textContent.trim().toLowerCase().startsWith(params.get('hood').toLowerCase())
+    );
+    if (hoodMatch) highlightSidebarOpt(hoodMatch, '#hood-filters .sidebar-opt');
+  }
   if (params.get('beds')) { sidebarBedsFilter = parseInt(params.get('beds')) || 0; }
   if (params.get('budget')) {
     const b = parseInt(params.get('budget'), 10);

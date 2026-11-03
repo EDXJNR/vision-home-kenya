@@ -43,36 +43,38 @@
 
     .prop-detail-layout {
       display: grid;
-      grid-template-columns: 1fr 360px;
+      grid-template-columns: minmax(0, 1fr) 340px;
       gap: 0;
       max-width: 1200px;
+      width: 100%;
       margin: 0 auto;
       padding: 40px 2rem 64px;
     }
-    .prop-detail-main { padding-right: 48px; }
+    .prop-detail-main { padding-right: 40px; min-width: 0; }
+    .prop-detail-sidebar { min-width: 0; }
 
     .gallery {
       width: 100%;
       margin-bottom: 32px;
-      border-radius: 3px;
-      overflow: hidden;
-      background: var(--bg2);
-      border: 0.5px solid var(--border);
     }
 
     .gallery-main {
-      width: 100%;
-      height: 420px;
+      width: fit-content;
+      max-width: 100%;
+      height: auto;
+      margin: 0 auto;
       position: relative;
-      overflow: hidden;
-      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .gallery-main img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
       display: block;
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 78vh;
       transition: opacity 0.25s ease;
     }
 
@@ -121,13 +123,11 @@
 
     .gallery-thumbs {
       display: flex;
+      flex-wrap: wrap;
       gap: 4px;
       padding: 4px;
       background: var(--bg);
-      overflow-x: auto;
-      scrollbar-width: none;
     }
-    .gallery-thumbs::-webkit-scrollbar { display: none; }
 
     .gallery-thumb {
       width: 80px;
@@ -383,48 +383,22 @@
     .enquiry-success-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--text); margin-bottom: 8px; }
     .enquiry-success-sub { font-size: 12px; color: var(--text-dim); line-height: 1.65; margin-bottom: 16px; }
 
-    .agent-mini {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 16px;
-      background: var(--bg);
-      border: 0.5px solid var(--border);
-      border-radius: 3px;
-      transition: background 0.3s;
-    }
-    .agent-mini-avatar {
-      width: 38px; height: 38px; border-radius: 50%;
-      background: var(--gold); display: flex; align-items: center;
-      justify-content: center; font-family: 'Cormorant Garamond', serif;
-      font-size: 15px; font-weight: 600; color: var(--bg); flex-shrink: 0;
-    }
-    .agent-mini-name { font-size: 13px; font-weight: 500; color: var(--text); }
-    .agent-mini-role { font-size: 11px; color: var(--text-faint); }
-
     .prop-detail-badge {
       display: inline-flex; align-items: center; gap: 6px;
       font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
       padding: 5px 12px; border-radius: 2px; margin-bottom: 16px;
     }
 
-    @media (min-width: 769px) {
-      .prop-detail-layout {
-        grid-template-columns: 1fr 360px;
-      }
-      .prop-detail-main { padding-right: 48px; }
+    @media (min-width: 1101px) {
       .prop-detail-sidebar { position: sticky; top: 80px; }
       .prop-features-grid { grid-template-columns: 1fr 1fr; }
-      .gallery-main { height: 420px; }
     }
 
-    @media (max-width: 768px) {
-      .prop-detail-layout { grid-template-columns: 1fr; padding: 20px 16px 48px; }
+    @media (max-width: 1100px) {
+      .prop-detail-layout { grid-template-columns: minmax(0, 1fr); padding: 28px 16px 48px; }
       .prop-detail-main { padding-right: 0; }
-      .gallery-main { height: 260px; }
-      .gallery-placeholder { height: 260px; }
-      .prop-detail-price { font-size: 28px; }
       .prop-detail-sidebar { position: static; }
+      .prop-detail-price { font-size: 28px; }
       .prop-features-grid { grid-template-columns: 1fr; }
       #property-map { height: 220px; }
     }
@@ -784,14 +758,6 @@
                 <a class="btn-gold" href="https://wa.me/${WA_NUMBER}?text=${waMsg}" target="_blank" style="width:100%;justify-content:center;margin-top:4px;">
                   <i class="ti ti-brand-whatsapp"></i> Open WhatsApp
                 </a>
-              </div>
-            </div>
-
-            <div class="agent-mini">
-              <div class="agent-mini-avatar">PA</div>
-              <div>
-                <div class="agent-mini-name">Phoebe Akinyi</div>
-                <div class="agent-mini-role">Client Relations — responds within 1hr</div>
               </div>
             </div>
           </aside>
